@@ -1,0 +1,8 @@
+---
+BasedOnStyle: Chromium
+
+BinPackArguments: false
+IndentWidth: 1
+TabWidth: 1
+UseTab: ForIndentation
+---

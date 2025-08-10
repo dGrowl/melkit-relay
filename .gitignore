@@ -1,3 +1,5 @@
 .vscode/
+lib/
 *.o
 *.exe
+*.ini

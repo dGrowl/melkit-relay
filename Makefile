@@ -2,7 +2,7 @@ CXX = g++
 
 EXE = relay
 
-IMGUI_DIR = ./lib/imgui
+LIB_DIR = ./lib
 SOURCE_DIR = ./src
 OBJ_DIR = ./build
 
@@ -20,7 +20,7 @@ SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl3.cpp \
 
 UNAME_S := $(shell uname -s)
 
-CXXFLAGS = -std=c++11 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -Iinc
+CXXFLAGS = -std=c++11 -I$(LIB_DIR) -I$(IMGUI_DIR) -Iinc
 LIBS =
 
 

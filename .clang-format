@@ -1,8 +1,14 @@
 ---
 BasedOnStyle: Chromium
 
+AlignAfterOpenBracket: Align
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
 BinPackArguments: false
+BinPackParameters: OnePerLine
+BreakConstructorInitializers: AfterColon
 IndentWidth: 1
+PackConstructorInitializers: Never
 TabWidth: 1
 UseTab: ForIndentation
 ---

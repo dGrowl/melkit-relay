@@ -4,6 +4,7 @@ EXE = relay
 
 IMGUI_DIR = ./lib/imgui
 SOURCE_DIR = ./src
+OBJ_DIR = ./build
 
 APP_HEADERS = $(wildcard ./inc/*.hpp)
 APP_SOURCES = $(wildcard ./src/*.cpp)
@@ -53,19 +54,19 @@ ifeq ($(OS), Windows_NT)
 	CFLAGS = $(CXXFLAGS)
 endif
 
-OBJS = $(addsuffix .o, $(basename $(notdir $(SOURCES))))
+OBJS = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 
 ##---------------------------------------------------------------------
 ## BUILD RULES
 ##---------------------------------------------------------------------
 
-%.o:$(SOURCE_DIR)/%.cpp
+$(OBJ_DIR)/%.o:$(SOURCE_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-%.o:$(IMGUI_DIR)/%.cpp
+$(OBJ_DIR)/%.o:$(IMGUI_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-%.o:$(IMGUI_DIR)/backends/%.cpp
+$(OBJ_DIR)/%.o:$(IMGUI_DIR)/backends/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 debug: CXXFLAGS += -g -Wall -Wextra -pedantic

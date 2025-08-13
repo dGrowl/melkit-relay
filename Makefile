@@ -1,17 +1,25 @@
 CXX = g++
 
 EXE = relay
+
 IMGUI_DIR = ./lib/imgui
 SOURCE_DIR = ./src
-APP_SOURCES = $(SOURCE_DIR)/main.cpp
+
+APP_HEADERS = $(wildcard ./inc/*.hpp)
+APP_SOURCES = $(wildcard ./src/*.cpp)
+
 SOURCES = $(APP_SOURCES)
-SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
-SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl3.cpp $(IMGUI_DIR)/backends/imgui_impl_sdlgpu3.cpp
-OBJS = $(addsuffix .o, $(basename $(notdir $(SOURCES))))
+SOURCES += $(IMGUI_DIR)/imgui.cpp \
+ $(IMGUI_DIR)/imgui_demo.cpp \
+ $(IMGUI_DIR)/imgui_draw.cpp \
+ $(IMGUI_DIR)/imgui_tables.cpp \
+ $(IMGUI_DIR)/imgui_widgets.cpp
+SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl3.cpp \
+	$(IMGUI_DIR)/backends/imgui_impl_sdlgpu3.cpp
+
 UNAME_S := $(shell uname -s)
 
-CXXFLAGS = -std=c++11 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
-CXXFLAGS += -g -Wall -Wextra -pedantic
+CXXFLAGS = -std=c++11 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -Iinc
 LIBS =
 
 
@@ -45,6 +53,8 @@ ifeq ($(OS), Windows_NT)
 	CFLAGS = $(CXXFLAGS)
 endif
 
+OBJS = $(addsuffix .o, $(basename $(notdir $(SOURCES))))
+
 ##---------------------------------------------------------------------
 ## BUILD RULES
 ##---------------------------------------------------------------------
@@ -58,6 +68,9 @@ endif
 %.o:$(IMGUI_DIR)/backends/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
+debug: CXXFLAGS += -g -Wall -Wextra -pedantic
+debug: all
+
 all: $(EXE)
 	@echo Build complete for $(ECHO_MESSAGE)
 
@@ -65,7 +78,7 @@ $(EXE): $(OBJS)
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
 format:
-	clang-format -i $(APP_SOURCES)
+	clang-format -i $(APP_SOURCES) $(APP_HEADERS)
 
 clean:
 	rm -f $(EXE) $(OBJS)

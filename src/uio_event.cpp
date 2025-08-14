@@ -1,6 +1,6 @@
 #include "uio_event.hpp"
 
-const int N_UIO_EVENTS = 4;
+const int N_UIO_EVENTS = 5;
 
 void allocateUIOEvents() {
 	SDL_RegisterEvents(N_UIO_EVENTS);
@@ -27,6 +27,10 @@ void uioHookCallback(uiohook_event* const event) {
 		case EVENT_MOUSE_PRESSED:
 		case EVENT_MOUSE_CLICKED:
 			type = UIO_EVENT_MOUSE_CLICK;
+			data.mouse.button = event->data.mouse.button;
+			break;
+		case EVENT_MOUSE_RELEASED:
+			type = UIO_EVENT_MOUSE_RELEASE;
 			data.mouse.button = event->data.mouse.button;
 			break;
 		default:

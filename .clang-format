@@ -2,10 +2,13 @@
 BasedOnStyle: Chromium
 
 AlignAfterOpenBracket: Align
+AlignOperands: Align
 AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
 BinPackArguments: false
 BinPackParameters: OnePerLine
+BreakBeforeBinaryOperators: NonAssignment
+BreakBinaryOperations: OnePerLine
 BreakConstructorInitializers: AfterColon
 IndentWidth: 1
 PackConstructorInitializers: Never

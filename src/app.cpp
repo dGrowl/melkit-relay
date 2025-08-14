@@ -24,9 +24,9 @@ int App::init() {
 		return 1;
 	}
 
-	_gpu = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV |
-	                               SDL_GPU_SHADERFORMAT_DXIL |
-	                               SDL_GPU_SHADERFORMAT_METALLIB,
+	_gpu = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV
+	                               | SDL_GPU_SHADERFORMAT_DXIL
+	                               | SDL_GPU_SHADERFORMAT_METALLIB,
 	                           true,
 	                           nullptr);
 	if (_gpu == nullptr) {

@@ -7,8 +7,9 @@ ConfigWindow::ConfigWindow() :
     _width(960),
     _clearColor{.03f, .02f, .04f, 1.0f},
     _window(nullptr),
-    _flags(SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN |
-           SDL_WINDOW_HIGH_PIXEL_DENSITY) {}
+    _flags(SDL_WINDOW_RESIZABLE
+           | SDL_WINDOW_HIDDEN
+           | SDL_WINDOW_HIGH_PIXEL_DENSITY) {}
 
 int ConfigWindow::open(SDL_GPUDevice* gpu) {
 	const SDL_DisplayID primaryDisplay = SDL_GetPrimaryDisplay();

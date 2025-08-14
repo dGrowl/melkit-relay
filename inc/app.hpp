@@ -2,18 +2,20 @@
 #define APP_HPP_
 
 #include <SDL3/SDL.h>
-
 #include <imgui/backends/imgui_impl_sdl3.h>
 #include <imgui/backends/imgui_impl_sdlgpu3.h>
 #include <imgui/imgui.h>
 
 #include "config_window.hpp"
+#include "uio_event.hpp"
 #include "tray_icon.hpp"
 
 class App {
 private:
 	bool _alive;
 	SDL_GPUDevice* _gpu;
+	SDL_Thread* _uioThread;
+
 	ConfigWindow _config;
 	TrayIcon _icon;
 
@@ -24,6 +26,8 @@ public:
 	void quit();
 	void run();
 	void openConfig();
+	void stopInput();
+	void handleEvent(SDL_Event& event);
 
 	static void openConfigCallback(void* userdata, SDL_TrayEntry*);
 	static void quitCallback(void* userdata, SDL_TrayEntry*);

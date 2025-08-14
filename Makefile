@@ -1,3 +1,4 @@
+CC = gcc
 CXX = g++
 
 EXE = relay
@@ -5,6 +6,9 @@ EXE = relay
 LIB_DIR = ./lib
 SOURCE_DIR = ./src
 OBJ_DIR = ./build
+
+IMGUI_DIR = $(LIB_DIR)/imgui
+LIBUIOHOOK_DIR = $(LIB_DIR)/libuiohook
 
 APP_HEADERS = $(wildcard ./inc/*.hpp)
 APP_SOURCES = $(wildcard ./src/*.cpp)
@@ -20,13 +24,9 @@ SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl3.cpp \
 
 UNAME_S := $(shell uname -s)
 
+CC_FLAGS = -I$(LIBUIOHOOK_DIR)
 CXXFLAGS = -std=c++11 -I$(LIB_DIR) -I$(IMGUI_DIR) -Iinc
 LIBS =
-
-
-##---------------------------------------------------------------------
-## BUILD FLAGS PER PLATFORM
-##---------------------------------------------------------------------
 
 ifeq ($(UNAME_S), Linux) #LINUX
 	ECHO_MESSAGE = "Linux"
@@ -34,6 +34,8 @@ ifeq ($(UNAME_S), Linux) #LINUX
 
 	CXXFLAGS += `pkg-config sdl3 --cflags`
 	CFLAGS = $(CXXFLAGS)
+
+	OS_DIR = x11
 endif
 
 ifeq ($(UNAME_S), Darwin) #APPLE
@@ -44,6 +46,8 @@ ifeq ($(UNAME_S), Darwin) #APPLE
 	CXXFLAGS += `pkg-config sdl3 --cflags`
 	CXXFLAGS += -I/usr/local/include -I/opt/local/include
 	CFLAGS = $(CXXFLAGS)
+
+	OS_DIR = darwin
 endif
 
 ifeq ($(OS), Windows_NT)
@@ -52,7 +56,15 @@ ifeq ($(OS), Windows_NT)
 
 	CXXFLAGS += `pkg-config --cflags sdl3`
 	CFLAGS = $(CXXFLAGS)
+
+	OS_DIR = windows
 endif
+
+SOURCES += $(LIBUIOHOOK_DIR)/logger.c \
+	$(LIBUIOHOOK_DIR)/$(OS_DIR)/input_helper.c \
+	$(LIBUIOHOOK_DIR)/$(OS_DIR)/input_hook.c \
+	$(LIBUIOHOOK_DIR)/$(OS_DIR)/post_event.c \
+	$(LIBUIOHOOK_DIR)/$(OS_DIR)/system_properties.c
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 
@@ -68,6 +80,12 @@ $(OBJ_DIR)/%.o:$(IMGUI_DIR)/%.cpp
 
 $(OBJ_DIR)/%.o:$(IMGUI_DIR)/backends/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJ_DIR)/%.o:$(LIBUIOHOOK_DIR)/%.c
+	$(CC) $(CC_FLAGS) -c -o $@ $<
+
+$(OBJ_DIR)/%.o:$(LIBUIOHOOK_DIR)/$(OS_DIR)/%.c
+	$(CC) $(CC_FLAGS) -c -o $@ $<
 
 debug: CXXFLAGS += -g -Wall -Wextra -pedantic
 debug: all

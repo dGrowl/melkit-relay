@@ -2,6 +2,7 @@
 
 App::App() :
     _alive(true),
+    _input(),
     _gpu(nullptr),
     _uioThread(nullptr),
     _config(),
@@ -92,18 +93,33 @@ void App::handleEvent(SDL_Event& event) {
 	if (_config.isOpen()) {
 		ImGui_ImplSDL3_ProcessEvent(&event);
 	}
-	if (event.type == UIO_EVENT_KEY_DOWN) {
-		auto* e = static_cast<UIO_Event*>(event.user.data1);
-		// handle keydown
-		SDL_free(e);
-	} else if (event.type == UIO_EVENT_MOUSE_MOVE) {
-		auto* e = static_cast<UIO_Event*>(event.user.data1);
-		// handle mousemove
-		SDL_free(e);
-	} else if (event.type == SDL_EVENT_QUIT) {
-		quit();
-	} else if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED &&
-	           event.window.windowID == _config.id()) {
+	switch (event.type) {
+		case UIO_EVENT_KEY_DOWN:
+			_input.handleKeyDown(event);
+			break;
+		case UIO_EVENT_KEY_UP:
+			_input.handleKeyUp(event);
+			break;
+		case UIO_EVENT_MOUSE_MOVE:
+			_input.handleMouseMove(event);
+			break;
+		case UIO_EVENT_MOUSE_CLICK:
+			_input.handleMouseButton(event, true);
+			break;
+		case UIO_EVENT_MOUSE_RELEASE:
+			_input.handleMouseButton(event, false);
+			break;
+		case SDL_EVENT_QUIT:
+			quit();
+			break;
+		case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+			handleWindowClose(event);
+			break;
+	}
+}
+
+void App::handleWindowClose(SDL_Event& event) {
+	if (event.window.windowID == _config.id()) {
 		_config.close(_gpu);
 	}
 }

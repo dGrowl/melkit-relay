@@ -7,12 +7,15 @@
 #include <imgui/imgui.h>
 
 #include "config_window.hpp"
-#include "uio_event.hpp"
+#include "input_state.hpp"
 #include "tray_icon.hpp"
+#include "uio_event.hpp"
 
 class App {
 private:
 	bool _alive;
+	InputState _input;
+
 	SDL_GPUDevice* _gpu;
 	SDL_Thread* _uioThread;
 
@@ -28,6 +31,7 @@ public:
 	void openConfig();
 	void stopInput();
 	void handleEvent(SDL_Event& event);
+	void handleWindowClose(SDL_Event& event);
 
 	static void openConfigCallback(void* userdata, SDL_TrayEntry*);
 	static void quitCallback(void* userdata, SDL_TrayEntry*);

@@ -18,11 +18,13 @@ void uioHookCallback(uiohook_event* const event) {
 			type = UIO_EVENT_KEY_UP;
 			data.key.keycode = event->data.keyboard.keycode;
 			break;
+		case EVENT_MOUSE_DRAGGED:
 		case EVENT_MOUSE_MOVED:
 			type = UIO_EVENT_MOUSE_MOVE;
 			data.mouse.x = event->data.mouse.x;
 			data.mouse.y = event->data.mouse.y;
 			break;
+		case EVENT_MOUSE_PRESSED:
 		case EVENT_MOUSE_CLICKED:
 			type = UIO_EVENT_MOUSE_CLICK;
 			data.mouse.button = event->data.mouse.button;

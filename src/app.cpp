@@ -5,9 +5,11 @@ App::App() :
     _input(),
     _gpu(nullptr),
     _uioThread(nullptr),
+    _wsThread(nullptr),
     _config(),
     _icon() {
-	_uioThread = SDL_CreateThread(uioHookThreadFn, "uiohook", nullptr);
+	_uioThread = SDL_CreateThread(uioHookThreadFn, "uio", nullptr);
+	_wsThread = SDL_CreateThread(wsThreadFn, "ws", nullptr);
 	allocateUIOEvents();
 }
 
@@ -49,7 +51,8 @@ int App::init() {
 
 void App::quit() {
 	_config.close(_gpu);
-	stopInput();
+	stopUio();
+	stopWs();
 	_alive = false;
 }
 
@@ -83,10 +86,16 @@ void App::openConfig() {
 	_config.open(_gpu);
 }
 
-void App::stopInput() {
+void App::stopUio() {
 	hook_stop();
 	SDL_WaitThread(_uioThread, nullptr);
 	_uioThread = nullptr;
+}
+
+void App::stopWs() {
+	stopWsThread();
+	SDL_WaitThread(_wsThread, nullptr);
+	_wsThread = nullptr;
 }
 
 void App::handleEvent(SDL_Event& event) {

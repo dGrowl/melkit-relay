@@ -10,6 +10,7 @@
 #include "input_state.hpp"
 #include "tray_icon.hpp"
 #include "uio_event.hpp"
+#include "websocket.hpp"
 
 class App {
 private:
@@ -18,6 +19,7 @@ private:
 
 	SDL_GPUDevice* _gpu;
 	SDL_Thread* _uioThread;
+	SDL_Thread* _wsThread;
 
 	ConfigWindow _config;
 	TrayIcon _icon;
@@ -29,7 +31,8 @@ public:
 	void quit();
 	void run();
 	void openConfig();
-	void stopInput();
+	void stopUio();
+	void stopWs();
 	void handleEvent(SDL_Event& event);
 	void handleWindowClose(SDL_Event& event);
 

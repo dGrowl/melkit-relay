@@ -26,7 +26,7 @@ UNAME_S := $(shell uname -s)
 
 CC_FLAGS = -I$(LIBUIOHOOK_DIR)
 CXXFLAGS = -std=c++11 -I$(LIB_DIR) -I$(IMGUI_DIR) -Iinc
-LIBS =
+LIBS = -lmongoose
 
 ifeq ($(UNAME_S), Linux) #LINUX
 	ECHO_MESSAGE = "Linux"

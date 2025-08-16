@@ -11,7 +11,13 @@ BreakBeforeBinaryOperators: NonAssignment
 BreakBinaryOperations: OnePerLine
 BreakConstructorInitializers: AfterColon
 IndentWidth: 1
+InsertNewlineAtEOF: true
 PackConstructorInitializers: Never
 TabWidth: 1
 UseTab: ForIndentation
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  BeforeCatch: true
+  BeforeElse: true
 ---

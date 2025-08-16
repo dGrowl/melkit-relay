@@ -35,6 +35,7 @@ public:
 	void stopWs();
 	void handleEvent(SDL_Event& event);
 	void handleWindowClose(SDL_Event& event);
+	void handleVtsMessage(SDL_Event& event);
 
 	static void openConfigCallback(void* userdata, SDL_TrayEntry*);
 	static void quitCallback(void* userdata, SDL_TrayEntry*);

@@ -1,6 +1,6 @@
 #include "uio_event.hpp"
 
-const int N_UIO_EVENTS = 5;
+static const int N_UIO_EVENTS = 5;
 
 void allocateUIOEvents() {
 	SDL_RegisterEvents(N_UIO_EVENTS);

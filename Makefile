@@ -10,8 +10,8 @@ OBJ_DIR = ./build
 IMGUI_DIR = $(LIB_DIR)/imgui
 LIBUIOHOOK_DIR = $(LIB_DIR)/libuiohook
 
-APP_HEADERS = $(wildcard ./inc/*.hpp)
-APP_SOURCES = $(wildcard ./src/*.cpp)
+APP_HEADERS = $(shell find ./inc -name "*.hpp")
+APP_SOURCES = $(shell find ./src -name "*.cpp")
 
 SOURCES = $(APP_SOURCES)
 SOURCES += $(IMGUI_DIR)/imgui.cpp \
@@ -73,6 +73,9 @@ OBJS = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))
 ##---------------------------------------------------------------------
 
 $(OBJ_DIR)/%.o:$(SOURCE_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJ_DIR)/%.o:$(SOURCE_DIR)/vts/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(OBJ_DIR)/%.o:$(IMGUI_DIR)/%.cpp

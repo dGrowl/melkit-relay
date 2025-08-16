@@ -1,4 +1,6 @@
 #include "app.hpp"
+#include "vts/request.hpp"
+#include "vts/response.hpp"
 
 App::App() :
     _alive(true),
@@ -11,6 +13,7 @@ App::App() :
 	_uioThread = SDL_CreateThread(uioHookThreadFn, "uio", nullptr);
 	_wsThread = SDL_CreateThread(wsThreadFn, "ws", nullptr);
 	allocateUIOEvents();
+	allocateWsEvents();
 }
 
 App::~App() {
@@ -118,6 +121,12 @@ void App::handleEvent(SDL_Event& event) {
 		case UIO_EVENT_MOUSE_RELEASE:
 			_input.handleMouseButton(event, false);
 			break;
+		case WS_EVENT_OPEN:
+			vts::authenticate();
+			break;
+		case WS_EVENT_MESSAGE:
+			handleVtsMessage(event);
+			break;
 		case SDL_EVENT_QUIT:
 			quit();
 			break;
@@ -130,5 +139,16 @@ void App::handleEvent(SDL_Event& event) {
 void App::handleWindowClose(SDL_Event& event) {
 	if (event.window.windowID == _config.id()) {
 		_config.close(_gpu);
+	}
+}
+
+void App::handleVtsMessage(SDL_Event& event) {
+	switch (event.user.code) {
+		case vts::ResponseCode::AUTHENTICATION_TOKEN:
+			auto* data =
+			    static_cast<vts::AuthenticationTokenResponse*>(event.user.data1);
+			vts::saveToken(data->token);
+			delete data;
+			break;
 	}
 }

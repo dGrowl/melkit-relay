@@ -6,23 +6,33 @@
 #include <imgui/backends/imgui_impl_sdlgpu3.h>
 #include <imgui/imgui.h>
 
+#include "ws/controller.hpp"
+
+constexpr Uint8 MAX_URL_LENGTH = 128;
+
 class ConfigWindow {
 private:
-	bool _showDemoWindow;
 	const char* _title;
 	int _height;
 	int _width;
 	SDL_FColor _clearColor;
+
+	ws::IController& _wsController;
+
+	char _urlBuffer[MAX_URL_LENGTH];
+
 	SDL_Window* _window;
 	SDL_WindowFlags _flags;
 
 public:
-	ConfigWindow();
+	ConfigWindow(ws::IController& wsController);
 	int open(SDL_GPUDevice* gpu);
 	void close(SDL_GPUDevice* gpu);
 	void render(SDL_GPUDevice* gpu);
 	bool isOpen() const;
 	SDL_WindowID id() const;
+
+	void showVtsConnection();
 };
 
 #endif  // CONFIG_WINDOW_HPP_

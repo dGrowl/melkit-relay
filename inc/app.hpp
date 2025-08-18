@@ -10,7 +10,7 @@
 #include "input_state.hpp"
 #include "tray_icon.hpp"
 #include "uio_event.hpp"
-#include "websocket.hpp"
+#include "ws/client.hpp"
 
 class App {
 private:
@@ -19,7 +19,7 @@ private:
 
 	SDL_GPUDevice* _gpu;
 	SDL_Thread* _uioThread;
-	SDL_Thread* _wsThread;
+	ws::Client _wsClient;
 
 	ConfigWindow _config;
 	TrayIcon _icon;
@@ -34,8 +34,8 @@ public:
 	void stopUio();
 	void stopWs();
 	void handleEvent(SDL_Event& event);
+	void handleVtsMessage(SDL_UserEvent& event);
 	void handleWindowClose(SDL_Event& event);
-	void handleVtsMessage(SDL_Event& event);
 
 	static void openConfigCallback(void* userdata, SDL_TrayEntry*);
 	static void quitCallback(void* userdata, SDL_TrayEntry*);

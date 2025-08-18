@@ -1,15 +1,25 @@
 #include "config_window.hpp"
 
-ConfigWindow::ConfigWindow() :
-    _showDemoWindow(true),
-    _title("Config"),
+const char* STATUS_TEXT[] = {
+    "DISCONNECTED",
+    "CONNECTING",
+    "FAILED",
+    "CONNECTED",
+};
+
+ConfigWindow::ConfigWindow(ws::IController& wsController) :
+    _title("Configuration"),
     _height(540),
     _width(960),
     _clearColor{.03f, .02f, .04f, 1.0f},
+    _wsController(wsController),
+    _urlBuffer(),
     _window(nullptr),
     _flags(SDL_WINDOW_RESIZABLE
            | SDL_WINDOW_HIDDEN
-           | SDL_WINDOW_HIGH_PIXEL_DENSITY) {}
+           | SDL_WINDOW_HIGH_PIXEL_DENSITY) {
+	SDL_strlcpy(_urlBuffer, wsController.getUrl(), sizeof(_urlBuffer));
+}
 
 int ConfigWindow::open(SDL_GPUDevice* gpu) {
 	const SDL_DisplayID primaryDisplay = SDL_GetPrimaryDisplay();
@@ -56,9 +66,20 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 	ImGui_ImplSDLGPU3_NewFrame();
 	ImGui_ImplSDL3_NewFrame();
 	ImGui::NewFrame();
-	if (_showDemoWindow) {
-		ImGui::ShowDemoWindow(&_showDemoWindow);
+
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(viewport->Pos);
+	ImGui::SetNextWindowSize(viewport->Size);
+
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDecoration
+	                               | ImGuiWindowFlags_NoMove
+	                               | ImGuiWindowFlags_NoResize
+	                               | ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+	if (ImGui::Begin("Settings", nullptr, windowFlags)) {
+		showVtsConnection();
 	}
+	ImGui::End();
 
 	ImGui::Render();
 	auto drawData = ImGui::GetDrawData();
@@ -114,4 +135,25 @@ bool ConfigWindow::isOpen() const {
 
 SDL_WindowID ConfigWindow::id() const {
 	return SDL_GetWindowID(_window);
+}
+
+void ConfigWindow::showVtsConnection() {
+	ImGui::Text("VTS Connection");
+	ImGui::Separator();
+	ImGui::InputText("API Address", _urlBuffer, IM_ARRAYSIZE(_urlBuffer));
+	ImGui::Text("Status: ");
+	ImGui::SameLine();
+	ImGui::Text(STATUS_TEXT[_wsController.getStatus()]);
+
+	if (_wsController.getStatus() == ws::Status::CONNECTED) {
+		if (ImGui::Button("Disconnect", ImVec2(120, 0))) {
+			_wsController.stop();
+		}
+	}
+	else {
+		if (ImGui::Button("Connect", ImVec2(120, 0))) {
+			_wsController.setUrl(_urlBuffer);
+			_wsController.start();
+		}
+	}
 }

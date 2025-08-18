@@ -4,7 +4,7 @@
 #include <mongoose.h>
 
 #include "vts/request.hpp"
-#include "websocket.hpp"
+#include "ws/client.hpp"
 
 namespace vts {
 static const char* TOKEN_FILE_NAME = "auth_token";
@@ -23,7 +23,7 @@ static const char* AUTHENTICATION_REQUEST = R"({
 	}
 })";
 
-void authenticate() {
+void authenticate(ws::Client& client) {
 	std::ifstream tokenFile(TOKEN_FILE_NAME);
 	if (tokenFile.is_open()) {
 		std::string token;
@@ -33,10 +33,10 @@ void authenticate() {
 		                            sizeof(buffer),
 		                            AUTHENTICATION_REQUEST,
 		                            token.c_str());
-		wsSend(std::string(buffer, nChars));
+		client.sendMessage(std::string(buffer, nChars));
 	}
 	else {
-		requestToken();
+		requestToken(client);
 	}
 }
 
@@ -52,8 +52,8 @@ static std::string AUTHENTICATION_TOKEN_REQUEST = R"({
 	}
 })";
 
-void requestToken() {
-	wsSend(AUTHENTICATION_TOKEN_REQUEST);
+void requestToken(ws::Client& client) {
+	client.sendMessage(AUTHENTICATION_TOKEN_REQUEST);
 }
 
 void saveToken(const std::string& token) {

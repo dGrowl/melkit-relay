@@ -1,19 +1,20 @@
 #include "app.hpp"
 #include "vts/request.hpp"
 #include "vts/response.hpp"
+#include "ws/event.hpp"
 
 App::App() :
     _alive(true),
     _input(),
     _gpu(nullptr),
     _uioThread(nullptr),
-    _wsThread(nullptr),
-    _config(),
+    _wsClient(),
+    _config(_wsClient),
     _icon() {
 	_uioThread = SDL_CreateThread(uioHookThreadFn, "uio", nullptr);
-	_wsThread = SDL_CreateThread(wsThreadFn, "ws", nullptr);
 	allocateUIOEvents();
-	allocateWsEvents();
+	ws::allocateEvents();
+	_wsClient.start();
 }
 
 App::~App() {
@@ -55,7 +56,7 @@ int App::init() {
 void App::quit() {
 	_config.close(_gpu);
 	stopUio();
-	stopWs();
+	_wsClient.stop();
 	_alive = false;
 }
 
@@ -95,12 +96,6 @@ void App::stopUio() {
 	_uioThread = nullptr;
 }
 
-void App::stopWs() {
-	stopWsThread();
-	SDL_WaitThread(_wsThread, nullptr);
-	_wsThread = nullptr;
-}
-
 void App::handleEvent(SDL_Event& event) {
 	if (_config.isOpen()) {
 		ImGui_ImplSDL3_ProcessEvent(&event);
@@ -121,11 +116,11 @@ void App::handleEvent(SDL_Event& event) {
 		case UIO_EVENT_MOUSE_RELEASE:
 			_input.handleMouseButton(event, false);
 			break;
-		case WS_EVENT_OPEN:
-			vts::authenticate();
+		case ws::Event::OPEN:
+			vts::authenticate(_wsClient);
 			break;
-		case WS_EVENT_MESSAGE:
-			handleVtsMessage(event);
+		case ws::Event::MESSAGE:
+			handleVtsMessage(event.user);
 			break;
 		case SDL_EVENT_QUIT:
 			quit();
@@ -136,19 +131,18 @@ void App::handleEvent(SDL_Event& event) {
 	}
 }
 
-void App::handleWindowClose(SDL_Event& event) {
-	if (event.window.windowID == _config.id()) {
-		_config.close(_gpu);
-	}
-}
-
-void App::handleVtsMessage(SDL_Event& event) {
-	switch (event.user.code) {
+void App::handleVtsMessage(SDL_UserEvent& event) {
+	switch (event.code) {
 		case vts::ResponseCode::AUTHENTICATION_TOKEN:
-			auto* data =
-			    static_cast<vts::AuthenticationTokenResponse*>(event.user.data1);
+			auto* data = static_cast<vts::AuthenticationTokenResponse*>(event.data1);
 			vts::saveToken(data->token);
 			delete data;
 			break;
+	}
+}
+
+void App::handleWindowClose(SDL_Event& event) {
+	if (event.window.windowID == _config.id()) {
+		_config.close(_gpu);
 	}
 }

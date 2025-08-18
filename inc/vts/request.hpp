@@ -3,10 +3,12 @@
 
 #include <string>
 
+#include "ws/client.hpp"
+
 namespace vts {
 
-void authenticate();
-void requestToken();
+void authenticate(ws::Client& client);
+void requestToken(ws::Client& client);
 void saveToken(const std::string& token);
 
 };  // namespace vts

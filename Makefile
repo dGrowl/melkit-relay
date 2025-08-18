@@ -15,7 +15,6 @@ APP_SOURCES = $(shell find ./src -name "*.cpp")
 
 SOURCES = $(APP_SOURCES)
 SOURCES += $(IMGUI_DIR)/imgui.cpp \
- $(IMGUI_DIR)/imgui_demo.cpp \
  $(IMGUI_DIR)/imgui_draw.cpp \
  $(IMGUI_DIR)/imgui_tables.cpp \
  $(IMGUI_DIR)/imgui_widgets.cpp
@@ -76,6 +75,9 @@ $(OBJ_DIR)/%.o:$(SOURCE_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(OBJ_DIR)/%.o:$(SOURCE_DIR)/vts/%.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJ_DIR)/%.o:$(SOURCE_DIR)/ws/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(OBJ_DIR)/%.o:$(IMGUI_DIR)/%.cpp

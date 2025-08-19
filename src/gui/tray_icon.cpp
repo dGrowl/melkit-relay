@@ -1,4 +1,6 @@
-#include "tray_icon.hpp"
+#include "gui/tray_icon.hpp"
+
+namespace gui {
 
 TrayIcon::TrayIcon() :
     _tray(nullptr),
@@ -23,3 +25,5 @@ void TrayIcon::setConfigCallback(SDL_TrayCallback callback, void* userdata) {
 void TrayIcon::setQuitCallback(SDL_TrayCallback callback, void* userdata) {
 	SDL_SetTrayEntryCallback(_quitEntry, callback, userdata);
 }
+
+}  // namespace gui

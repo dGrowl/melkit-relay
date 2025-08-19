@@ -6,9 +6,9 @@
 #include <imgui/backends/imgui_impl_sdlgpu3.h>
 #include <imgui/imgui.h>
 
-#include "config_window.hpp"
+#include "gui/config_window.hpp"
+#include "gui/tray_icon.hpp"
 #include "input_state.hpp"
-#include "tray_icon.hpp"
 #include "uio_event.hpp"
 #include "ws/client.hpp"
 
@@ -21,8 +21,8 @@ private:
 	SDL_Thread* _uioThread;
 	ws::Client _wsClient;
 
-	ConfigWindow _config;
-	TrayIcon _icon;
+	gui::ConfigWindow _config;
+	gui::TrayIcon _icon;
 
 public:
 	App();

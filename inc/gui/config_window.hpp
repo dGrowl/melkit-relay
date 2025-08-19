@@ -8,6 +8,8 @@
 
 #include "ws/controller.hpp"
 
+namespace gui {
+
 constexpr Uint8 MAX_URL_LENGTH = 128;
 
 class ConfigWindow {
@@ -34,5 +36,7 @@ public:
 
 	void showVtsConnection();
 };
+
+}  // namespace gui
 
 #endif  // CONFIG_WINDOW_HPP_

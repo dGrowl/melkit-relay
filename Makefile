@@ -67,32 +67,21 @@ SOURCES += $(LIBUIOHOOK_DIR)/logger.c \
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
 
-##---------------------------------------------------------------------
-## BUILD RULES
-##---------------------------------------------------------------------
+vpath %.cpp $(SOURCE_DIR)
+vpath %.cpp $(SOURCE_DIR)/gui
+vpath %.cpp $(SOURCE_DIR)/sys
+vpath %.cpp $(SOURCE_DIR)/vts
+vpath %.cpp $(SOURCE_DIR)/ws
+vpath %.cpp $(IMGUI_DIR)
+vpath %.cpp $(IMGUI_DIR)/backends
 
-$(OBJ_DIR)/%.o:$(SOURCE_DIR)/%.cpp
+vpath %.c $(LIBUIOHOOK_DIR)
+vpath %.c $(LIBUIOHOOK_DIR)/$(OS_DIR)
+
+$(OBJ_DIR)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(OBJ_DIR)/%.o:$(SOURCE_DIR)/sys/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(OBJ_DIR)/%.o:$(SOURCE_DIR)/vts/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(OBJ_DIR)/%.o:$(SOURCE_DIR)/ws/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(OBJ_DIR)/%.o:$(IMGUI_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(OBJ_DIR)/%.o:$(IMGUI_DIR)/backends/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(OBJ_DIR)/%.o:$(LIBUIOHOOK_DIR)/%.c
-	$(CC) $(CC_FLAGS) -c -o $@ $<
-
-$(OBJ_DIR)/%.o:$(LIBUIOHOOK_DIR)/$(OS_DIR)/%.c
+$(OBJ_DIR)/%.o: %.c
 	$(CC) $(CC_FLAGS) -c -o $@ $<
 
 debug: CXXFLAGS += -g -Wall -Wextra -pedantic

@@ -3,6 +3,8 @@
 
 #include <SDL3/SDL.h>
 
+namespace gui {
+
 class TrayIcon {
 private:
 	SDL_Tray* _tray;
@@ -17,5 +19,7 @@ public:
 	void setQuitCallback(SDL_TrayCallback callback, void* userdata);
 	void setConfigCallback(SDL_TrayCallback callback, void* userdata);
 };
+
+}  // namespace gui
 
 #endif  // TRAY_ICON_HPP_

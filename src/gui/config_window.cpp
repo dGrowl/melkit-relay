@@ -1,6 +1,8 @@
-#include "config_window.hpp"
+#include "gui/config_window.hpp"
 
-const char* STATUS_TEXT[] = {
+namespace gui {
+
+static const char* STATUS_TEXT[] = {
     "DISCONNECTED",
     "CONNECTING",
     "FAILED",
@@ -159,3 +161,5 @@ void ConfigWindow::showVtsConnection() {
 		}
 	}
 }
+
+}  // namespace gui

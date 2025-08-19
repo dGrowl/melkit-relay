@@ -3,11 +3,11 @@
 
 #include <mongoose.h>
 
+#include "sys/settings.hpp"
 #include "vts/request.hpp"
 #include "ws/client.hpp"
 
 namespace vts {
-static const char* TOKEN_FILE_NAME = "auth_token";
 
 static char buffer[1024];
 
@@ -24,11 +24,8 @@ static const char* AUTHENTICATION_REQUEST = R"({
 })";
 
 void authenticate(ws::Client& client) {
-	std::ifstream tokenFile(TOKEN_FILE_NAME);
-	if (tokenFile.is_open()) {
-		std::string token;
-		std::getline(tokenFile, token);
-		tokenFile.close();
+	std::string token = SETTINGS.getAuthToken();
+	if (token.size() > 0) {
 		size_t nChars = mg_snprintf(buffer,
 		                            sizeof(buffer),
 		                            AUTHENTICATION_REQUEST,
@@ -56,11 +53,4 @@ void requestToken(ws::Client& client) {
 	client.sendMessage(AUTHENTICATION_TOKEN_REQUEST);
 }
 
-void saveToken(const std::string& token) {
-	std::ofstream tokenFile(TOKEN_FILE_NAME);
-	if (tokenFile.is_open()) {
-		tokenFile << token;
-		tokenFile.close();
-	}
-}
 };  // namespace vts

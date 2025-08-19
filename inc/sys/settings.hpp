@@ -31,6 +31,9 @@ public:
 	Settings(Settings&&) = delete;
 	Settings& operator=(Settings&&) = delete;
 
+	const char* getAuthToken();
+	void setAuthToken(const char* newAuthToken);
+
 	const char* getWsUrl();
 	void setWsUrl(const char* newWsUrl);
 };

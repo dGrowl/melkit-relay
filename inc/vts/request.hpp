@@ -9,7 +9,6 @@ namespace vts {
 
 void authenticate(ws::Client& client);
 void requestToken(ws::Client& client);
-void saveToken(const std::string& token);
 
 };  // namespace vts
 

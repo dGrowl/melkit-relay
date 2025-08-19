@@ -15,14 +15,19 @@ namespace sys {
 
 static const char* DEFAULT_WS_URL = "localhost:8001";
 
+static const char* DEFAULT_AUTH_TOKEN = "";
+
 static const char* SCHEMA_STRING = R"({
     "type": "object",
     "properties": {
         "api_url": {
             "type": "string"
+        },
+        "vts_token": {
+            "type": "string"
         }
     },
-    "required": ["api_url"]
+    "required": ["api_url", "vts_token"]
 })";
 
 static const char* FILE_PATH = "settings.json";
@@ -94,6 +99,11 @@ void Settings::loadDefault() {
 	apiUrl = rj::StringRef(DEFAULT_WS_URL, SDL_strlen(DEFAULT_WS_URL));
 
 	_document.AddMember("api_url", apiUrl, allocator);
+
+	rj::Value authToken;
+	authToken = rj::StringRef(DEFAULT_AUTH_TOKEN, SDL_strlen(DEFAULT_AUTH_TOKEN));
+
+	_document.AddMember("vts_token", authToken, allocator);
 }
 
 void Settings::save() {
@@ -115,11 +125,27 @@ void Settings::saveUnlocked() {
 	file.close();
 }
 
+const char* Settings::getAuthToken() {
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	auto& value = _document["vts_token"];
+	return value.GetString();
+}
+
+void Settings::setAuthToken(const char* newAuthToken) {
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	rj::Value value(newAuthToken, _document.GetAllocator());
+	_document["vts_token"] = value;
+
+	saveUnlocked();
+}
+
 const char* Settings::getWsUrl() {
 	std::lock_guard<std::mutex> lock(_mutex);
 
-	auto& wsUrlValue = _document["api_url"];
-	return wsUrlValue.GetString();
+	auto& value = _document["api_url"];
+	return value.GetString();
 }
 
 void Settings::setWsUrl(const char* newWsUrl) {

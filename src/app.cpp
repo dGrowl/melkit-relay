@@ -1,4 +1,5 @@
 #include "app.hpp"
+#include "sys/settings.hpp"
 #include "vts/request.hpp"
 #include "vts/response.hpp"
 #include "ws/event.hpp"
@@ -135,7 +136,7 @@ void App::handleVtsMessage(SDL_UserEvent& event) {
 	switch (event.code) {
 		case vts::ResponseCode::AUTHENTICATION_TOKEN:
 			auto* data = static_cast<vts::AuthenticationTokenResponse*>(event.data1);
-			vts::saveToken(data->token);
+			SETTINGS.setAuthToken(data->token.c_str());
 			delete data;
 			break;
 	}

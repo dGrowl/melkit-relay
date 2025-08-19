@@ -5,5 +5,4 @@ lib/
 *.exe
 *.ini
 *.o
-auth_token
 settings.json

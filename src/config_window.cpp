@@ -140,7 +140,9 @@ SDL_WindowID ConfigWindow::id() const {
 void ConfigWindow::showVtsConnection() {
 	ImGui::Text("VTS Connection");
 	ImGui::Separator();
-	ImGui::InputText("API Address", _urlBuffer, IM_ARRAYSIZE(_urlBuffer));
+	if (ImGui::InputText("API Address", _urlBuffer, IM_ARRAYSIZE(_urlBuffer))) {
+		_wsController.setUrl(_urlBuffer);
+	}
 	ImGui::Text("Status: ");
 	ImGui::SameLine();
 	ImGui::Text(STATUS_TEXT[_wsController.getStatus()]);

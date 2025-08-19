@@ -1,5 +1,9 @@
+.local/
 .vscode/
 lib/
-*.o
+
 *.exe
 *.ini
+*.o
+auth_token
+settings.json

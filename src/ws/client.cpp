@@ -3,14 +3,12 @@
 #include <SDL3/SDL_log.h>
 #include <mongoose.h>
 
+#include "sys/settings.hpp"
 #include "vts/response.hpp"
 #include "ws/client.hpp"
 #include "ws/event.hpp"
 
 namespace ws {
-
-static const char* DEFAULT_URL = "localhost:8001";
-
 void handleMessage(void* event_data) {
 	mg_ws_message* wm = (mg_ws_message*)event_data;
 	SDL_Log("Received message: [%.*s]\n", (int)wm->data.len, wm->data.buf);
@@ -24,7 +22,7 @@ void handleMessage(void* event_data) {
 Client::Client() :
     _alive(false),
     _status(Status::DISCONNECTED),
-    _url(DEFAULT_URL),
+    _url(SETTINGS.getWsUrl()),
     _thread(),
     _sendMutex(),
     _sendQueue() {
@@ -117,6 +115,7 @@ Status Client::getStatus() {
 
 void Client::setUrl(const char* url) {
 	_url = url;
+	SETTINGS.setWsUrl(url);
 }
 
 void Client::start() {

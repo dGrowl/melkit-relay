@@ -74,6 +74,9 @@ OBJS = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))
 $(OBJ_DIR)/%.o:$(SOURCE_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
+$(OBJ_DIR)/%.o:$(SOURCE_DIR)/sys/%.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
 $(OBJ_DIR)/%.o:$(SOURCE_DIR)/vts/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 

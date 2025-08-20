@@ -10,17 +10,6 @@ OBJ_DIR = ./build
 IMGUI_DIR = $(LIB_DIR)/imgui
 LIBUIOHOOK_DIR = $(LIB_DIR)/libuiohook
 
-APP_HEADERS = $(shell find ./inc -name "*.hpp")
-APP_SOURCES = $(shell find ./src -name "*.cpp")
-
-SOURCES = $(APP_SOURCES)
-SOURCES += $(IMGUI_DIR)/imgui.cpp \
- $(IMGUI_DIR)/imgui_draw.cpp \
- $(IMGUI_DIR)/imgui_tables.cpp \
- $(IMGUI_DIR)/imgui_widgets.cpp
-SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl3.cpp \
-	$(IMGUI_DIR)/backends/imgui_impl_sdlgpu3.cpp
-
 UNAME_S := $(shell uname -s)
 
 CC_FLAGS = -I$(LIBUIOHOOK_DIR)
@@ -59,13 +48,16 @@ ifeq ($(OS), Windows_NT)
 	OS_DIR = windows
 endif
 
-SOURCES += $(LIBUIOHOOK_DIR)/logger.c \
-	$(LIBUIOHOOK_DIR)/$(OS_DIR)/input_helper.c \
-	$(LIBUIOHOOK_DIR)/$(OS_DIR)/input_hook.c \
-	$(LIBUIOHOOK_DIR)/$(OS_DIR)/post_event.c \
-	$(LIBUIOHOOK_DIR)/$(OS_DIR)/system_properties.c
+APP_SOURCES = $(shell find $(SOURCE_DIR) -name "*.cpp")
+IMGUI_SOURCES = $(shell find $(IMGUI_DIR) -name "*.cpp")
+LIBUIOHOOK_SOURCES = $(shell find $(LIBUIOHOOK_DIR)/$(OS_DIR) -name "*.c")
+LIBUIOHOOK_SOURCES += $(LIBUIOHOOK_DIR)/logger.c
 
-OBJS = $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
+APP_OBJS = $(patsubst $(SOURCE_DIR)/%.cpp,$(OBJ_DIR)/app/%.o,$(APP_SOURCES))
+IMGUI_OBJS = $(patsubst $(IMGUI_DIR)/%.cpp,$(OBJ_DIR)/imgui/%.o,$(IMGUI_SOURCES))
+LIBUIOHOOK_OBJS = $(patsubst $(LIBUIOHOOK_DIR)/%.c,$(OBJ_DIR)/libuiohook/%.o,$(LIBUIOHOOK_SOURCES))
+
+OBJS = $(APP_OBJS) $(IMGUI_OBJS) $(LIBUIOHOOK_OBJS)
 
 vpath %.cpp $(SOURCE_DIR)
 vpath %.cpp $(SOURCE_DIR)/gui
@@ -74,14 +66,22 @@ vpath %.cpp $(SOURCE_DIR)/vts
 vpath %.cpp $(SOURCE_DIR)/ws
 vpath %.cpp $(IMGUI_DIR)
 vpath %.cpp $(IMGUI_DIR)/backends
-
 vpath %.c $(LIBUIOHOOK_DIR)
 vpath %.c $(LIBUIOHOOK_DIR)/$(OS_DIR)
 
-$(OBJ_DIR)/%.o: %.cpp
+$(EXE): $(OBJS)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
+
+$(OBJ_DIR)/app/%.o: %.cpp
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(OBJ_DIR)/%.o: %.c
+$(OBJ_DIR)/imgui/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJ_DIR)/libuiohook/%.o: %.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CC_FLAGS) -c -o $@ $<
 
 debug: CXXFLAGS += -g -Wall -Wextra -pedantic
@@ -90,11 +90,15 @@ debug: all
 all: $(EXE)
 	@echo Build complete for $(ECHO_MESSAGE)
 
-$(EXE): $(OBJS)
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
-
 format:
 	clang-format -i $(APP_SOURCES) $(APP_HEADERS)
 
 clean:
-	rm -f $(EXE) $(OBJS)
+	rm -f $(EXE)
+	rm -rf $(OBJ_DIR)
+
+clean-libs:
+	rm -rf $(OBJ_DIR)/imgui $(OBJ_DIR)/libuiohook
+
+clean-app:
+	rm -rf $(OBJ_DIR)/app

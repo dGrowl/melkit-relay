@@ -48,6 +48,7 @@ ifeq ($(OS), Windows_NT)
 	OS_DIR = windows
 endif
 
+APP_HEADERS = $(shell find ./inc -name "*.hpp")
 APP_SOURCES = $(shell find $(SOURCE_DIR) -name "*.cpp")
 IMGUI_SOURCES = $(shell find $(IMGUI_DIR) -name "*.cpp")
 LIBUIOHOOK_SOURCES = $(shell find $(LIBUIOHOOK_DIR)/$(OS_DIR) -name "*.c")

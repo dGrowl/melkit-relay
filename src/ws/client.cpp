@@ -3,7 +3,7 @@
 #include <SDL3/SDL_log.h>
 #include <mongoose.h>
 
-#include "sys/settings.hpp"
+#include "core/settings.hpp"
 #include "vts/response.hpp"
 #include "ws/client.hpp"
 #include "ws/event.hpp"

@@ -1,5 +1,5 @@
-#ifndef SYS_SETTINGS_HPP_
-#define SYS_SETTINGS_HPP_
+#ifndef CORE_SETTINGS_HPP_
+#define CORE_SETTINGS_HPP_
 
 #include <mutex>
 
@@ -7,7 +7,7 @@
 
 namespace rj = rapidjson;
 
-namespace sys {
+namespace core {
 
 class Settings {
 private:
@@ -38,8 +38,8 @@ public:
 	void setWsUrl(const char* newWsUrl);
 };
 
-};  // namespace sys
+};  // namespace core
 
-#define SETTINGS (sys::Settings::instance())
+#define SETTINGS (core::Settings::instance())
 
-#endif  // SYS_SETINGS_HPP_
+#endif  // CORE_SETTINGS_HPP_

@@ -60,8 +60,8 @@ LIBUIOHOOK_OBJS = $(patsubst $(LIBUIOHOOK_DIR)/%.c,$(OBJ_DIR)/libuiohook/%.o,$(L
 OBJS = $(APP_OBJS) $(IMGUI_OBJS) $(LIBUIOHOOK_OBJS)
 
 vpath %.cpp $(SOURCE_DIR)
+vpath %.cpp $(SOURCE_DIR)/core
 vpath %.cpp $(SOURCE_DIR)/gui
-vpath %.cpp $(SOURCE_DIR)/sys
 vpath %.cpp $(SOURCE_DIR)/vts
 vpath %.cpp $(SOURCE_DIR)/ws
 vpath %.cpp $(IMGUI_DIR)

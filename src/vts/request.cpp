@@ -3,7 +3,7 @@
 
 #include <mongoose.h>
 
-#include "sys/settings.hpp"
+#include "core/settings.hpp"
 #include "vts/request.hpp"
 #include "ws/client.hpp"
 

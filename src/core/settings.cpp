@@ -9,9 +9,9 @@
 #include <rapidjson/schema.h>
 #include <rapidjson/stringbuffer.h>
 
-#include "sys/settings.hpp"
+#include "core/settings.hpp"
 
-namespace sys {
+namespace core {
 
 static const char* DEFAULT_WS_URL = "localhost:8001";
 
@@ -157,4 +157,4 @@ void Settings::setWsUrl(const char* newWsUrl) {
 	saveUnlocked();
 }
 
-}  // namespace sys
+}  // namespace core

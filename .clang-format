@@ -5,6 +5,7 @@ AlignAfterOpenBracket: Align
 AlignOperands: Align
 AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortEnumsOnASingleLine: false
 BinPackArguments: false
 BinPackParameters: OnePerLine
 BreakBeforeBinaryOperators: NonAssignment

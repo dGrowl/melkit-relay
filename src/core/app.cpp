@@ -1,8 +1,10 @@
-#include "app.hpp"
+#include "core/app.hpp"
 #include "core/settings.hpp"
 #include "vts/request.hpp"
 #include "vts/response.hpp"
 #include "ws/event.hpp"
+
+namespace core {
 
 App::App() :
     _alive(true),
@@ -147,3 +149,5 @@ void App::handleWindowClose(SDL_Event& event) {
 		_config.close(_gpu);
 	}
 }
+
+}  // namespace core

@@ -1,5 +1,5 @@
-#ifndef APP_HPP_
-#define APP_HPP_
+#ifndef CORE_APP_HPP_
+#define CORE_APP_HPP_
 
 #include <SDL3/SDL.h>
 #include <imgui/backends/imgui_impl_sdl3.h>
@@ -11,6 +11,7 @@
 #include "input_state.hpp"
 #include "uio_event.hpp"
 #include "ws/client.hpp"
+namespace core {
 
 class App {
 private:
@@ -41,4 +42,6 @@ public:
 	static void quitCallback(void* userdata, SDL_TrayEntry*);
 };
 
-#endif  // APP_HPP_
+}
+
+#endif  // CORE_APP_HPP_

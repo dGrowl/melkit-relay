@@ -1,7 +1,7 @@
-#include "app.hpp"
+#include "core/app.hpp"
 
 int main(int, char*[]) {
-	App app;
+	core::App app;
 	if (app.init() != 0) {
 		return 1;
 	}

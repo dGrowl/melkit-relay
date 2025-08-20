@@ -3,7 +3,7 @@
 
 #include <unordered_set>
 
-#include "uio_event.hpp"
+#include <SDL3/SDL_events.h>
 
 struct MouseState {
 	int x = 0;
@@ -26,13 +26,14 @@ private:
 	MouseState _mouse;
 	KeyboardState _key;
 
+	void handleKeyDown(SDL_UserEvent& event);
+	void handleKeyUp(SDL_UserEvent& event);
+	void handleMouseButton(SDL_UserEvent& event, bool isClicked);
+	void handleMouseMove(SDL_UserEvent& event);
+
 public:
 	InputState() = default;
-
-	void handleKeyDown(SDL_Event& event);
-	void handleKeyUp(SDL_Event& event);
-	void handleMouseButton(SDL_Event& event, bool isClicked);
-	void handleMouseMove(SDL_Event& event);
+	void handleEvent(SDL_UserEvent& event);
 };
 
 #endif  // INPUT_STATE_HPP_

@@ -9,8 +9,9 @@
 #include "gui/config_window.hpp"
 #include "gui/tray_icon.hpp"
 #include "input_state.hpp"
-#include "uio_event.hpp"
+#include "mnk/monitor.hpp"
 #include "ws/client.hpp"
+
 namespace core {
 
 class App {
@@ -19,7 +20,7 @@ private:
 	InputState _input;
 
 	SDL_GPUDevice* _gpu;
-	SDL_Thread* _uioThread;
+	mnk::Monitor _mnkMonitor;
 	ws::Client _wsClient;
 
 	gui::ConfigWindow _config;
@@ -32,7 +33,7 @@ public:
 	void quit();
 	void run();
 	void openConfig();
-	void stopUio();
+	void stopMouseKeyboard();
 	void stopWs();
 	void handleEvent(SDL_Event& event);
 	void handleVtsMessage(SDL_UserEvent& event);
@@ -42,6 +43,6 @@ public:
 	static void quitCallback(void* userdata, SDL_TrayEntry*);
 };
 
-}
+}  // namespace core
 
 #endif  // CORE_APP_HPP_

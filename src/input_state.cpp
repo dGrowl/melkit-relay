@@ -1,20 +1,24 @@
+#include <libuiohook/uiohook.h>
+#include <SDL3/SDL_log.h>
+
 #include "input_state.hpp"
+#include "mnk/event.hpp"
 
-void InputState::handleKeyDown(SDL_Event& event) {
-	auto* e = static_cast<UIO_Event*>(event.user.data1);
-	_key.held.insert(e->key.keycode);
-	SDL_free(e);
+void InputState::handleKeyDown(SDL_UserEvent& event) {
+	auto* data = static_cast<mnk::KeyboardData*>(event.data1);
+	_key.held.insert(data->keycode);
+	delete data;
 }
 
-void InputState::handleKeyUp(SDL_Event& event) {
-	auto* e = static_cast<UIO_Event*>(event.user.data1);
-	_key.held.erase(e->key.keycode);
-	SDL_free(e);
+void InputState::handleKeyUp(SDL_UserEvent& event) {
+	auto* data = static_cast<mnk::KeyboardData*>(event.data1);
+	_key.held.erase(data->keycode);
+	delete data;
 }
 
-void InputState::handleMouseButton(SDL_Event& event, bool isClicked) {
-	auto* e = static_cast<UIO_Event*>(event.user.data1);
-	switch (e->mouse.button) {
+void InputState::handleMouseButton(SDL_UserEvent& event, bool isClicked) {
+	auto* data = static_cast<mnk::MouseData*>(event.data1);
+	switch (data->button) {
 		case MOUSE_BUTTON1:
 			_mouse.left = isClicked;
 			break;
@@ -31,16 +35,36 @@ void InputState::handleMouseButton(SDL_Event& event, bool isClicked) {
 			_mouse.fifth = isClicked;
 			break;
 	}
-	SDL_free(e);
+	delete data;
 }
 
-void InputState::handleMouseMove(SDL_Event& event) {
-	auto* e = static_cast<UIO_Event*>(event.user.data1);
-	Sint16 x = e->mouse.x;
-	Sint16 y = e->mouse.y;
+void InputState::handleMouseMove(SDL_UserEvent& event) {
+	auto* data = static_cast<mnk::MouseData*>(event.data1);
+	Sint16 x = data->x;
+	Sint16 y = data->y;
 	_mouse.dx = x - _mouse.x;
 	_mouse.dy = y - _mouse.y;
 	_mouse.x = x;
 	_mouse.y = y;
-	SDL_free(e);
+	delete data;
+}
+
+void InputState::handleEvent(SDL_UserEvent& event) {
+	switch (event.code) {
+		case mnk::InputCode::KEY_DOWN:
+			handleKeyDown(event);
+			break;
+		case mnk::InputCode::KEY_UP:
+			handleKeyUp(event);
+			break;
+		case mnk::InputCode::MOUSE_MOVE:
+			handleMouseMove(event);
+			break;
+		case mnk::InputCode::MOUSE_CLICK:
+			handleMouseButton(event, true);
+			break;
+		case mnk::InputCode::MOUSE_RELEASE:
+			handleMouseButton(event, false);
+			break;
+	}
 }

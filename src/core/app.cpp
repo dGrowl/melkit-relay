@@ -1,5 +1,6 @@
 #include "core/app.hpp"
 #include "core/settings.hpp"
+#include "mnk/event.hpp"
 #include "vts/request.hpp"
 #include "vts/response.hpp"
 #include "ws/event.hpp"
@@ -10,13 +11,12 @@ App::App() :
     _alive(true),
     _input(),
     _gpu(nullptr),
-    _uioThread(nullptr),
+    _mnkMonitor(),
     _wsClient(),
     _config(_wsClient),
     _icon() {
-	_uioThread = SDL_CreateThread(uioHookThreadFn, "uio", nullptr);
-	allocateUIOEvents();
 	ws::allocateEvents();
+	mnk::allocateEvents();
 	_wsClient.start();
 }
 
@@ -58,7 +58,7 @@ int App::init() {
 
 void App::quit() {
 	_config.close(_gpu);
-	stopUio();
+	stopMouseKeyboard();
 	_wsClient.stop();
 	_alive = false;
 }
@@ -93,10 +93,8 @@ void App::openConfig() {
 	_config.open(_gpu);
 }
 
-void App::stopUio() {
-	hook_stop();
-	SDL_WaitThread(_uioThread, nullptr);
-	_uioThread = nullptr;
+void App::stopMouseKeyboard() {
+	_mnkMonitor.stop();
 }
 
 void App::handleEvent(SDL_Event& event) {
@@ -104,20 +102,8 @@ void App::handleEvent(SDL_Event& event) {
 		ImGui_ImplSDL3_ProcessEvent(&event);
 	}
 	switch (event.type) {
-		case UIO_EVENT_KEY_DOWN:
-			_input.handleKeyDown(event);
-			break;
-		case UIO_EVENT_KEY_UP:
-			_input.handleKeyUp(event);
-			break;
-		case UIO_EVENT_MOUSE_MOVE:
-			_input.handleMouseMove(event);
-			break;
-		case UIO_EVENT_MOUSE_CLICK:
-			_input.handleMouseButton(event, true);
-			break;
-		case UIO_EVENT_MOUSE_RELEASE:
-			_input.handleMouseButton(event, false);
+		case mnk::Event::INPUT:
+			_input.handleEvent(event.user);
 			break;
 		case ws::Event::OPEN:
 			vts::authenticate(_wsClient);

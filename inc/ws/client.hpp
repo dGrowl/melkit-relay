@@ -40,6 +40,7 @@ public:
 	void start() override;
 	void stop() override;
 };
+
 }  // namespace ws
 
 #endif  // WS_CLIENT_HPP_

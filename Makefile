@@ -13,7 +13,7 @@ LIBUIOHOOK_DIR = $(LIB_DIR)/libuiohook
 UNAME_S := $(shell uname -s)
 
 CC_FLAGS = -I$(LIBUIOHOOK_DIR)
-CXXFLAGS = -std=c++11 -I$(LIB_DIR) -I$(IMGUI_DIR) -Iinc
+CXXFLAGS = -std=c++20 -I$(LIB_DIR) -I$(IMGUI_DIR) -Iinc
 LIBS = -lmongoose
 
 ifeq ($(UNAME_S), Linux) #LINUX

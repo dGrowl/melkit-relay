@@ -52,9 +52,8 @@ void Client::handleEvent(mg_connection* connection,
 		client->stop();
 	}
 }
-void Client::handleError(const char* description) {
-	setStatus(Status::FAILED);
 
+void Client::handleError(const char* description) {
 	SDL_Log("WebSocket Error: %s\n", description);
 }
 

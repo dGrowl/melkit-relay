@@ -1,4 +1,11 @@
+#include <format>
+
+#include <SDL3/SDL_events.h>
+
+#include "imgui/imgui.h"
+
 #include "gui/config_window.hpp"
+#include "vts/request.hpp"
 
 namespace gui {
 
@@ -9,13 +16,16 @@ static const char* STATUS_TEXT[] = {
     "CONNECTED",
 };
 
-ConfigWindow::ConfigWindow(ws::IController& wsController) :
+ConfigWindow::ConfigWindow(ws::IController& wsController,
+                           vts::ParameterManager& paramManager) :
     _title("Configuration"),
     _height(540),
     _width(960),
     _clearColor{.03f, .02f, .04f, 1.0f},
+    _paramManager(paramManager),
     _wsController(wsController),
     _urlBuffer(),
+    _newParamNameBuffer(),
     _window(nullptr),
     _flags(SDL_WINDOW_RESIZABLE
            | SDL_WINDOW_HIDDEN
@@ -77,9 +87,20 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 	                               | ImGuiWindowFlags_NoMove
 	                               | ImGuiWindowFlags_NoResize
 	                               | ImGuiWindowFlags_NoBringToFrontOnFocus;
-
 	if (ImGui::Begin("Settings", nullptr, windowFlags)) {
-		showVtsConnection();
+		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
+		if (ImGui::BeginTable("Columns",
+		                      2,
+		                      ImGuiTableFlags_Resizable,
+		                      contentRegion)) {
+			ImGui::TableNextColumn();
+			showVtsConnection();
+
+			ImGui::TableNextColumn();
+			showParameters();
+
+			ImGui::EndTable();
+		}
 	}
 	ImGui::End();
 
@@ -140,25 +161,83 @@ SDL_WindowID ConfigWindow::id() const {
 }
 
 void ConfigWindow::showVtsConnection() {
-	ImGui::Text("VTS Connection");
-	ImGui::Separator();
-	if (ImGui::InputText("API Address", _urlBuffer, IM_ARRAYSIZE(_urlBuffer))) {
-		_wsController.setUrl(_urlBuffer);
+	ImGui::Text("Settings");
+
+	ImGui::SeparatorText("VTS Connection");
+
+	if (ImGui::BeginTable("VTS Config", 2, ImGuiTableFlags_SizingFixedFit)) {
+		ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+
+		ImGui::TableNextRow();
+		ImGui::TableNextColumn();
+		ImGui::Text("API Address");
+		ImGui::TableNextColumn();
+		ImGui::SetNextItemWidth(-1.0f);
+		if (ImGui::InputText("##vtsUrl", _urlBuffer, IM_ARRAYSIZE(_urlBuffer))) {
+			_wsController.setUrl(_urlBuffer);
+		}
+		ImGui::TableNextRow();
+		ImGui::TableNextColumn();
+		ImGui::Text("Status");
+		ImGui::TableNextColumn();
+		ImGui::Text(STATUS_TEXT[_wsController.getStatus()]);
+
+		ImGui::EndTable();
 	}
-	ImGui::Text("Status: ");
-	ImGui::SameLine();
-	ImGui::Text(STATUS_TEXT[_wsController.getStatus()]);
 
 	if (_wsController.getStatus() == ws::Status::CONNECTED) {
-		if (ImGui::Button("Disconnect", ImVec2(120, 0))) {
+		if (ImGui::Button("Disconnect", ImVec2(-1.0f, 0.0f))) {
 			_wsController.stop();
 		}
 	}
 	else {
-		if (ImGui::Button("Connect", ImVec2(120, 0))) {
+		if (ImGui::Button("Connect", ImVec2(-1.0f, 0.0f))) {
 			_wsController.setUrl(_urlBuffer);
 			_wsController.start();
 		}
+	}
+}
+
+void ConfigWindow::showParameters() {
+	ImGui::Text("Parameters");
+	ImGui::Separator();
+
+	if (ImGui::Button("Add", ImVec2(-1.0f, 0.0f))) {
+		ImGui::OpenPopup("Create Parameter");
+	}
+
+	if (ImGui::BeginPopupModal("Create Parameter",
+	                           nullptr,
+	                           ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::SeparatorText("Details");
+		ImGui::Text("MK_");
+		ImGui::SameLine();
+		ImGui::InputText("Name",
+		                 _newParamNameBuffer,
+		                 IM_ARRAYSIZE(_newParamNameBuffer));
+
+		if (ImGui::Button("OK", ImVec2(120, 0))) {
+			vts::ParameterData newParam{
+			    .name = std::format("MK_{}", _newParamNameBuffer),
+			    .defaultValue = 0.0f,
+			    .max = 1.0f,
+			    .min = 0.0f,
+			};
+			_paramManager.add(newParam);
+			vts::createParameter(_wsController, newParam);
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+
+	for (const auto& p : _paramManager.values()) {
+		ImGui::Button(p.getName().c_str(), ImVec2(-1.0f, 0.0f));
 	}
 }
 

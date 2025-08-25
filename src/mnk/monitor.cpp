@@ -2,6 +2,17 @@
 
 #include "mnk/event.hpp"
 #include "mnk/monitor.hpp"
+#include "vts/input.hpp"
+
+template <typename T>
+void* unsignedToPointer(const T x) {
+	return reinterpret_cast<void*>(static_cast<uintptr_t>(x));
+}
+
+template <typename T>
+void* signedToPointer(const T x) {
+	return reinterpret_cast<void*>(static_cast<intptr_t>(x));
+}
 
 namespace mnk {
 
@@ -16,43 +27,33 @@ Monitor::~Monitor() {
 
 void Monitor::buildKeyDown(SDL_UserEvent& userEvent,
                            uiohook_event* const hookEvent) {
-	userEvent.code = InputCode::KEY_DOWN;
-	auto* keyboard = new KeyboardData();
-	keyboard->keycode = hookEvent->data.keyboard.keycode;
-	userEvent.data1 = keyboard;
+	userEvent.code = vts::ActionCode::KEY_DOWN;
+	userEvent.data1 = unsignedToPointer(hookEvent->data.keyboard.keycode);
 }
 
 void Monitor::buildKeyUp(SDL_UserEvent& userEvent,
                          uiohook_event* const hookEvent) {
-	userEvent.code = InputCode::KEY_UP;
-	auto* keyboard = new KeyboardData();
-	keyboard->keycode = hookEvent->data.keyboard.keycode;
-	userEvent.data1 = keyboard;
+	userEvent.code = vts::ActionCode::KEY_UP;
+	userEvent.data1 = unsignedToPointer(hookEvent->data.keyboard.keycode);
 }
 
 void Monitor::buildMouseMove(SDL_UserEvent& userEvent,
                              uiohook_event* const hookEvent) {
-	userEvent.code = InputCode::MOUSE_MOVE;
-	auto* mouse = new MouseData();
-	mouse->x = hookEvent->data.mouse.x;
-	mouse->y = hookEvent->data.mouse.y;
-	userEvent.data1 = mouse;
+	userEvent.code = vts::ActionCode::MOUSE_MOVE;
+	userEvent.data1 = signedToPointer(hookEvent->data.mouse.x);
+	userEvent.data2 = signedToPointer(hookEvent->data.mouse.y);
 }
 
 void Monitor::buildMouseClick(SDL_UserEvent& userEvent,
                               uiohook_event* const hookEvent) {
-	userEvent.code = InputCode::MOUSE_CLICK;
-	auto* mouse = new MouseData();
-	mouse->button = hookEvent->data.mouse.button;
-	userEvent.data1 = mouse;
+	userEvent.code = vts::ActionCode::MOUSE_CLICK;
+	userEvent.data1 = unsignedToPointer(hookEvent->data.mouse.button << 16);
 }
 
 void Monitor::buildMouseRelease(SDL_UserEvent& userEvent,
                                 uiohook_event* const hookEvent) {
-	userEvent.code = InputCode::MOUSE_RELEASE;
-	auto* mouse = new MouseData();
-	mouse->button = hookEvent->data.mouse.button;
-	userEvent.data1 = mouse;
+	userEvent.code = vts::ActionCode::MOUSE_RELEASE;
+	userEvent.data1 = unsignedToPointer(hookEvent->data.mouse.button << 16);
 }
 
 void Monitor::handleEvent(uiohook_event* const event) {

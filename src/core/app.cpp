@@ -1,3 +1,5 @@
+#include <imgui/imgui.h>
+
 #include "core/app.hpp"
 #include "core/settings.hpp"
 #include "mnk/event.hpp"
@@ -9,11 +11,11 @@ namespace core {
 
 App::App() :
     _alive(true),
-    _input(),
     _gpu(nullptr),
+    _params(),
     _mnkMonitor(),
     _wsClient(),
-    _config(_wsClient),
+    _config(_wsClient, _params),
     _icon() {
 	ws::allocateEvents();
 	mnk::allocateEvents();
@@ -59,7 +61,7 @@ int App::init() {
 void App::quit() {
 	_config.close(_gpu);
 	stopMouseKeyboard();
-	_wsClient.stop();
+	stopWs();
 	_alive = false;
 }
 
@@ -97,13 +99,17 @@ void App::stopMouseKeyboard() {
 	_mnkMonitor.stop();
 }
 
+void App::stopWs() {
+	_wsClient.stop();
+}
+
 void App::handleEvent(SDL_Event& event) {
 	if (_config.isOpen()) {
 		ImGui_ImplSDL3_ProcessEvent(&event);
 	}
 	switch (event.type) {
 		case mnk::Event::INPUT:
-			_input.handleEvent(event.user);
+			_params.handleEvent(event.user);
 			break;
 		case ws::Event::OPEN:
 			vts::authenticate(_wsClient);
@@ -120,12 +126,43 @@ void App::handleEvent(SDL_Event& event) {
 	}
 }
 
+void App::handleVtsAuthenticationToken(SDL_UserEvent& event) {
+	auto* data = static_cast<vts::AuthenticationTokenData*>(event.data1);
+	SETTINGS.setAuthToken(data->token.c_str());
+	vts::authenticate(_wsClient);
+	delete data;
+}
+
+void App::handleVtsAuthenticationSuccess() {
+	vts::getParameters(_wsClient);
+}
+
+void App::handleVtsAuthenticationFailure() {
+	SETTINGS.setAuthToken("");
+	stopWs();
+}
+
+void App::handleVtsInputParameterList(SDL_UserEvent& event) {
+	auto* data = static_cast<vts::InputParameterListData*>(event.data1);
+	for (const auto& p : data->parameters) {
+		_params.add(p);
+	}
+	delete data;
+}
+
 void App::handleVtsMessage(SDL_UserEvent& event) {
 	switch (event.code) {
 		case vts::ResponseCode::AUTHENTICATION_TOKEN:
-			auto* data = static_cast<vts::AuthenticationTokenResponse*>(event.data1);
-			SETTINGS.setAuthToken(data->token.c_str());
-			delete data;
+			handleVtsAuthenticationToken(event);
+			break;
+		case vts::ResponseCode::AUTHENTICATION_SUCCESS:
+			handleVtsAuthenticationSuccess();
+			break;
+		case vts::ResponseCode::AUTHENTICATION_FAILURE:
+			handleVtsAuthenticationFailure();
+			break;
+		case vts::ResponseCode::INPUT_PARAMETER_LIST:
+			handleVtsInputParameterList(event);
 			break;
 	}
 }

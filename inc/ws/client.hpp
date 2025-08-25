@@ -29,13 +29,13 @@ public:
 	static void handleEvent(mg_connection* connection, int event, void* eventData);
 	void handleError(const char* description);
 	void handleOpen();
-	void sendMessage(const std::string& message);
 	void setStatus(const Status newStatus);
 	void threadFn();
 
 	// IController
 	const char* getUrl() override;
 	Status getStatus() override;
+	void sendMessage(const std::string& message) override;
 	void setUrl(const char* url) override;
 	void start() override;
 	void stop() override;

@@ -18,16 +18,42 @@ static const char* DEFAULT_WS_URL = "localhost:8001";
 static const char* DEFAULT_AUTH_TOKEN = "";
 
 static const char* SCHEMA_STRING = R"({
-    "type": "object",
-    "properties": {
-        "api_url": {
-            "type": "string"
-        },
-        "vts_token": {
-            "type": "string"
-        }
-    },
-    "required": ["api_url", "vts_token"]
+	"type": "object",
+	"properties": {
+		"api_url": {
+			"type": "string"
+		},
+		"vts_token": {
+			"type": "string"
+		},
+		"parameters": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"inputs": {
+						"type": "array",
+						"items": {
+							"type": "integer",
+							"minimum": 0
+						}
+					}
+				},
+				"required": [
+					"name",
+					"inputs"
+				]
+			}
+		}
+	},
+	"required": [
+		"api_url",
+		"vts_token",
+		"parameters"
+	]
 })";
 
 static const char* FILE_PATH = "settings.json";
@@ -104,6 +130,8 @@ void Settings::loadDefault() {
 	authToken = rj::StringRef(DEFAULT_AUTH_TOKEN, SDL_strlen(DEFAULT_AUTH_TOKEN));
 
 	_document.AddMember("vts_token", authToken, allocator);
+
+	_document.AddMember("parameters", rj::Value(rj::kArrayType), allocator);
 }
 
 void Settings::save() {

@@ -4,8 +4,9 @@
 #include <mongoose.h>
 
 #include "core/settings.hpp"
+#include "vts/parameter.hpp"
 #include "vts/request.hpp"
-#include "ws/client.hpp"
+#include "ws/controller.hpp"
 
 namespace vts {
 
@@ -23,17 +24,17 @@ static const char* AUTHENTICATION_REQUEST = R"({
 	}
 })";
 
-void authenticate(ws::Client& client) {
+void authenticate(ws::IController& wsController) {
 	std::string token = SETTINGS.getAuthToken();
 	if (token.size() > 0) {
 		size_t nChars = mg_snprintf(buffer,
 		                            sizeof(buffer),
 		                            AUTHENTICATION_REQUEST,
 		                            token.c_str());
-		client.sendMessage(std::string(buffer, nChars));
+		wsController.sendMessage(std::string(buffer, nChars));
 	}
 	else {
-		requestToken(client);
+		requestToken(wsController);
 	}
 }
 
@@ -49,8 +50,62 @@ static std::string AUTHENTICATION_TOKEN_REQUEST = R"({
 	}
 })";
 
-void requestToken(ws::Client& client) {
-	client.sendMessage(AUTHENTICATION_TOKEN_REQUEST);
+void requestToken(ws::IController& wsController) {
+	wsController.sendMessage(AUTHENTICATION_TOKEN_REQUEST);
+}
+
+static const char* PARAMETER_CREATION_REQUEST = R"({
+	"apiName": "VTubeStudioPublicAPI",
+	"apiVersion": "1.0",
+	"requestID": "SomeID",
+	"messageType": "ParameterCreationRequest",
+	"data": {
+		"parameterName": "%s",
+		"explanation": "This is my new parameter.",
+		"min": %f,
+		"max": %f,
+		"defaultValue": %f
+	}
+})";
+
+void createParameter(ws::IController& wsController,
+                     const ParameterData& parameter) {
+	size_t nChars = mg_snprintf(buffer,
+	                            sizeof(buffer),
+	                            PARAMETER_CREATION_REQUEST,
+	                            parameter.name.c_str(),
+	                            parameter.min,
+	                            parameter.max);
+	wsController.sendMessage(std::string(buffer, nChars));
+}
+
+static const char* PARAMETER_DELETION_REQUEST = R"({
+	"apiName": "VTubeStudioPublicAPI",
+	"apiVersion": "1.0",
+	"requestID": "SomeID",
+	"messageType": "ParameterDeletionRequest",
+	"data": {
+		"parameterName": "%s"
+	}
+})";
+
+void deleteParameter(ws::IController& wsController, const Parameter parameter) {
+	size_t nChars = mg_snprintf(buffer,
+	                            sizeof(buffer),
+	                            PARAMETER_DELETION_REQUEST,
+	                            parameter.getName().c_str());
+	wsController.sendMessage(std::string(buffer, nChars));
+}
+
+static const char* INPUT_PARAMETER_LIST_REQUEST = R"({
+	"apiName": "VTubeStudioPublicAPI",
+	"apiVersion": "1.0",
+	"requestID": "SomeID",
+	"messageType": "InputParameterListRequest"
+})";
+
+void getParameters(ws::IController& wsController) {
+	wsController.sendMessage(std::string(INPUT_PARAMETER_LIST_REQUEST));
 }
 
 };  // namespace vts

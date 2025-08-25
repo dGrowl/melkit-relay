@@ -67,11 +67,6 @@ void Client::handleOpen() {
 	SDL_PushEvent(&sdlEvent);
 }
 
-void Client::sendMessage(const std::string& message) {
-	std::lock_guard<std::mutex> lock(_sendMutex);
-	_sendQueue.push(message);
-}
-
 void Client::setStatus(const Status newStatus) {
 	_status = newStatus;
 }
@@ -111,6 +106,12 @@ const char* Client::getUrl() {
 
 Status Client::getStatus() {
 	return _status;
+}
+
+void Client::sendMessage(const std::string& message) {
+	std::lock_guard<std::mutex> lock(_sendMutex);
+
+	_sendQueue.push(std::move(message));
 }
 
 void Client::setUrl(const char* url) {

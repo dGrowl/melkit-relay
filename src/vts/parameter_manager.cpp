@@ -80,6 +80,10 @@ void ParameterManager::add(const ParameterData& data) {
 	_params.emplace(data.name, data);
 }
 
+void ParameterManager::clear() {
+	_params.clear();
+}
+
 void ParameterManager::handleEvent(SDL_UserEvent& event) {
 	switch (event.code) {
 		case vts::ActionCode::KEY_DOWN:

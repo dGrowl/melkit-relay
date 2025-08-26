@@ -35,6 +35,7 @@ public:
 	Parameter& operator[](const char* name);
 	ConstParameterView values() const;
 	void add(const ParameterData& data);
+	void clear();
 	void handleEvent(SDL_UserEvent& event);
 };
 

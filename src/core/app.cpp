@@ -144,10 +144,19 @@ void App::handleVtsAuthenticationFailure() {
 
 void App::handleVtsInputParameterList(SDL_UserEvent& event) {
 	auto* data = static_cast<vts::InputParameterListData*>(event.data1);
+	_params.clear();
 	for (const auto& p : data->parameters) {
 		_params.add(p);
 	}
 	delete data;
+}
+
+void App::handleVtsParameterCreation() {
+	vts::getParameters(_wsClient);
+}
+
+void App::handleVtsParameterDeletion() {
+	vts::getParameters(_wsClient);
 }
 
 void App::handleVtsMessage(SDL_UserEvent& event) {
@@ -163,6 +172,12 @@ void App::handleVtsMessage(SDL_UserEvent& event) {
 			break;
 		case vts::ResponseCode::INPUT_PARAMETER_LIST:
 			handleVtsInputParameterList(event);
+			break;
+		case vts::ResponseCode::PARAMETER_CREATION:
+			handleVtsParameterCreation();
+			break;
+		case vts::ResponseCode::PARAMETER_DELETION:
+			handleVtsParameterDeletion();
 			break;
 	}
 }

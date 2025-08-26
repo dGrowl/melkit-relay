@@ -1,10 +1,14 @@
+#include <algorithm>
 #include <format>
+#include <functional>
+#include <ranges>
 
 #include <SDL3/SDL_events.h>
 
 #include "imgui/imgui.h"
 
 #include "gui/config_window.hpp"
+#include "vts/parameter.hpp"
 #include "vts/request.hpp"
 
 namespace gui {
@@ -97,7 +101,7 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 			showVtsConnection();
 
 			ImGui::TableNextColumn();
-			showParameters();
+			showParameterPanel();
 
 			ImGui::EndTable();
 		}
@@ -174,9 +178,10 @@ void ConfigWindow::showVtsConnection() {
 		ImGui::Text("API Address");
 		ImGui::TableNextColumn();
 		ImGui::SetNextItemWidth(-1.0f);
-		if (ImGui::InputText("##vtsUrl", _urlBuffer, IM_ARRAYSIZE(_urlBuffer))) {
+		if (ImGui::InputText("##vts-url", _urlBuffer, IM_ARRAYSIZE(_urlBuffer))) {
 			_wsController.setUrl(_urlBuffer);
 		}
+
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn();
 		ImGui::Text("Status");
@@ -199,11 +204,8 @@ void ConfigWindow::showVtsConnection() {
 	}
 }
 
-void ConfigWindow::showParameters() {
-	ImGui::Text("Parameters");
-	ImGui::Separator();
-
-	if (ImGui::Button("Add", ImVec2(-1.0f, 0.0f))) {
+void ConfigWindow::showCreateParameter() {
+	if (ImGui::Button("Create", ImVec2(128.0f, 0.0f))) {
 		ImGui::OpenPopup("Create Parameter");
 	}
 
@@ -224,7 +226,6 @@ void ConfigWindow::showParameters() {
 			    .max = 1.0f,
 			    .min = 0.0f,
 			};
-			_paramManager.add(newParam);
 			vts::createParameter(_wsController, newParam);
 			ImGui::CloseCurrentPopup();
 		}
@@ -235,10 +236,149 @@ void ConfigWindow::showParameters() {
 		}
 		ImGui::EndPopup();
 	}
+}
 
-	for (const auto& p : _paramManager.values()) {
-		ImGui::Button(p.getName().c_str(), ImVec2(-1.0f, 0.0f));
+void ConfigWindow::showDeleteParameters() {
+	if (ImGui::Button("Delete", ImVec2(128.0f, 0.0f))) {
+		ImGui::OpenPopup("Delete Parameters");
 	}
+	static bool allSelected = false;
+	static std::unordered_map<std::string, bool> selectedState;
+	if (ImGui::BeginPopupModal("Delete Parameters",
+	                           nullptr,
+	                           ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::Text("Select which parameters to delete.");
+
+		if (ImGui::BeginChild("##delete-selection",
+		                      ImVec2(-1.0f, ImGui::GetFontSize() * 20),
+		                      ImGuiChildFlags_Borders)) {
+			for (auto& p : _paramManager.values()) {
+				if (ImGui::Checkbox(p.getName().c_str(), &selectedState[p.getName()])) {
+					allSelected = std::ranges::all_of(selectedState | std::views::values,
+					                                  std::identity{});
+				}
+			}
+		}
+		ImGui::EndChild();
+		if (ImGui::Checkbox("All", &allSelected)) {
+			for (bool& isSelected : selectedState | std::views::values) {
+				isSelected = allSelected;
+			}
+		}
+
+		if (ImGui::Button("Delete", ImVec2(128.0f, 0.0f))) {
+			for (auto& p : _paramManager.values()) {
+				if (selectedState[p.getName()]) {
+					deleteParameter(_wsController, p);
+				}
+			}
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120.0f, 0.0f))) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+}
+
+void ConfigWindow::showParameterControls() {
+	showCreateParameter();
+	ImGui::SameLine();
+	showDeleteParameters();
+}
+
+void ConfigWindow::showParameterData() {
+	static vts::Parameter selectedParameter;
+
+	for (auto& p : _paramManager.values()) {
+		if (ImGui::Button(p.getName().c_str(), ImVec2(-1.0f, 0.0f))) {
+			selectedParameter = p;
+			ImGui::OpenPopup("Edit Parameter");
+		}
+	}
+
+	if (ImGui::BeginPopupModal("Edit Parameter",
+	                           nullptr,
+	                           ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::SeparatorText(selectedParameter.getName().c_str());
+
+		if (ImGui::BeginTable("Parameter Fields",
+		                      2,
+		                      ImGuiTableFlags_SizingFixedFit)) {
+			ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);
+			ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+			ImGui::Text("Default");
+			ImGui::TableNextColumn();
+			ImGui::SetNextItemWidth(-1.0f);
+			ImGui::InputScalar("##default",
+			                   ImGuiDataType_Float,
+			                   &selectedParameter.defaultValue,
+			                   nullptr,
+			                   nullptr,
+			                   nullptr,
+			                   ImGuiInputTextFlags_None);
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+			ImGui::Text("Minimum");
+			ImGui::TableNextColumn();
+			ImGui::SetNextItemWidth(-1.0f);
+			ImGui::InputScalar("##minimum",
+			                   ImGuiDataType_Float,
+			                   &selectedParameter.min,
+			                   nullptr,
+			                   nullptr,
+			                   nullptr,
+			                   ImGuiInputTextFlags_None);
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+			ImGui::Text("Maximum");
+			ImGui::TableNextColumn();
+			ImGui::SetNextItemWidth(-1.0f);
+			ImGui::InputScalar("##maximum",
+			                   ImGuiDataType_Float,
+			                   &selectedParameter.max,
+			                   nullptr,
+			                   nullptr,
+			                   nullptr,
+			                   ImGuiInputTextFlags_None);
+
+			ImGui::EndTable();
+		}
+
+		if (ImGui::Button("Save", ImVec2(120, 0))) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Discard", ImVec2(120, 0))) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+}
+
+void ConfigWindow::showParameterPanel() {
+	ImGui::Text("Parameters");
+	ImGui::Separator();
+	if (_wsController.getStatus() == ws::Status::CONNECTED) {
+		showParameters();
+	}
+	else {
+		ImGui::Text("You'll need to connect to VTS to manage parameters.");
+	}
+}
+
+void ConfigWindow::showParameters() {
+	showParameterControls();
+	ImGui::Separator();
+	showParameterData();
 }
 
 }  // namespace gui

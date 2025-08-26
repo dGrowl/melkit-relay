@@ -20,12 +20,12 @@ private:
 	std::string _name;
 	std::unordered_map<Uint32, float> _inputs;
 
-	float _defaultValue;
-	float _max;
-	float _min;
-	float _output;
-
 public:
+	float defaultValue;
+	float max;
+	float min;
+	float output;
+
 	Parameter();
 	Parameter(const ParameterData& data);
 	const std::string& getName() const;

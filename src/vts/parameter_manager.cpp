@@ -45,7 +45,7 @@ Parameter& ParameterManager::operator[](const char* name) {
 	return _params[name];
 }
 
-auto ParameterManager::values() const -> ConstParameterView {
+auto ParameterManager::values() -> ParameterView {
 	return _params | std::views::values;
 }
 

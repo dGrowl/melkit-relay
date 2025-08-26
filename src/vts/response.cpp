@@ -20,6 +20,12 @@ static const auto AUTHENTICATION_TYPESTRING =
 static const auto INPUT_PARAMETER_LIST_TYPESTRING =
     rj::Value("InputParameterListResponse");
 
+static const auto PARAMETER_CREATION_TYPESTRING =
+    rj::Value("ParameterCreationResponse");
+
+static const auto PARAMETER_DELETION_TYPESTRING =
+    rj::Value("ParameterDeletionResponse");
+
 static const auto PLUGIN_NAME_VALUE = rj::Value(rj::StringRef(PLUGIN_NAME));
 
 void buildAuthenticationTokenEvent(SDL_UserEvent& event,
@@ -87,11 +93,30 @@ void buildInputParameterListEvent(SDL_UserEvent& event,
 	event.data1 = static_cast<void*>(responseData);
 }
 
+void buildParameterCreationEvent(SDL_UserEvent& event,
+                                 const rj::Document& json) {
+	const auto& data = json["data"];
+	if (!data.HasMember("parameterName") || !data["parameterName"].IsString()) {
+		return;
+	}
+	event.code = ResponseCode::PARAMETER_CREATION;
+}
+
+void buildParameterDeletionEvent(SDL_UserEvent& event,
+                                 const rj::Document& json) {
+	const auto& data = json["data"];
+	if (!data.HasMember("parameterName") || !data["parameterName"].IsString()) {
+		return;
+	}
+	event.code = ResponseCode::PARAMETER_DELETION;
+}
+
 void buildResponseEvent(SDL_UserEvent& event,
                         char* jsonString,
                         const int nChars) {
 	rj::Document json;
 	json.Parse(jsonString, nChars);
+
 	event.code = ResponseCode::UNKNOWN;
 
 	const auto& type = json["messageType"];
@@ -103,6 +128,12 @@ void buildResponseEvent(SDL_UserEvent& event,
 	}
 	else if (type == INPUT_PARAMETER_LIST_TYPESTRING) {
 		buildInputParameterListEvent(event, json);
+	}
+	else if (type == PARAMETER_CREATION_TYPESTRING) {
+		buildParameterCreationEvent(event, json);
+	}
+	else if (type == PARAMETER_DELETION_TYPESTRING) {
+		buildParameterDeletionEvent(event, json);
 	}
 }
 

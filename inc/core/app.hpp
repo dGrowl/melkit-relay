@@ -28,6 +28,8 @@ private:
 	void handleVtsAuthenticationSuccess();
 	void handleVtsAuthenticationToken(SDL_UserEvent& event);
 	void handleVtsInputParameterList(SDL_UserEvent& event);
+	void handleVtsParameterCreation();
+	void handleVtsParameterDeletion();
 
 public:
 	App();

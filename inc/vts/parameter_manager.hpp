@@ -15,8 +15,8 @@ struct MouseState {
 	int y = 0;
 };
 
-using ConstParameterView =
-    decltype(std::declval<const std::unordered_map<std::string, Parameter>&>()
+using ParameterView =
+    decltype(std::declval<std::unordered_map<std::string, Parameter>&>()
              | std::views::values);
 
 class ParameterManager {
@@ -33,7 +33,7 @@ private:
 public:
 	ParameterManager() = default;
 	Parameter& operator[](const char* name);
-	ConstParameterView values() const;
+	ParameterView values();
 	void add(const ParameterData& data);
 	void clear();
 	void handleEvent(SDL_UserEvent& event);

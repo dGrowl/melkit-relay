@@ -34,6 +34,15 @@ private:
 	SDL_Window* _window;
 	SDL_WindowFlags _flags;
 
+	void showCreateParameter();
+	void showDeleteParameters();
+	void showParameterControls();
+	void showParameterData();
+	void showParameterPanel();
+	void showParameters();
+
+	void showVtsConnection();
+
 public:
 	ConfigWindow(ws::IController& wsController,
 	             vts::ParameterManager& paramManager);
@@ -42,9 +51,6 @@ public:
 	void render(SDL_GPUDevice* gpu);
 	bool isOpen() const;
 	SDL_WindowID id() const;
-
-	void showParameters();
-	void showVtsConnection();
 };
 
 }  // namespace gui

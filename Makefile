@@ -94,6 +94,9 @@ all: $(EXE)
 format:
 	clang-format -i $(APP_SOURCES) $(APP_HEADERS)
 
+loc:
+	find inc src -regex ".*\.\(hpp\|cpp\)$$" | xargs wc -l
+
 clean:
 	rm -f $(EXE)
 	rm -rf $(OBJ_DIR)

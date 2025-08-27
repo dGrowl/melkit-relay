@@ -38,6 +38,11 @@ ConfigWindow::ConfigWindow(ws::IController& wsController,
 }
 
 int ConfigWindow::open(SDL_GPUDevice* gpu) {
+	if (_window != nullptr) {
+		SDL_RaiseWindow(_window);
+		return 0;
+	}
+
 	const SDL_DisplayID primaryDisplay = SDL_GetPrimaryDisplay();
 	const float mainScale = SDL_GetDisplayContentScale(primaryDisplay);
 

@@ -72,7 +72,6 @@ void Monitor::handleEvent(uiohook_event* const event) {
 			buildMouseMove(sdlEvent.user, event);
 			break;
 		case EVENT_MOUSE_PRESSED:
-		case EVENT_MOUSE_CLICKED:
 			buildMouseClick(sdlEvent.user, event);
 			break;
 		case EVENT_MOUSE_RELEASED:

@@ -1,5 +1,5 @@
-#ifndef TRAY_ICON_HPP_
-#define TRAY_ICON_HPP_
+#ifndef GUI_TRAY_ICON_HPP_
+#define GUI_TRAY_ICON_HPP_
 
 #include <SDL3/SDL.h>
 
@@ -22,4 +22,4 @@ public:
 
 }  // namespace gui
 
-#endif  // TRAY_ICON_HPP_
+#endif  // GUI_TRAY_ICON_HPP_

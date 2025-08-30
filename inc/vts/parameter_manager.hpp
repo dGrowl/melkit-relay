@@ -5,6 +5,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <SDL3/SDL_events.h>
+
 #include "vts/input.hpp"
 #include "vts/parameter.hpp"
 
@@ -22,7 +24,7 @@ using ParameterView =
 class ParameterManager {
 private:
 	MouseState _mouse;
-
+	Parameter _sample;
 	std::unordered_map<std::string, Parameter> _params;
 
 	void handleKeyDown(SDL_UserEvent& event);
@@ -33,6 +35,7 @@ private:
 public:
 	ParameterManager() = default;
 	Parameter& operator[](const char* name);
+	Parameter& getSample();
 	ParameterView values();
 	void add(const ParameterData& data);
 	void clear();

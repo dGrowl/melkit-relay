@@ -1,3 +1,5 @@
+#include <ranges>
+
 #include <SDL3/SDL_events.h>
 #include <libuiohook/uiohook.h>
 
@@ -20,29 +22,37 @@ namespace vts {
 void ParameterManager::handleKeyDown(SDL_UserEvent& event) {
 	auto keycode = pointerToUnsigned<Uint32>(event.data1);
 	const Uint32 id = InputType::KEY | (keycode << 16);
-	for (auto& pair : _params) {
-		pair.second.handleInput(id, 1.0f);
+	for (auto& parameter : values()) {
+		parameter.handleInput(id, 1.0f);
 	}
+	_sample.handleInput(id, 1.0f);
 }
 
 void ParameterManager::handleKeyUp(SDL_UserEvent& event) {
 	auto keycode = pointerToUnsigned<Uint32>(event.data1);
 	const Uint32 id = InputType::KEY | (keycode << 16);
-	for (auto& pair : _params) {
-		pair.second.handleInput(id, 0.0f);
+	for (auto& parameter : values()) {
+		parameter.handleInput(id, 0.0f);
 	}
+	_sample.handleInput(id, 0.0f);
 }
 
 void ParameterManager::handleMouseButton(SDL_UserEvent& event, bool isClicked) {
 	auto button = pointerToUnsigned<Uint32>(event.data1);
 	const Uint32 id = InputType::MOUSE_BUTTON | button;
-	for (auto& pair : _params) {
-		pair.second.handleInput(id, isClicked ? 1.0f : 0.0f);
+	const float newValue = isClicked ? 1.0f : 0.0f;
+	for (auto& parameter : values()) {
+		parameter.handleInput(id, newValue);
 	}
+	_sample.handleInput(id, newValue);
 }
 
 Parameter& ParameterManager::operator[](const char* name) {
 	return _params[name];
+}
+
+Parameter& ParameterManager::getSample() {
+	return _sample;
 }
 
 auto ParameterManager::values() -> ParameterView {
@@ -68,12 +78,16 @@ void ParameterManager::handleMouseMove(SDL_UserEvent& event) {
 	auto dy = y - _mouse.y;
 	_mouse.x = x;
 	_mouse.y = y;
-	for (auto& pair : _params) {
-		pair.second.handleInput(MOUSE_MOVE_ABS_X, x);
-		pair.second.handleInput(MOUSE_MOVE_ABS_Y, y);
-		pair.second.handleInput(MOUSE_MOVE_REL_X, dx);
-		pair.second.handleInput(MOUSE_MOVE_REL_Y, dy);
+	for (auto& parameter : values()) {
+		parameter.handleInput(MOUSE_MOVE_ABS_X, x);
+		parameter.handleInput(MOUSE_MOVE_ABS_Y, y);
+		parameter.handleInput(MOUSE_MOVE_REL_X, dx);
+		parameter.handleInput(MOUSE_MOVE_REL_Y, dy);
 	}
+	_sample.handleInput(MOUSE_MOVE_ABS_X, x);
+	_sample.handleInput(MOUSE_MOVE_ABS_Y, y);
+	_sample.handleInput(MOUSE_MOVE_REL_X, dx);
+	_sample.handleInput(MOUSE_MOVE_REL_Y, dy);
 }
 
 void ParameterManager::add(const ParameterData& data) {

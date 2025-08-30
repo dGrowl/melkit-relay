@@ -26,6 +26,7 @@ ConfigWindow::ConfigWindow(ws::IController& wsController,
     _height(540),
     _width(960),
     _clearColor{.03f, .02f, .04f, 1.0f},
+    _editingParameter(paramManager.getSample()),
     _paramManager(paramManager),
     _wsController(wsController),
     _urlBuffer(),
@@ -33,7 +34,9 @@ ConfigWindow::ConfigWindow(ws::IController& wsController,
     _window(nullptr),
     _flags(SDL_WINDOW_RESIZABLE
            | SDL_WINDOW_HIDDEN
-           | SDL_WINDOW_HIGH_PIXEL_DENSITY) {
+           | SDL_WINDOW_HIGH_PIXEL_DENSITY),
+    _deleteParametersModal(_paramManager, _wsController),
+    _editParameterModal(_editingParameter) {
 	SDL_strlcpy(_urlBuffer, wsController.getUrl(), sizeof(_urlBuffer));
 }
 
@@ -51,14 +54,14 @@ int ConfigWindow::open(SDL_GPUDevice* gpu) {
 	                           (int)(_height * mainScale),
 	                           _flags);
 	if (_window == nullptr) {
-		return 1;
+		return 2;
 	}
 
 	SDL_SetWindowPosition(_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	SDL_ShowWindow(_window);
 
 	if (!SDL_ClaimWindowForGPUDevice(gpu, _window)) {
-		return 2;
+		return 3;
 	}
 	SDL_SetGPUSwapchainParameters(gpu,
 	                              _window,
@@ -245,47 +248,10 @@ void ConfigWindow::showCreateParameter() {
 
 void ConfigWindow::showDeleteParameters() {
 	if (ImGui::Button("Delete", ImVec2(128.0f, 0.0f))) {
-		ImGui::OpenPopup("Delete Parameters");
+		ImGui::OpenPopup(DeleteParametersModal::NAME);
 	}
-	static bool allSelected = false;
-	static std::unordered_map<std::string, bool> selectedState;
-	if (ImGui::BeginPopupModal("Delete Parameters",
-	                           nullptr,
-	                           ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::Text("Select which parameters to delete.");
 
-		if (ImGui::BeginChild("##delete-selection",
-		                      ImVec2(-1.0f, ImGui::GetFontSize() * 20),
-		                      ImGuiChildFlags_Borders)) {
-			for (auto& p : _paramManager.values()) {
-				if (ImGui::Checkbox(p.getName().c_str(), &selectedState[p.getName()])) {
-					allSelected = std::ranges::all_of(selectedState | std::views::values,
-					                                  std::identity{});
-				}
-			}
-		}
-		ImGui::EndChild();
-		if (ImGui::Checkbox("All", &allSelected)) {
-			for (bool& isSelected : selectedState | std::views::values) {
-				isSelected = allSelected;
-			}
-		}
-
-		if (ImGui::Button("Delete", ImVec2(128.0f, 0.0f))) {
-			for (auto& p : _paramManager.values()) {
-				if (selectedState[p.getName()]) {
-					deleteParameter(_wsController, p);
-				}
-			}
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::SetItemDefaultFocus();
-		ImGui::SameLine();
-		if (ImGui::Button("Cancel", ImVec2(120.0f, 0.0f))) {
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::EndPopup();
-	}
+	_deleteParametersModal.show();
 }
 
 void ConfigWindow::showParameterControls() {
@@ -295,78 +261,14 @@ void ConfigWindow::showParameterControls() {
 }
 
 void ConfigWindow::showParameterData() {
-	static vts::Parameter selectedParameter;
-
 	for (auto& p : _paramManager.values()) {
 		if (ImGui::Button(p.getName().c_str(), ImVec2(-1.0f, 0.0f))) {
-			selectedParameter = p;
-			ImGui::OpenPopup("Edit Parameter");
+			_editingParameter = p;
+			ImGui::OpenPopup(EditParameterModal::NAME);
 		}
 	}
 
-	if (ImGui::BeginPopupModal("Edit Parameter",
-	                           nullptr,
-	                           ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::SeparatorText(selectedParameter.getName().c_str());
-
-		if (ImGui::BeginTable("Parameter Fields",
-		                      2,
-		                      ImGuiTableFlags_SizingFixedFit)) {
-			ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);
-			ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
-
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-			ImGui::Text("Default");
-			ImGui::TableNextColumn();
-			ImGui::SetNextItemWidth(-1.0f);
-			ImGui::InputScalar("##default",
-			                   ImGuiDataType_Float,
-			                   &selectedParameter.defaultValue,
-			                   nullptr,
-			                   nullptr,
-			                   nullptr,
-			                   ImGuiInputTextFlags_None);
-
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-			ImGui::Text("Minimum");
-			ImGui::TableNextColumn();
-			ImGui::SetNextItemWidth(-1.0f);
-			ImGui::InputScalar("##minimum",
-			                   ImGuiDataType_Float,
-			                   &selectedParameter.min,
-			                   nullptr,
-			                   nullptr,
-			                   nullptr,
-			                   ImGuiInputTextFlags_None);
-
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-			ImGui::Text("Maximum");
-			ImGui::TableNextColumn();
-			ImGui::SetNextItemWidth(-1.0f);
-			ImGui::InputScalar("##maximum",
-			                   ImGuiDataType_Float,
-			                   &selectedParameter.max,
-			                   nullptr,
-			                   nullptr,
-			                   nullptr,
-			                   ImGuiInputTextFlags_None);
-
-			ImGui::EndTable();
-		}
-
-		if (ImGui::Button("Save", ImVec2(120, 0))) {
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::SetItemDefaultFocus();
-		ImGui::SameLine();
-		if (ImGui::Button("Discard", ImVec2(120, 0))) {
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::EndPopup();
-	}
+	_editParameterModal.show();
 }
 
 void ConfigWindow::showParameterPanel() {

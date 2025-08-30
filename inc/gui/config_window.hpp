@@ -1,5 +1,5 @@
-#ifndef CONFIG_WINDOW_HPP_
-#define CONFIG_WINDOW_HPP_
+#ifndef GUI_CONFIG_WINDOW_HPP_
+#define GUI_CONFIG_WINDOW_HPP_
 
 #include <SDL3/SDL_gpu.h>
 #include <SDL3/SDL_pixels.h>
@@ -9,6 +9,8 @@
 #include "imgui/backends/imgui_impl_sdlgpu3.h"
 #include "imgui/imgui.h"
 
+#include "gui/delete_parameters_modal.hpp"
+#include "gui/edit_parameter_modal.hpp"
 #include "vts/parameter_manager.hpp"
 #include "ws/controller.hpp"
 
@@ -25,6 +27,7 @@ private:
 	int _width;
 	SDL_FColor _clearColor;
 
+	vts::Parameter& _editingParameter;
 	vts::ParameterManager& _paramManager;
 	ws::IController& _wsController;
 
@@ -33,6 +36,9 @@ private:
 
 	SDL_Window* _window;
 	SDL_WindowFlags _flags;
+
+	DeleteParametersModal _deleteParametersModal;
+	EditParameterModal _editParameterModal;
 
 	void showCreateParameter();
 	void showDeleteParameters();
@@ -55,4 +61,4 @@ public:
 
 }  // namespace gui
 
-#endif  // CONFIG_WINDOW_HPP_
+#endif  // GUI_CONFIG_WINDOW_HPP_

@@ -15,22 +15,27 @@ struct ParameterData {
 	float min;
 };
 
+using InputMap = std::unordered_map<InputId, float>;
+
 class Parameter {
 private:
 	std::string _name;
-	std::unordered_map<Uint32, float> _inputs;
+	InputMap _inputs;
+	float _output;
 
 public:
 	float defaultValue;
 	float max;
 	float min;
-	float output;
 
 	Parameter();
 	Parameter(const ParameterData& data);
 	const std::string& getName() const;
+	InputMap& getInputs();
+	float getNormalized() const;
 	float getOutput() const;
-	void handleInput(const Uint32 id, const float value);
+	void addInput(const InputId id);
+	void handleInput(const InputId id, const float value);
 };
 
 }  // namespace vts

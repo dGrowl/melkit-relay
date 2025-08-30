@@ -5,8 +5,10 @@
 
 namespace vts {
 
+using InputId = Uint32;
+
 enum ActionCode : Sint32 {
-	KEY_DOWN,
+	KEY_DOWN = 1,
 	KEY_UP,
 	MOUSE_MOVE,
 	MOUSE_CLICK,
@@ -14,7 +16,7 @@ enum ActionCode : Sint32 {
 };
 
 enum InputType : Uint32 {
-	KEY,
+	KEY = 1,
 	MOUSE_BUTTON,
 	MOUSE_MOVE_ABS,
 	MOUSE_MOVE_REL
@@ -22,15 +24,15 @@ enum InputType : Uint32 {
 
 enum Axis : Uint32 {
 	X = 1 << 16,
-	Y,
+	Y = 2 << 16,
 };
 
 enum Button : Uint32 {
 	LEFT = 1 << 16,
-	RIGHT,
-	MIDDLE,
-	FOURTH,
-	FIFTH
+	RIGHT = 2 << 16,
+	MIDDLE = 3 << 16,
+	FOURTH = 4 << 16,
+	FIFTH = 5 << 16,
 };
 
 }  // namespace vts

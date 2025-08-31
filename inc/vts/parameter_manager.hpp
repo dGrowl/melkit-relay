@@ -26,6 +26,7 @@ private:
 	MouseState _mouse;
 	Parameter _sample;
 	std::unordered_map<std::string, Parameter> _params;
+	Uint64 _mouseMovementResetTicks;
 
 	void handleKeyDown(SDL_UserEvent& event);
 	void handleKeyUp(SDL_UserEvent& event);
@@ -38,6 +39,7 @@ public:
 	Parameter& getSample();
 	ParameterView values();
 	void add(const ParameterData& data);
+	void checkInactivity();
 	void clear();
 	void handleEvent(SDL_UserEvent& event);
 };

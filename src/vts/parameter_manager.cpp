@@ -88,10 +88,23 @@ void ParameterManager::handleMouseMove(SDL_UserEvent& event) {
 	_sample.handleInput(MOUSE_MOVE_ABS_Y, y);
 	_sample.handleInput(MOUSE_MOVE_REL_X, dx);
 	_sample.handleInput(MOUSE_MOVE_REL_Y, dy);
+	_mouseMovementResetTicks = SDL_GetTicks() + INACTIVITY_DELAY_MS;
 }
 
 void ParameterManager::add(const ParameterData& data) {
 	_params.emplace(data.name, data);
+}
+
+void ParameterManager::checkInactivity() {
+	if (SDL_GetTicks() >= _mouseMovementResetTicks) {
+		for (auto& parameter : values()) {
+			parameter.handleInput(MOUSE_MOVE_REL_X, 0.0f);
+			parameter.handleInput(MOUSE_MOVE_REL_Y, 0.0f);
+		}
+		_sample.handleInput(MOUSE_MOVE_REL_X, 0.0f);
+		_sample.handleInput(MOUSE_MOVE_REL_Y, 0.0f);
+		_mouseMovementResetTicks = UINT64_MAX;
+	}
 }
 
 void ParameterManager::clear() {

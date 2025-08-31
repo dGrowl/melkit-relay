@@ -87,6 +87,7 @@ void App::run() {
 		}
 		_config.render(_gpu);
 
+		_params.checkInactivity();
 		SDL_Delay(10);
 	}
 }

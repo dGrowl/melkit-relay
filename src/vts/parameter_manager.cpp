@@ -1,6 +1,7 @@
 #include <ranges>
 
 #include <SDL3/SDL_events.h>
+#include <SDL3/SDL_timer.h>
 #include <libuiohook/uiohook.h>
 
 #include "mnk/event.hpp"
@@ -21,7 +22,7 @@ namespace vts {
 
 void ParameterManager::handleKeyDown(SDL_UserEvent& event) {
 	auto keycode = pointerToUnsigned<Uint32>(event.data1);
-	const Uint32 id = InputType::KEY | (keycode << 16);
+	const Uint32 id = InputEvent::KEY | (keycode << 16);
 	for (auto& parameter : values()) {
 		parameter.handleInput(id, 1.0f);
 	}
@@ -30,7 +31,7 @@ void ParameterManager::handleKeyDown(SDL_UserEvent& event) {
 
 void ParameterManager::handleKeyUp(SDL_UserEvent& event) {
 	auto keycode = pointerToUnsigned<Uint32>(event.data1);
-	const Uint32 id = InputType::KEY | (keycode << 16);
+	const Uint32 id = InputEvent::KEY | (keycode << 16);
 	for (auto& parameter : values()) {
 		parameter.handleInput(id, 0.0f);
 	}
@@ -39,7 +40,7 @@ void ParameterManager::handleKeyUp(SDL_UserEvent& event) {
 
 void ParameterManager::handleMouseButton(SDL_UserEvent& event, bool isClicked) {
 	auto button = pointerToUnsigned<Uint32>(event.data1);
-	const Uint32 id = InputType::MOUSE_BUTTON | button;
+	const Uint32 id = InputEvent::MOUSE_BUTTON | button;
 	const float newValue = isClicked ? 1.0f : 0.0f;
 	for (auto& parameter : values()) {
 		parameter.handleInput(id, newValue);
@@ -59,17 +60,19 @@ auto ParameterManager::values() -> ParameterView {
 	return _params | std::views::values;
 }
 
-constexpr Uint32 MOUSE_MOVE_ABS_X =
-    InputType::MOUSE_MOVE_ABS | static_cast<Uint32>(Axis::X);
+constexpr InputId MOUSE_MOVE_ABS_X =
+    InputEvent::MOUSE_MOVE_ABS | static_cast<InputId>(Axis::X);
 
-constexpr Uint32 MOUSE_MOVE_ABS_Y =
-    InputType::MOUSE_MOVE_ABS | static_cast<Uint32>(Axis::Y);
+constexpr InputId MOUSE_MOVE_ABS_Y =
+    InputEvent::MOUSE_MOVE_ABS | static_cast<InputId>(Axis::Y);
 
-constexpr Uint32 MOUSE_MOVE_REL_X =
-    InputType::MOUSE_MOVE_REL | static_cast<Uint32>(Axis::X);
+constexpr InputId MOUSE_MOVE_REL_X =
+    InputEvent::MOUSE_MOVE_REL | static_cast<InputId>(Axis::X);
 
-constexpr Uint32 MOUSE_MOVE_REL_Y =
-    InputType::MOUSE_MOVE_REL | static_cast<Uint32>(Axis::Y);
+constexpr InputId MOUSE_MOVE_REL_Y =
+    InputEvent::MOUSE_MOVE_REL | static_cast<InputId>(Axis::Y);
+
+static constexpr Uint64 INACTIVITY_DELAY_MS = 20;
 
 void ParameterManager::handleMouseMove(SDL_UserEvent& event) {
 	auto x = pointerToSigned<Sint16>(event.data1);

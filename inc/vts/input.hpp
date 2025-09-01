@@ -15,7 +15,7 @@ enum ActionCode : Sint32 {
 	MOUSE_RELEASE
 };
 
-enum InputType : Uint32 {
+enum InputEvent : Uint32 {
 	KEY = 1,
 	MOUSE_BUTTON,
 	MOUSE_MOVE_ABS,
@@ -33,6 +33,18 @@ enum Button : Uint32 {
 	MIDDLE = 3 << 16,
 	FOURTH = 4 << 16,
 	FIFTH = 5 << 16,
+};
+
+struct InputData {
+	InputId id = 0;
+
+	float min = 0.0f;
+	float max = 1.0f;
+	float value = 0.0f;
+
+	const char* device = "UNKNOWN";
+	const char* event = "UNKNOWN";
+	const char* target = "UNKNOWN";
 };
 
 }  // namespace vts

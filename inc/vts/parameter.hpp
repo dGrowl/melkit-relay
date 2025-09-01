@@ -15,7 +15,7 @@ struct ParameterData {
 	float min;
 };
 
-using InputMap = std::unordered_map<InputId, float>;
+using InputMap = std::unordered_map<InputId, InputData>;
 
 class Parameter {
 private:
@@ -30,11 +30,12 @@ public:
 
 	Parameter();
 	Parameter(const ParameterData& data);
+	bool hasInputs() const;
 	const std::string& getName() const;
-	InputMap& getInputs();
 	float getNormalized() const;
 	float getOutput() const;
-	void addInput(const InputId id);
+	InputMap& getInputs();
+	void addInput(const InputData& data);
 	void handleInput(const InputId id, const float value);
 };
 

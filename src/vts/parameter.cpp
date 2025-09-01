@@ -27,6 +27,10 @@ Parameter::Parameter(const ParameterData& data) :
     max(data.max),
     min(data.min) {}
 
+bool Parameter::hasInputs() const {
+	return !_inputs.empty();
+}
+
 const std::string& Parameter::getName() const {
 	return _name;
 }
@@ -43,17 +47,37 @@ float Parameter::getOutput() const {
 	return _output;
 }
 
-void Parameter::addInput(const InputId id) {
-	_inputs.emplace(id, 0.0f);
+void Parameter::addInput(const InputData& data) {
+	_inputs.emplace(data.id, std::move(data));
 }
 
-void Parameter::handleInput(const Uint32 id, const float value) {
+float remap(float inValue,
+            float inLower,
+            float inUpper,
+            float outLower,
+            float outUpper) {
+	return outLower
+	       + (inValue - inLower)
+	       * (outUpper - outLower)
+	       / (inUpper - inLower);
+}
+
+void Parameter::handleInput(const InputId id, const float value) {
 	auto input = _inputs.find(id);
 	if (input == _inputs.end()) {
 		return;
 	}
-	input->second = value;
-	_output = std::ranges::max(_inputs | std::views::values);
+	auto& data = input->second;
+	data.value = std::clamp(value, data.min, data.max);
+	float nextOutput = defaultValue;
+	for (InputData& data : _inputs | std::views::values) {
+		float remappedValue = remap(data.value, data.min, data.max, min, max);
+		if (std::abs(nextOutput - defaultValue)
+		    < std::abs(remappedValue - defaultValue)) {
+			nextOutput = remappedValue;
+		}
+	}
+	_output = nextOutput;
 }
 
 }  // namespace vts

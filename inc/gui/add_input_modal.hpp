@@ -21,9 +21,9 @@ private:
 	ComboBox _mouseButtonSelector;
 	ComboBox _mouseEventSelector;
 
-	vts::InputId getMouseAxisId() const;
-	vts::InputId getMouseButtonId() const;
-	vts::InputId getInputId() const;
+	void applyMouseAxis(vts::InputData& data) const;
+	void applyMouseButton(vts::InputData& data) const;
+	vts::InputData buildInputData() const;
 
 	void showCloseButtons();
 	void showDeviceSelector();

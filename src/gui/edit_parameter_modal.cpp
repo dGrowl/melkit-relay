@@ -22,24 +22,27 @@ void EditParameterModal::showInputs() {
 		ImGui::TableSetupColumn("Event", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Target", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+		if (_editingParameter.hasInputs()) {
+			ImGui::TableHeadersRow();
+		}
 
-		for (auto& [inputId, value] : _editingParameter.getInputs()) {
-			ImGui::PushID(inputId);
+		for (auto& [id, data] : _editingParameter.getInputs()) {
+			ImGui::PushID(id);
 
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
-			ImGui::Text("Device");
+			ImGui::Text(data.device);
 			ImGui::TableNextColumn();
-			ImGui::Text("Event");
+			ImGui::Text(data.event);
 			ImGui::TableNextColumn();
-			ImGui::Text("Target");
+			ImGui::Text(data.target);
 			ImGui::TableNextColumn();
-			ImGui::SetNextItemWidth(-1.0f);
+			ImGui::SetNextItemWidth(128.0f);
 			ImGui::BeginDisabled();
 			ImGui::SliderFloat("##input-value",
-			                   &value,
-			                   -1.0f,
-			                   1.0f,
+			                   &data.value,
+			                   data.min,
+			                   data.max,
 			                   "%.3f",
 			                   ImGuiSliderFlags_NoInput);
 			ImGui::EndDisabled();
@@ -101,12 +104,16 @@ void EditParameterModal::showOutput() {
 		ImGui::TableNextColumn();
 		ImGui::Text("Current");
 		ImGui::TableNextColumn();
-		ImGui::SetNextItemWidth(-1.0f);
-		std::string currentLabel =
-		    std::format("{:.2f}", _editingParameter.getOutput());
-		ImGui::ProgressBar(_editingParameter.getNormalized(),
-		                   ImVec2(0.0f, 0.0f),
-		                   currentLabel.c_str());
+		float outputValue = _editingParameter.getOutput();
+		ImGui::SetNextItemWidth(128.0f);
+		ImGui::BeginDisabled();
+		ImGui::SliderFloat("##output-value",
+		                   &outputValue,
+		                   _editingParameter.min,
+		                   _editingParameter.max,
+		                   "%.3f",
+		                   ImGuiSliderFlags_NoInput);
+		ImGui::EndDisabled();
 
 		ImGui::EndTable();
 	}

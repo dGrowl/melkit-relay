@@ -38,62 +38,80 @@ static constexpr unsigned MOUSE_AXIS_Y = 1;
 
 static std::vector<const char*> AXES{"X (Left-Right)", "Y (Up-Down)"};
 
-vts::InputId AddInputModal::getMouseAxisId() const {
+void AddInputModal::applyMouseAxis(vts::InputData& data) const {
 	switch (_mouseAxisSelector.getIndex()) {
 		case MOUSE_AXIS_X:
-			return vts::Axis::X;
+			data.target = "X";
+			data.id |= vts::Axis::X;
+			break;
 		case MOUSE_AXIS_Y:
-			return vts::Axis::Y;
+			data.target = "Y";
+			data.id |= vts::Axis::Y;
+			break;
 	}
-	return 0;
 }
 
-vts::InputId AddInputModal::getMouseButtonId() const {
-	switch (_mouseButtonSelector.getIndex()) {
+void AddInputModal::applyMouseButton(vts::InputData& data) const {
+	const unsigned index = _mouseButtonSelector.getIndex();
+	data.target = MOUSE_BUTTONS[index];
+	switch (index) {
 		case MOUSE_BUTTON_LEFT:
-			return vts::Button::LEFT;
+			data.id |= vts::Button::LEFT;
+			break;
 		case MOUSE_BUTTON_RIGHT:
-			return vts::Button::RIGHT;
+			data.id |= vts::Button::RIGHT;
+			break;
 		case MOUSE_BUTTON_MIDDLE:
-			return vts::Button::MIDDLE;
+			data.id |= vts::Button::MIDDLE;
+			break;
 		case MOUSE_BUTTON_FOURTH:
-			return vts::Button::FOURTH;
+			data.id |= vts::Button::FOURTH;
+			break;
 		case MOUSE_BUTTON_FIFTH:
-			return vts::Button::FIFTH;
+			data.id |= vts::Button::FIFTH;
+			break;
 	}
-	return 0;
 }
 
-vts::InputId AddInputModal::getInputId() const {
-	vts::InputId id = 0;
+vts::InputData AddInputModal::buildInputData() const {
+	vts::InputData data;
 	const auto device = _deviceSelector.getIndex();
 	if (device == DEVICE_MOUSE) {
+		data.device = DEVICES[DEVICE_MOUSE];
 		const auto event = _mouseEventSelector.getIndex();
 		switch (event) {
 			case MOUSE_EVENT_BUTTON:
-				id |= vts::InputType::MOUSE_BUTTON;
-				id |= getMouseButtonId();
+				data.id |= vts::InputEvent::MOUSE_BUTTON;
+				data.event = "Button";
+				applyMouseButton(data);
 				break;
 			case MOUSE_EVENT_MOVE_ABSOLUTE:
-				id |= vts::InputType::MOUSE_MOVE_ABS;
-				id |= getMouseAxisId();
+				data.id |= vts::InputEvent::MOUSE_MOVE_ABS;
+				data.event = "Move (Abs)";
+				applyMouseAxis(data);
 				break;
 			case MOUSE_EVENT_MOVE_RELATIVE:
-				id |= vts::InputType::MOUSE_MOVE_REL;
-				id |= getMouseAxisId();
+				data.id |= vts::InputEvent::MOUSE_MOVE_REL;
+				applyMouseAxis(data);
+				data.min = -4.0f;
+				data.max = 4.0f;
+				data.event = "Move (Rel)";
 				break;
 		}
 	}
 	else if (device == DEVICE_KEYBOARD) {
-		id |= vts::InputType::KEY;
-		id |= gui::convertImGuiToUioKey(_selectedKey) << 16;
+		data.device = DEVICES[DEVICE_KEYBOARD];
+		data.event = "Press";
+		data.target = ImGui::GetKeyName(_selectedKey);
+		data.id |= vts::InputEvent::KEY;
+		data.id |= gui::convertImGuiToUioKey(_selectedKey) << 16;
 	}
-	return id;
+	return data;
 }
 
 void AddInputModal::showCloseButtons() {
 	if (ImGui::Button("Add", ImVec2(128.0f, 0.0f))) {
-		_editingParameter.addInput(getInputId());
+		_editingParameter.addInput(buildInputData());
 		ImGui::CloseCurrentPopup();
 	}
 	ImGui::SetItemDefaultFocus();
@@ -159,8 +177,6 @@ void AddInputModal::showKeyboardControls() {
 	ImGui::TableNextColumn();
 	ImGui::Text("Key");
 	ImGui::TableNextColumn();
-
-	// static std::string lastKeyPressed = "";
 
 	for (const ImGuiKey key : gui::validImGuiKeys()) {
 		if (ImGui::IsKeyPressed(key)) {

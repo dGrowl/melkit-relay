@@ -14,9 +14,13 @@ private:
 
 	AddInputModal _addInputModal;
 
+	vts::InputId _inputIdToDelete;
+
 	void showAddInput();
 	void showInputs();
 	void showOutput();
+
+	void checkDeleteInput();
 
 public:
 	EditParameterModal(ws::IController& wsController,

@@ -84,6 +84,10 @@ void Parameter::handleInput(const InputId id, const float value) {
 	_output = nextOutput;
 }
 
+void Parameter::removeInput(const InputId id) {
+	_inputs.erase(id);
+}
+
 void Parameter::setInputs(const std::vector<InputData>& inputs) {
 	for (const auto& input : inputs) {
 		_inputs.insert_or_assign(input.getId(), input);

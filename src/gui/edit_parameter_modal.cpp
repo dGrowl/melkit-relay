@@ -73,11 +73,12 @@ void EditParameterModal::showAddInput() {
 void EditParameterModal::showInputs() {
 	ImGui::SeparatorText("Input");
 
-	if (ImGui::BeginTable("Input Table", 4, ImGuiTableFlags_SizingFixedFit)) {
+	if (ImGui::BeginTable("Input Table", 5, ImGuiTableFlags_SizingFixedFit)) {
 		ImGui::TableSetupColumn("Device", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Event", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Target", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableSetupColumn("Remove", ImGuiTableColumnFlags_WidthFixed);
 		if (_editingParameter.hasInputs()) {
 			ImGui::TableHeadersRow();
 		}
@@ -104,6 +105,10 @@ void EditParameterModal::showInputs() {
 			                   "%.3f",
 			                   ImGuiSliderFlags_NoInput);
 			ImGui::EndDisabled();
+			ImGui::TableNextColumn();
+			if (ImGui::Button("x", ImVec2(16.0f, 0.0f))) {
+				_inputIdToDelete = id;
+			}
 
 			ImGui::PopID();
 		}
@@ -177,11 +182,20 @@ void EditParameterModal::showOutput() {
 	}
 }
 
+void EditParameterModal::checkDeleteInput() {
+	if (_inputIdToDelete == 0) {
+		return;
+	}
+	_editingParameter.removeInput(_inputIdToDelete);
+	_inputIdToDelete = 0;
+}
+
 EditParameterModal::EditParameterModal(ws::IController& wsController,
                                        vts::Parameter& editingParameter) :
     _wsController(wsController),
     _editingParameter(editingParameter),
-    _addInputModal(editingParameter) {}
+    _addInputModal(editingParameter),
+    _inputIdToDelete(0) {}
 
 void EditParameterModal::show() {
 	if (ImGui::BeginPopupModal(
@@ -193,6 +207,7 @@ void EditParameterModal::show() {
 		showInputs();
 		showAddInput();
 		showOutput();
+		checkDeleteInput();
 
 		if (ImGui::Button("Save", ImVec2(128.0f, 0.0f))) {
 			SETTINGS.setParameter(_editingParameter);

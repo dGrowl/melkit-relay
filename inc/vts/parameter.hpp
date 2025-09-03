@@ -39,6 +39,7 @@ public:
 	const InputMap& getInputs() const;
 	void addInput(const InputData& data);
 	void handleInput(const InputId id, const float value);
+	void removeInput(const InputId id);
 	void setInputs(const std::vector<InputData>& inputs);
 };
 

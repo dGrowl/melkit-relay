@@ -37,8 +37,22 @@ static const char* SCHEMA_STRING = R"({
 					"inputs": {
 						"type": "array",
 						"items": {
-							"type": "integer",
-							"minimum": 0
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "integer",
+									"minimum": 0
+								},
+								"min": {
+									"type": "number"
+								},
+								"max": {
+									"type": "number"
+								}
+							},
+							"required": [
+								"id"
+							]
 						}
 					}
 				},
@@ -181,6 +195,92 @@ void Settings::setWsUrl(const char* newWsUrl) {
 
 	rj::Value value(newWsUrl, _document.GetAllocator());
 	_document["api_url"] = value;
+
+	saveUnlocked();
+}
+
+std::vector<SettingsParameter> Settings::getParameters() {
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	std::vector<SettingsParameter> result;
+
+	for (const auto& parameter : _document["parameters"].GetArray()) {
+		SettingsParameter settingsParam;
+		settingsParam.name = parameter["name"].GetString();
+
+		for (const auto& input : parameter["inputs"].GetArray()) {
+			vts::InputData data(input["id"].GetInt());
+
+			if (input.HasMember("min")) {
+				data.min = input["min"].GetFloat();
+			}
+			if (input.HasMember("max")) {
+				data.max = input["max"].GetFloat();
+			}
+
+			settingsParam.inputs.push_back(data);
+		}
+
+		result.push_back(std::move(settingsParam));
+	}
+
+	return result;
+}
+
+void Settings::removeParameter(const std::string& name) {
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	auto& parameters = _document["parameters"];
+
+	for (auto it = parameters.Begin(); it != parameters.End(); ++it) {
+		if (it->HasMember("name") && std::string((*it)["name"].GetString()) == name) {
+			parameters.Erase(it);
+			saveUnlocked();
+			return;
+		}
+	}
+}
+
+void Settings::setParameter(const vts::Parameter& newParameter) {
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	auto& parameters = _document["parameters"];
+	auto& allocator = _document.GetAllocator();
+
+	for (auto& parameter : parameters.GetArray()) {
+		if (parameter["name"].GetString() == newParameter.getName()) {
+			auto& inputs = parameter["inputs"];
+			inputs.Clear();
+
+			for (const auto& [inputId, input] : newParameter.getInputs()) {
+				rj::Value inputObject(rj::kObjectType);
+				inputObject.AddMember("id", rj::Value(inputId), allocator);
+				inputObject.AddMember("min", rj::Value(input.min), allocator);
+				inputObject.AddMember("max", rj::Value(input.max), allocator);
+				inputs.PushBack(inputObject, allocator);
+			}
+
+			saveUnlocked();
+			return;
+		}
+	}
+
+	rj::Value newParam(rj::kObjectType);
+	newParam.AddMember("name",
+	                   rj::Value(newParameter.getName().c_str(), allocator),
+	                   allocator);
+
+	rj::Value inputs(rj::kArrayType);
+	for (const auto& [inputId, input] : newParameter.getInputs()) {
+		rj::Value inputObject(rj::kObjectType);
+		inputObject.AddMember("id", rj::Value(inputId), allocator);
+		inputObject.AddMember("min", rj::Value(input.min), allocator);
+		inputObject.AddMember("max", rj::Value(input.max), allocator);
+		inputs.PushBack(inputObject, allocator);
+	}
+
+	newParam.AddMember("inputs", inputs, allocator);
+	parameters.PushBack(newParam, allocator);
 
 	saveUnlocked();
 }

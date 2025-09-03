@@ -119,6 +119,14 @@ static const std::unordered_map<ImGuiKey, vts::InputId> imguiToUioKeyMap = {
     {ImGuiKey_KeypadEqual, VC_KP_EQUALS},
 };
 
+std::unordered_map<vts::InputId, const char*> uioToStringMap = []() {
+	std::unordered_map<vts::InputId, const char*> map;
+	for (const auto& pair : imguiToUioKeyMap) {
+		map[pair.second] = ImGui::GetKeyName(pair.first);
+	}
+	return map;
+}();
+
 namespace gui {
 
 KeycodeView validImGuiKeys() {
@@ -127,6 +135,10 @@ KeycodeView validImGuiKeys() {
 
 vts::InputId convertImGuiToUioKey(const ImGuiKey keycode) {
 	return imguiToUioKeyMap.at(keycode);
+}
+
+const char* getUioKeyName(const Uint32 keycode) {
+	return uioToStringMap.at(keycode);
 }
 
 }  // namespace gui

@@ -150,6 +150,7 @@ void App::handleVtsInputParameterList(SDL_UserEvent& event) {
 		_params.add(p);
 	}
 	delete data;
+	loadParameterSettings();
 }
 
 void App::handleVtsParameterCreation() {
@@ -158,6 +159,19 @@ void App::handleVtsParameterCreation() {
 
 void App::handleVtsParameterDeletion() {
 	vts::getParameters(_wsClient);
+}
+
+void App::loadParameterSettings() {
+	auto settingsParameters = SETTINGS.getParameters();
+	for (const auto& settingsParameter : settingsParameters) {
+		auto it = _params.find(settingsParameter.name);
+		if (it == _params.end()) {
+			SETTINGS.removeParameter(settingsParameter.name);
+		}
+		else {
+			it->second.setInputs(settingsParameter.inputs);
+		}
+	}
 }
 
 void App::handleVtsMessage(SDL_UserEvent& event) {

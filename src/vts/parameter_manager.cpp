@@ -52,6 +52,15 @@ Parameter& ParameterManager::operator[](const char* name) {
 	return _params[name];
 }
 
+std::unordered_map<std::string, Parameter>::iterator ParameterManager::end() {
+	return _params.end();
+}
+
+std::unordered_map<std::string, Parameter>::iterator ParameterManager::find(
+    const std::string& name) {
+	return _params.find(name);
+}
+
 Parameter& ParameterManager::getSample() {
 	return _sample;
 }

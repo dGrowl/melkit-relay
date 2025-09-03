@@ -36,6 +36,10 @@ private:
 public:
 	ParameterManager() = default;
 	Parameter& operator[](const char* name);
+
+	std::unordered_map<std::string, Parameter>::iterator end();
+	std::unordered_map<std::string, Parameter>::iterator find(
+	    const std::string& name);
 	Parameter& getSample();
 	ParameterView values();
 	void add(const ParameterData& data);

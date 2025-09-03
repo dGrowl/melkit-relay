@@ -36,7 +36,7 @@ ConfigWindow::ConfigWindow(ws::IController& wsController,
            | SDL_WINDOW_HIDDEN
            | SDL_WINDOW_HIGH_PIXEL_DENSITY),
     _deleteParametersModal(_paramManager, _wsController),
-    _editParameterModal(_editingParameter) {
+    _editParameterModal(wsController, _editingParameter) {
 	SDL_strlcpy(_urlBuffer, wsController.getUrl(), sizeof(_urlBuffer));
 }
 

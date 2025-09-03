@@ -2,9 +2,65 @@
 
 #include "imgui/imgui.h"
 
+#include "core/settings.hpp"
 #include "gui/edit_parameter_modal.hpp"
+#include "gui/utility.hpp"
+#include "vts/request.hpp"
 
 namespace gui {
+
+static constexpr const char* UNKNOWN = "UNKNOWN";
+
+static constexpr const char* DEVICE_MOUSE = "Mouse";
+static constexpr const char* DEVICE_KEYBOARD = "Keyboard";
+
+static constexpr const char* KEY_EVENT_PRESS = "Press";
+static constexpr const char* MOUSE_EVENT_BUTTON = "Button";
+static constexpr const char* MOUSE_EVENT_MOVE_ABS = "Move (Abs)";
+static constexpr const char* MOUSE_EVENT_MOVE_REL = "Move (Rel)";
+
+static const char* MOUSE_BUTTONS[] = {"Left",
+                                      "Right",
+                                      "Middle",
+                                      "Fourth",
+                                      "Fifth"};
+
+static const char* AXES[]{"X", "Y"};
+
+struct InputStrings {
+	const char* device = UNKNOWN;
+	const char* event = UNKNOWN;
+	const char* target = UNKNOWN;
+};
+
+InputStrings getInputStrings(const vts::InputId id) {
+	InputStrings strings;
+	const vts::InputId event = id & 0xFFFF;
+	const vts::InputId target = id >> 16;
+	switch (event) {
+		case vts::InputEvent::MOUSE_BUTTON:
+			strings.device = DEVICE_MOUSE;
+			strings.event = MOUSE_EVENT_BUTTON;
+			strings.target = MOUSE_BUTTONS[target - 1];
+			break;
+		case vts::InputEvent::MOUSE_MOVE_ABS:
+			strings.device = DEVICE_MOUSE;
+			strings.event = MOUSE_EVENT_MOVE_ABS;
+			strings.target = AXES[target - 1];
+			break;
+		case vts::InputEvent::MOUSE_MOVE_REL:
+			strings.device = DEVICE_MOUSE;
+			strings.event = MOUSE_EVENT_MOVE_REL;
+			strings.target = AXES[target - 1];
+			break;
+		case vts::InputEvent::KEY:
+			strings.device = DEVICE_KEYBOARD;
+			strings.event = KEY_EVENT_PRESS;
+			strings.target = getUioKeyName(target);
+			break;
+	}
+	return strings;
+}
 
 void EditParameterModal::showAddInput() {
 	if (ImGui::Button("Add", ImVec2(128.0f, 0.0f))) {
@@ -29,13 +85,15 @@ void EditParameterModal::showInputs() {
 		for (auto& [id, data] : _editingParameter.getInputs()) {
 			ImGui::PushID(id);
 
+			auto fields = getInputStrings(id);
+
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
-			ImGui::Text(data.device);
+			ImGui::Text(fields.device);
 			ImGui::TableNextColumn();
-			ImGui::Text(data.event);
+			ImGui::Text(fields.event);
 			ImGui::TableNextColumn();
-			ImGui::Text(data.target);
+			ImGui::Text(fields.target);
 			ImGui::TableNextColumn();
 			ImGui::SetNextItemWidth(128.0f);
 			ImGui::BeginDisabled();
@@ -119,12 +177,17 @@ void EditParameterModal::showOutput() {
 	}
 }
 
-EditParameterModal::EditParameterModal(vts::Parameter& editingParameter) :
+EditParameterModal::EditParameterModal(ws::IController& wsController,
+                                       vts::Parameter& editingParameter) :
+    _wsController(wsController),
     _editingParameter(editingParameter),
     _addInputModal(editingParameter) {}
 
 void EditParameterModal::show() {
-	if (ImGui::BeginPopupModal(NAME, nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (ImGui::BeginPopupModal(
+	        NAME,
+	        nullptr,
+	        ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
 		ImGui::Text(_editingParameter.getName().c_str());
 
 		showInputs();
@@ -132,6 +195,8 @@ void EditParameterModal::show() {
 		showOutput();
 
 		if (ImGui::Button("Save", ImVec2(128.0f, 0.0f))) {
+			SETTINGS.setParameter(_editingParameter);
+			vts::createParameter(_wsController, _editingParameter);
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SetItemDefaultFocus();

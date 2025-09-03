@@ -79,6 +79,17 @@ void createParameter(ws::IController& wsController,
 	wsController.sendMessage(std::string(buffer, nChars));
 }
 
+void createParameter(ws::IController& wsController,
+                     const Parameter& parameter) {
+	size_t nChars = mg_snprintf(buffer,
+	                            sizeof(buffer),
+	                            PARAMETER_CREATION_REQUEST,
+	                            parameter.getName().c_str(),
+	                            parameter.min,
+	                            parameter.max);
+	wsController.sendMessage(std::string(buffer, nChars));
+}
+
 static const char* PARAMETER_DELETION_REQUEST = R"({
 	"apiName": "VTubeStudioPublicAPI",
 	"apiVersion": "1.0",

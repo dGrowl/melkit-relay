@@ -39,6 +39,10 @@ InputMap& Parameter::getInputs() {
 	return _inputs;
 };
 
+const InputMap& Parameter::getInputs() const {
+	return _inputs;
+};
+
 float Parameter::getNormalized() const {
 	return (_output - min) / (max - min);
 }
@@ -48,7 +52,7 @@ float Parameter::getOutput() const {
 }
 
 void Parameter::addInput(const InputData& data) {
-	_inputs.emplace(data.id, std::move(data));
+	_inputs.emplace(data.getId(), std::move(data));
 }
 
 float remap(float inValue,
@@ -78,6 +82,12 @@ void Parameter::handleInput(const InputId id, const float value) {
 		}
 	}
 	_output = nextOutput;
+}
+
+void Parameter::setInputs(const std::vector<InputData>& inputs) {
+	for (const auto& input : inputs) {
+		_inputs.insert_or_assign(input.getId(), input);
+	}
 }
 
 }  // namespace vts

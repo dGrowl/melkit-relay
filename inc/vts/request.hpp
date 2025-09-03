@@ -10,6 +10,8 @@ void authenticate(ws::IController& wsController);
 void createParameter(ws::IController& wsController,
                      const ParameterData& parameter);
 
+void createParameter(ws::IController& wsController, const Parameter& parameter);
+
 void deleteParameter(ws::IController& wsController, const Parameter parameter);
 
 void getParameters(ws::IController& wsController);

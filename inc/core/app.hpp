@@ -31,6 +31,8 @@ private:
 	void handleVtsParameterCreation();
 	void handleVtsParameterDeletion();
 
+	void loadParameterSettings();
+
 public:
 	App();
 	~App();

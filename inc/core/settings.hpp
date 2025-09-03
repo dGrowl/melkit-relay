@@ -2,12 +2,21 @@
 #define CORE_SETTINGS_HPP_
 
 #include <mutex>
+#include <vector>
 
 #include <rapidjson/document.h>
+
+#include "vts/input.hpp"
+#include "vts/parameter.hpp"
 
 namespace rj = rapidjson;
 
 namespace core {
+
+struct SettingsParameter {
+	std::string name;
+	std::vector<vts::InputData> inputs;
+};
 
 class Settings {
 private:
@@ -36,6 +45,10 @@ public:
 
 	const char* getWsUrl();
 	void setWsUrl(const char* newWsUrl);
+
+	std::vector<SettingsParameter> getParameters();
+	void removeParameter(const std::string& name);
+	void setParameter(const vts::Parameter& parameter);
 };
 
 };  // namespace core

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "vts/input.hpp"
 
@@ -35,8 +36,10 @@ public:
 	float getNormalized() const;
 	float getOutput() const;
 	InputMap& getInputs();
+	const InputMap& getInputs() const;
 	void addInput(const InputData& data);
 	void handleInput(const InputId id, const float value);
+	void setInputs(const std::vector<InputData>& inputs);
 };
 
 }  // namespace vts

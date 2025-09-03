@@ -35,16 +35,18 @@ enum Button : Uint32 {
 	FIFTH = 5 << 16,
 };
 
-struct InputData {
-	InputId id = 0;
+class InputData {
+private:
+	InputId _id;
 
-	float min = 0.0f;
-	float max = 1.0f;
-	float value = 0.0f;
+public:
+	float min;
+	float max;
+	float value;
 
-	const char* device = "UNKNOWN";
-	const char* event = "UNKNOWN";
-	const char* target = "UNKNOWN";
+	InputData(const InputId id);
+
+	inline InputId getId() const { return _id; }
 };
 
 }  // namespace vts

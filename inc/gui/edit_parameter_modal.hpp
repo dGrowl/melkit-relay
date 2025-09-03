@@ -3,11 +3,13 @@
 
 #include "gui/add_input_modal.hpp"
 #include "vts/parameter.hpp"
+#include "ws/controller.hpp"
 
 namespace gui {
 
 class EditParameterModal {
 private:
+	ws::IController& _wsController;
 	vts::Parameter& _editingParameter;
 
 	AddInputModal _addInputModal;
@@ -17,7 +19,8 @@ private:
 	void showOutput();
 
 public:
-	EditParameterModal(vts::Parameter& editingParameter);
+	EditParameterModal(ws::IController& wsController,
+	                   vts::Parameter& editingParameter);
 	void show();
 
 	constexpr static const char* NAME = "Edit Parameter";

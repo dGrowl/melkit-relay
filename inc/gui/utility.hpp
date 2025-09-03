@@ -19,6 +19,8 @@ KeycodeView validImGuiKeys();
 
 vts::InputId convertImGuiToUioKey(const ImGuiKey keycode);
 
+const char* getUioKeyName(const Uint32 keycode);
+
 }  // namespace gui
 
 #endif  // GUI_UTILITY_HPP_

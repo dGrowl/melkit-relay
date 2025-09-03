@@ -11,9 +11,9 @@ namespace vts {
 
 struct ParameterData {
 	std::string name;
-	float defaultValue;
-	float max;
-	float min;
+	float defaultValue = 0.0f;
+	float max = 1.0f;
+	float min = 0.0f;
 };
 
 using InputMap = std::unordered_map<InputId, InputData>;

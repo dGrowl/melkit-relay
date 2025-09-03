@@ -64,7 +64,7 @@ static const char* PARAMETER_CREATION_REQUEST = R"({
 		"explanation": "This is my new parameter.",
 		"min": %f,
 		"max": %f,
-		"defaultValue": %f
+		"defaultValue": 0.0
 	}
 })";
 

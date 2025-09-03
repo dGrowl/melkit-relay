@@ -126,19 +126,6 @@ void EditParameterModal::showOutput() {
 
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn();
-		ImGui::Text("Default");
-		ImGui::TableNextColumn();
-		ImGui::SetNextItemWidth(-1.0f);
-		ImGui::InputScalar("##default",
-		                   ImGuiDataType_Float,
-		                   &_editingParameter.defaultValue,
-		                   nullptr,
-		                   nullptr,
-		                   nullptr,
-		                   ImGuiInputTextFlags_None);
-
-		ImGui::TableNextRow();
-		ImGui::TableNextColumn();
 		ImGui::Text("Minimum");
 		ImGui::TableNextColumn();
 		ImGui::SetNextItemWidth(-1.0f);

@@ -1,4 +1,6 @@
-#include <imgui/imgui.h>
+#include <format>
+
+#include "imgui/imgui.h"
 
 #include "core/app.hpp"
 #include "core/settings.hpp"
@@ -12,8 +14,8 @@ namespace core {
 App::App() :
     _alive(true),
     _gpu(nullptr),
+    _params(),
     _wsClient(),
-    _params(_wsClient),
     _mnkMonitor(),
     _config(_wsClient, _params),
     _icon() {
@@ -88,6 +90,8 @@ void App::run() {
 		_config.render(_gpu);
 
 		_params.update();
+		checkParameterValues();
+
 		SDL_Delay(10);
 	}
 }
@@ -159,6 +163,23 @@ void App::handleVtsParameterCreation() {
 
 void App::handleVtsParameterDeletion() {
 	vts::getParameters(_wsClient);
+}
+
+void App::checkParameterValues() {
+	std::string payload;
+	for (auto& parameter : _params.values()) {
+		if (parameter.isFresh()) {
+			if (!payload.empty()) {
+				payload += ",";
+			}
+			payload += std::format(R"({{"id":"{}","value":{}}})",
+			                       parameter.getName(),
+			                       parameter.getOutput());
+		}
+	}
+	if (!payload.empty()) {
+		vts::setParameters(_wsClient, payload);
+	}
 }
 
 void App::loadParameterSettings() {

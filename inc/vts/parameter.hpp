@@ -23,6 +23,7 @@ private:
 	std::string _name;
 	InputMap _inputs;
 	float _output;
+	bool _fresh;
 
 public:
 	float defaultValue;
@@ -31,14 +32,16 @@ public:
 
 	Parameter();
 	Parameter(const ParameterData& data);
+
 	bool hasInputs() const;
+	bool isFresh();
+	const InputMap& getInputs() const;
 	const std::string& getName() const;
 	float getNormalized() const;
 	float getOutput() const;
 	InputMap& getInputs();
-	const InputMap& getInputs() const;
 	void addInput(const InputData& data);
-	bool handleInput(const InputId id, const float value);
+	void handleInput(const InputId id, const float value);
 	void removeInput(const InputId id);
 	void setInputs(const std::vector<InputData>& inputs);
 };

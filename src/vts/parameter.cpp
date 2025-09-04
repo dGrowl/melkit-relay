@@ -16,6 +16,7 @@ Parameter::Parameter() :
     _name(DEFAULT_PARAMETER_NAME),
     _inputs(),
     _output(0.0f),
+    _fresh(false),
     defaultValue(0.0f),
     max(1.0f),
     min(0.0f) {}
@@ -24,12 +25,21 @@ Parameter::Parameter(const ParameterData& data) :
     _name(data.name),
     _inputs(),
     _output(0.0f),
+    _fresh(false),
     defaultValue(data.defaultValue),
     max(data.max),
     min(data.min) {}
 
 bool Parameter::hasInputs() const {
 	return !_inputs.empty();
+}
+
+bool Parameter::isFresh() {
+	if (_fresh) {
+		_fresh = false;
+		return true;
+	}
+	return false;
 }
 
 const std::string& Parameter::getName() const {
@@ -67,10 +77,10 @@ float remap(float inValue,
 	       / (inUpper - inLower);
 }
 
-bool Parameter::handleInput(const InputId id, const float value) {
+void Parameter::handleInput(const InputId id, const float value) {
 	auto input = _inputs.find(id);
 	if (input == _inputs.end()) {
-		return false;
+		return;
 	}
 	auto& data = input->second;
 	data.value = std::clamp(value, data.min, data.max);
@@ -83,10 +93,10 @@ bool Parameter::handleInput(const InputId id, const float value) {
 		}
 	}
 	if (_output == nextOutput) {
-		return false;
+		return;
 	}
 	_output = nextOutput;
-	return true;
+	_fresh = true;
 }
 
 void Parameter::removeInput(const InputId id) {

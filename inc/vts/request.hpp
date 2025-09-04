@@ -1,6 +1,8 @@
 #ifndef VTS_REQUEST_HPP_
 #define VTS_REQUEST_HPP_
 
+#include <string_view>
+
 #include "vts/parameter.hpp"
 #include "ws/controller.hpp"
 
@@ -19,7 +21,8 @@ void deleteParameter(ws::IController& wsController, const Parameter& parameter);
 
 void getParameters(ws::IController& wsController);
 
-void setParameter(ws::IController& wsController, const Parameter& parameter);
+void setParameters(ws::IController& wsController,
+                   const std::string_view objectsString);
 
 };  // namespace vts
 

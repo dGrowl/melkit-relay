@@ -26,9 +26,7 @@ void ParameterManager::handleKeyDown(SDL_UserEvent& event) {
 	auto keycode = pointerToUnsigned<Uint32>(event.data1);
 	const Uint32 id = InputEvent::KEY | (keycode << 16);
 	for (auto& parameter : values()) {
-		if (parameter.handleInput(id, 1.0f)) {
-			setParameter(_wsController, parameter);
-		}
+		parameter.handleInput(id, 1.0f);
 	}
 	_sample.handleInput(id, 1.0f);
 }
@@ -37,9 +35,7 @@ void ParameterManager::handleKeyUp(SDL_UserEvent& event) {
 	auto keycode = pointerToUnsigned<Uint32>(event.data1);
 	const Uint32 id = InputEvent::KEY | (keycode << 16);
 	for (auto& parameter : values()) {
-		if (parameter.handleInput(id, 0.0f)) {
-			setParameter(_wsController, parameter);
-		}
+		parameter.handleInput(id, 0.0f);
 	}
 	_sample.handleInput(id, 0.0f);
 }
@@ -49,9 +45,7 @@ void ParameterManager::handleMouseButton(SDL_UserEvent& event, bool isClicked) {
 	const Uint32 id = InputEvent::MOUSE_BUTTON | button;
 	const float newValue = isClicked ? 1.0f : 0.0f;
 	for (auto& parameter : values()) {
-		if (parameter.handleInput(id, newValue)) {
-			setParameter(_wsController, parameter);
-		}
+		parameter.handleInput(id, newValue);
 	}
 	_sample.handleInput(id, newValue);
 }
@@ -98,8 +92,7 @@ void ParameterManager::handleMouseMove(SDL_UserEvent& event) {
 	_mouse.y = y;
 }
 
-ParameterManager::ParameterManager(ws::IController& wsController) :
-    _wsController(wsController),
+ParameterManager::ParameterManager() :
     _mouse(),
     _sample(),
     _params(),
@@ -163,14 +156,10 @@ void ParameterManager::update() {
 	_mouse.dy = sign(_mouse.dy)
 	            * std::clamp(std::abs(_mouse.dy) - decay, 0.0f, MOUSE_DELTA_MAX);
 	for (auto& parameter : values()) {
-		bool updated = false;
-		updated |= parameter.handleInput(MOUSE_MOVE_ABS_X, _mouse.x);
-		updated |= parameter.handleInput(MOUSE_MOVE_ABS_Y, _mouse.y);
-		updated |= parameter.handleInput(MOUSE_MOVE_REL_X, _mouse.dx);
-		updated |= parameter.handleInput(MOUSE_MOVE_REL_Y, _mouse.dy);
-		if (updated) {
-			setParameter(_wsController, parameter);
-		}
+		parameter.handleInput(MOUSE_MOVE_ABS_X, _mouse.x);
+		parameter.handleInput(MOUSE_MOVE_ABS_Y, _mouse.y);
+		parameter.handleInput(MOUSE_MOVE_REL_X, _mouse.dx);
+		parameter.handleInput(MOUSE_MOVE_REL_Y, _mouse.dy);
 	}
 	_sample.handleInput(MOUSE_MOVE_ABS_X, _mouse.x);
 	_sample.handleInput(MOUSE_MOVE_ABS_Y, _mouse.y);

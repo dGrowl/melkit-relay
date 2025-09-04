@@ -17,8 +17,9 @@ private:
 	bool _alive;
 	SDL_GPUDevice* _gpu;
 
-	ws::Client _wsClient;
 	vts::ParameterManager _params;
+
+	ws::Client _wsClient;
 	mnk::Monitor _mnkMonitor;
 
 	gui::ConfigWindow _config;
@@ -31,6 +32,7 @@ private:
 	void handleVtsParameterCreation();
 	void handleVtsParameterDeletion();
 
+	void checkParameterValues();
 	void loadParameterSettings();
 
 public:

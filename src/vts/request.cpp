@@ -12,35 +12,29 @@
 
 namespace vts {
 
-static char buffer[1024];
-
-static constexpr auto AUTHENTICATION_REQUEST = R"({
+static constexpr auto AUTHENTICATION_REQUEST = R"({{
 	"apiName": "VTubeStudioPublicAPI",
 	"apiVersion": "1.0",
 	"requestID": "SomeID",
 	"messageType": "AuthenticationRequest",
-	"data": {
+	"data": {{
 		"pluginName": "MelKIT::Relay",
 		"pluginDeveloper": "github->dGrowl",
-		"authenticationToken": "%s"
-	}
-})";
+		"authenticationToken": "{}"
+	}}
+}})";
 
 void authenticate(ws::IController& wsController) {
 	std::string token = SETTINGS.getAuthToken();
 	if (token.size() > 0) {
-		size_t nChars = mg_snprintf(buffer,
-		                            sizeof(buffer),
-		                            AUTHENTICATION_REQUEST,
-		                            token.c_str());
-		wsController.sendMessage(std::string(buffer, nChars));
+		wsController.sendMessage(std::format(AUTHENTICATION_REQUEST, token));
 	}
 	else {
 		requestToken(wsController);
 	}
 }
 
-static std::string AUTHENTICATION_TOKEN_REQUEST = R"({
+static constexpr auto AUTHENTICATION_TOKEN_REQUEST = R"({
 	"apiName": "VTubeStudioPublicAPI",
 	"apiVersion": "1.0",
 	"requestID": "SomeID",
@@ -53,62 +47,53 @@ static std::string AUTHENTICATION_TOKEN_REQUEST = R"({
 })";
 
 void requestToken(ws::IController& wsController) {
-	wsController.sendMessage(AUTHENTICATION_TOKEN_REQUEST);
+	wsController.sendMessage(std::string(AUTHENTICATION_TOKEN_REQUEST));
 }
 
-static constexpr const char* PARAMETER_CREATION_REQUEST = R"({
+static constexpr const char* PARAMETER_CREATION_REQUEST = R"({{
 	"apiName": "VTubeStudioPublicAPI",
 	"apiVersion": "1.0",
 	"requestID": "SomeID",
 	"messageType": "ParameterCreationRequest",
-	"data": {
-		"parameterName": "%s",
+	"data": {{
+		"parameterName": "{}",
 		"explanation": "This is my new parameter.",
-		"min": %f,
-		"max": %f,
+		"min": {},
+		"max": {},
 		"defaultValue": 0.0
-	}
-})";
+	}}
+}})";
 
 void createParameter(ws::IController& wsController,
                      const ParameterData& parameter) {
-	size_t nChars = mg_snprintf(buffer,
-	                            sizeof(buffer),
-	                            PARAMETER_CREATION_REQUEST,
-	                            parameter.name.c_str(),
-	                            parameter.min,
-	                            parameter.max);
-	wsController.sendMessage(std::string(buffer, nChars));
+	wsController.sendMessage(std::format(PARAMETER_CREATION_REQUEST,
+	                                     parameter.name,
+	                                     parameter.min,
+	                                     parameter.max));
 }
 
 void createParameter(ws::IController& wsController,
                      const Parameter& parameter) {
-	size_t nChars = mg_snprintf(buffer,
-	                            sizeof(buffer),
-	                            PARAMETER_CREATION_REQUEST,
-	                            parameter.getName().c_str(),
-	                            parameter.min,
-	                            parameter.max);
-	wsController.sendMessage(std::string(buffer, nChars));
+	wsController.sendMessage(std::format(PARAMETER_CREATION_REQUEST,
+	                                     parameter.getName(),
+	                                     parameter.min,
+	                                     parameter.max));
 }
 
-static constexpr auto PARAMETER_DELETION_REQUEST = R"({
+static constexpr auto PARAMETER_DELETION_REQUEST = R"({{
 	"apiName": "VTubeStudioPublicAPI",
 	"apiVersion": "1.0",
 	"requestID": "SomeID",
 	"messageType": "ParameterDeletionRequest",
-	"data": {
-		"parameterName": "%s"
-	}
-})";
+	"data": {{
+		"parameterName": "{}"
+	}}
+}})";
 
 void deleteParameter(ws::IController& wsController,
                      const Parameter& parameter) {
-	size_t nChars = mg_snprintf(buffer,
-	                            sizeof(buffer),
-	                            PARAMETER_DELETION_REQUEST,
-	                            parameter.getName().c_str());
-	wsController.sendMessage(std::string(buffer, nChars));
+	wsController.sendMessage(
+	    std::format(PARAMETER_DELETION_REQUEST, parameter.getName()));
 }
 
 static constexpr auto INPUT_PARAMETER_LIST_REQUEST = R"({

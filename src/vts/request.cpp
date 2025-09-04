@@ -12,7 +12,7 @@ namespace vts {
 
 static char buffer[1024];
 
-static const char* AUTHENTICATION_REQUEST = R"({
+static constexpr const char* AUTHENTICATION_REQUEST = R"({
 	"apiName": "VTubeStudioPublicAPI",
 	"apiVersion": "1.0",
 	"requestID": "SomeID",
@@ -54,7 +54,7 @@ void requestToken(ws::IController& wsController) {
 	wsController.sendMessage(AUTHENTICATION_TOKEN_REQUEST);
 }
 
-static const char* PARAMETER_CREATION_REQUEST = R"({
+static constexpr const char* PARAMETER_CREATION_REQUEST = R"({
 	"apiName": "VTubeStudioPublicAPI",
 	"apiVersion": "1.0",
 	"requestID": "SomeID",
@@ -90,7 +90,7 @@ void createParameter(ws::IController& wsController,
 	wsController.sendMessage(std::string(buffer, nChars));
 }
 
-static const char* PARAMETER_DELETION_REQUEST = R"({
+static constexpr const char* PARAMETER_DELETION_REQUEST = R"({
 	"apiName": "VTubeStudioPublicAPI",
 	"apiVersion": "1.0",
 	"requestID": "SomeID",
@@ -100,7 +100,8 @@ static const char* PARAMETER_DELETION_REQUEST = R"({
 	}
 })";
 
-void deleteParameter(ws::IController& wsController, const Parameter parameter) {
+void deleteParameter(ws::IController& wsController,
+                     const Parameter& parameter) {
 	size_t nChars = mg_snprintf(buffer,
 	                            sizeof(buffer),
 	                            PARAMETER_DELETION_REQUEST,
@@ -108,7 +109,7 @@ void deleteParameter(ws::IController& wsController, const Parameter parameter) {
 	wsController.sendMessage(std::string(buffer, nChars));
 }
 
-static const char* INPUT_PARAMETER_LIST_REQUEST = R"({
+static constexpr const char* INPUT_PARAMETER_LIST_REQUEST = R"({
 	"apiName": "VTubeStudioPublicAPI",
 	"apiVersion": "1.0",
 	"requestID": "SomeID",
@@ -117,6 +118,32 @@ static const char* INPUT_PARAMETER_LIST_REQUEST = R"({
 
 void getParameters(ws::IController& wsController) {
 	wsController.sendMessage(std::string(INPUT_PARAMETER_LIST_REQUEST));
+}
+
+static constexpr const char* INJECT_PARAMETER_DATA_REQUEST = R"({
+	"apiName": "VTubeStudioPublicAPI",
+	"apiVersion": "1.0",
+	"requestID": "SomeID",
+	"messageType": "InjectParameterDataRequest",
+	"data": {
+		"faceFound": false,
+		"mode": "set",
+		"parameterValues": [
+			{
+				"id": "%s",
+				"value": %f
+			}
+		]
+	}
+})";
+
+void setParameter(ws::IController& wsController, const Parameter& parameter) {
+	size_t nChars = mg_snprintf(buffer,
+	                            sizeof(buffer),
+	                            INJECT_PARAMETER_DATA_REQUEST,
+	                            parameter.getName().c_str(),
+	                            parameter.getOutput());
+	wsController.sendMessage(std::string(buffer, nChars));
 }
 
 };  // namespace vts

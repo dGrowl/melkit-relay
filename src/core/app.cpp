@@ -12,9 +12,9 @@ namespace core {
 App::App() :
     _alive(true),
     _gpu(nullptr),
-    _params(),
-    _mnkMonitor(),
     _wsClient(),
+    _params(_wsClient),
+    _mnkMonitor(),
     _config(_wsClient, _params),
     _icon() {
 	ws::allocateEvents();

@@ -17,9 +17,9 @@ private:
 	bool _alive;
 	SDL_GPUDevice* _gpu;
 
+	ws::Client _wsClient;
 	vts::ParameterManager _params;
 	mnk::Monitor _mnkMonitor;
-	ws::Client _wsClient;
 
 	gui::ConfigWindow _config;
 	gui::TrayIcon _icon;

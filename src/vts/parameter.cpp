@@ -5,6 +5,7 @@
 #include <libuiohook/uiohook.h>
 
 #include "mnk/event.hpp"
+#include "vts/parameter.hpp"
 #include "vts/response.hpp"
 
 namespace vts {
@@ -66,10 +67,10 @@ float remap(float inValue,
 	       / (inUpper - inLower);
 }
 
-void Parameter::handleInput(const InputId id, const float value) {
+bool Parameter::handleInput(const InputId id, const float value) {
 	auto input = _inputs.find(id);
 	if (input == _inputs.end()) {
-		return;
+		return false;
 	}
 	auto& data = input->second;
 	data.value = std::clamp(value, data.min, data.max);
@@ -81,7 +82,11 @@ void Parameter::handleInput(const InputId id, const float value) {
 			nextOutput = remappedValue;
 		}
 	}
+	if (_output == nextOutput) {
+		return false;
+	}
 	_output = nextOutput;
+	return true;
 }
 
 void Parameter::removeInput(const InputId id) {

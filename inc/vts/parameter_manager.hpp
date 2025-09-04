@@ -9,6 +9,7 @@
 
 #include "vts/input.hpp"
 #include "vts/parameter.hpp"
+#include "ws/controller.hpp"
 
 namespace vts {
 
@@ -25,6 +26,8 @@ using ParameterView =
 
 class ParameterManager {
 private:
+	ws::IController& _wsController;
+
 	MouseState _mouse;
 	Parameter _sample;
 	std::unordered_map<std::string, Parameter> _params;
@@ -38,7 +41,7 @@ private:
 	void handleMouseMove(SDL_UserEvent& event);
 
 public:
-	ParameterManager() = default;
+	ParameterManager(ws::IController& wsController);
 	Parameter& operator[](const char* name);
 
 	std::unordered_map<std::string, Parameter>::iterator end();

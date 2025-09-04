@@ -15,6 +15,8 @@ namespace vts {
 struct MouseState {
 	int x = 0;
 	int y = 0;
+	float dx = 0;
+	float dy = 0;
 };
 
 using ParameterView =
@@ -26,7 +28,9 @@ private:
 	MouseState _mouse;
 	Parameter _sample;
 	std::unordered_map<std::string, Parameter> _params;
-	Uint64 _mouseMovementResetTicks;
+
+	Uint64 _lastUpdateTimeMs;
+	Uint64 _nextUpdateTimeMs;
 
 	void handleKeyDown(SDL_UserEvent& event);
 	void handleKeyUp(SDL_UserEvent& event);
@@ -43,9 +47,9 @@ public:
 	Parameter& getSample();
 	ParameterView values();
 	void add(const ParameterData& data);
-	void checkInactivity();
 	void clear();
 	void handleEvent(SDL_UserEvent& event);
+	void update();
 };
 
 }  // namespace vts

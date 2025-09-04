@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <ranges>
 
 #include <SDL3/SDL_events.h>
@@ -81,42 +82,17 @@ constexpr InputId MOUSE_MOVE_REL_X =
 constexpr InputId MOUSE_MOVE_REL_Y =
     InputEvent::MOUSE_MOVE_REL | static_cast<InputId>(Axis::Y);
 
-static constexpr Uint64 INACTIVITY_DELAY_MS = 20;
-
 void ParameterManager::handleMouseMove(SDL_UserEvent& event) {
 	auto x = pointerToSigned<Sint16>(event.data1);
 	auto y = pointerToSigned<Sint16>(event.data2);
-	auto dx = x - _mouse.x;
-	auto dy = y - _mouse.y;
+	_mouse.dx += x - _mouse.x;
+	_mouse.dy += y - _mouse.y;
 	_mouse.x = x;
 	_mouse.y = y;
-	for (auto& parameter : values()) {
-		parameter.handleInput(MOUSE_MOVE_ABS_X, x);
-		parameter.handleInput(MOUSE_MOVE_ABS_Y, y);
-		parameter.handleInput(MOUSE_MOVE_REL_X, dx);
-		parameter.handleInput(MOUSE_MOVE_REL_Y, dy);
-	}
-	_sample.handleInput(MOUSE_MOVE_ABS_X, x);
-	_sample.handleInput(MOUSE_MOVE_ABS_Y, y);
-	_sample.handleInput(MOUSE_MOVE_REL_X, dx);
-	_sample.handleInput(MOUSE_MOVE_REL_Y, dy);
-	_mouseMovementResetTicks = SDL_GetTicks() + INACTIVITY_DELAY_MS;
 }
 
 void ParameterManager::add(const ParameterData& data) {
 	_params.emplace(data.name, data);
-}
-
-void ParameterManager::checkInactivity() {
-	if (SDL_GetTicks() >= _mouseMovementResetTicks) {
-		for (auto& parameter : values()) {
-			parameter.handleInput(MOUSE_MOVE_REL_X, 0.0f);
-			parameter.handleInput(MOUSE_MOVE_REL_Y, 0.0f);
-		}
-		_sample.handleInput(MOUSE_MOVE_REL_X, 0.0f);
-		_sample.handleInput(MOUSE_MOVE_REL_Y, 0.0f);
-		_mouseMovementResetTicks = UINT64_MAX;
-	}
 }
 
 void ParameterManager::clear() {
@@ -141,6 +117,48 @@ void ParameterManager::handleEvent(SDL_UserEvent& event) {
 			handleMouseButton(event, false);
 			break;
 	}
+}
+
+constexpr float sign(const float x) {
+	if (x > 0.0f)
+		return 1.0f;
+	if (x < 0.0f)
+		return -1.0f;
+	return 0.0f;
+}
+
+constexpr Uint64 UPDATE_DELAY_MS = 30;
+
+constexpr float MOUSE_DELTA_DECAY_RATE_MS = .65f;
+
+constexpr float MOUSE_DELTA_MAX = 64.0f;
+
+void ParameterManager::update() {
+	const Uint64 timeMs = SDL_GetTicks();
+	if (timeMs <= _nextUpdateTimeMs) {
+		return;
+	}
+	if (_mouse.dx == 0.0f && _mouse.dy == 0.0f) {
+		return;
+	}
+	const Uint64 dtMs = timeMs - _lastUpdateTimeMs;
+	const float decay = MOUSE_DELTA_DECAY_RATE_MS * dtMs;
+	_mouse.dx = sign(_mouse.dx)
+	            * std::clamp(std::abs(_mouse.dx) - decay, 0.0f, MOUSE_DELTA_MAX);
+	_mouse.dy = sign(_mouse.dy)
+	            * std::clamp(std::abs(_mouse.dy) - decay, 0.0f, MOUSE_DELTA_MAX);
+	for (auto& parameter : values()) {
+		parameter.handleInput(MOUSE_MOVE_ABS_X, _mouse.x);
+		parameter.handleInput(MOUSE_MOVE_ABS_Y, _mouse.y);
+		parameter.handleInput(MOUSE_MOVE_REL_X, _mouse.dx);
+		parameter.handleInput(MOUSE_MOVE_REL_Y, _mouse.dy);
+	}
+	_sample.handleInput(MOUSE_MOVE_ABS_X, _mouse.x);
+	_sample.handleInput(MOUSE_MOVE_ABS_Y, _mouse.y);
+	_sample.handleInput(MOUSE_MOVE_REL_X, _mouse.dx);
+	_sample.handleInput(MOUSE_MOVE_REL_Y, _mouse.dy);
+	_nextUpdateTimeMs = timeMs + UPDATE_DELAY_MS;
+	_lastUpdateTimeMs = timeMs;
 }
 
 }  // namespace vts

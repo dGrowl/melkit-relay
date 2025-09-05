@@ -100,8 +100,8 @@ void EditParameterModal::showInputs() {
 			ImGui::BeginDisabled();
 			ImGui::SliderFloat("##input-value",
 			                   &data.value,
-			                   data.min,
-			                   data.max,
+			                   data.outMin,
+			                   data.outMax,
 			                   "%.3f",
 			                   ImGuiSliderFlags_NoInput);
 			ImGui::EndDisabled();

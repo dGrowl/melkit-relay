@@ -212,10 +212,10 @@ std::vector<SettingsParameter> Settings::getParameters() {
 			vts::InputData data(input["id"].GetInt());
 
 			if (input.HasMember("min")) {
-				data.min = input["min"].GetFloat();
+				data.outMin = input["min"].GetFloat();
 			}
 			if (input.HasMember("max")) {
-				data.max = input["max"].GetFloat();
+				data.outMax = input["max"].GetFloat();
 			}
 
 			settingsParam.inputs.push_back(data);
@@ -255,8 +255,8 @@ void Settings::setParameter(const vts::Parameter& newParameter) {
 			for (const auto& [inputId, input] : newParameter.getInputs()) {
 				rj::Value inputObject(rj::kObjectType);
 				inputObject.AddMember("id", rj::Value(inputId), allocator);
-				inputObject.AddMember("min", rj::Value(input.min), allocator);
-				inputObject.AddMember("max", rj::Value(input.max), allocator);
+				inputObject.AddMember("min", rj::Value(input.outMin), allocator);
+				inputObject.AddMember("max", rj::Value(input.outMax), allocator);
 				inputs.PushBack(inputObject, allocator);
 			}
 
@@ -274,8 +274,8 @@ void Settings::setParameter(const vts::Parameter& newParameter) {
 	for (const auto& [inputId, input] : newParameter.getInputs()) {
 		rj::Value inputObject(rj::kObjectType);
 		inputObject.AddMember("id", rj::Value(inputId), allocator);
-		inputObject.AddMember("min", rj::Value(input.min), allocator);
-		inputObject.AddMember("max", rj::Value(input.max), allocator);
+		inputObject.AddMember("min", rj::Value(input.outMin), allocator);
+		inputObject.AddMember("max", rj::Value(input.outMax), allocator);
 		inputs.PushBack(inputObject, allocator);
 	}
 

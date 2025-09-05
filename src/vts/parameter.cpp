@@ -66,36 +66,23 @@ void Parameter::addInput(const InputData& data) {
 	_inputs.emplace(data.getId(), std::move(data));
 }
 
-float remap(float inValue,
-            float inLower,
-            float inUpper,
-            float outLower,
-            float outUpper) {
-	return outLower
-	       + (inValue - inLower)
-	       * (outUpper - outLower)
-	       / (inUpper - inLower);
-}
-
 void Parameter::handleInput(const InputId id, const float value) {
 	auto input = _inputs.find(id);
 	if (input == _inputs.end()) {
 		return;
 	}
-	auto& data = input->second;
-	data.value = std::clamp(value, data.min, data.max);
-	float nextOutput = defaultValue;
+	input->second.update(value);
+	float newOutput = defaultValue;
 	for (InputData& data : _inputs | std::views::values) {
-		float remappedValue = remap(data.value, data.min, data.max, min, max);
-		if (std::abs(nextOutput - defaultValue)
-		    < std::abs(remappedValue - defaultValue)) {
-			nextOutput = remappedValue;
+		if (std::abs(newOutput - defaultValue)
+		    < std::abs(data.value - defaultValue)) {
+			newOutput = data.value;
 		}
 	}
-	if (_output == nextOutput) {
+	if (_output == newOutput) {
 		return;
 	}
-	_output = nextOutput;
+	_output = newOutput;
 	_fresh = true;
 }
 

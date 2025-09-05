@@ -38,15 +38,18 @@ enum Button : Uint32 {
 class InputData {
 private:
 	InputId _id;
+	float _inMin;
+	float _inMax;
 
 public:
-	float min;
-	float max;
+	float outMin;
+	float outMax;
 	float value;
 
 	InputData(const InputId id);
 
-	inline InputId getId() const { return _id; }
+	InputId getId() const;
+	void update(float inValue);
 };
 
 }  // namespace vts

@@ -135,7 +135,7 @@ constexpr float sign(const float x) {
 	return 0.0f;
 }
 
-constexpr Uint64 UPDATE_DELAY_MS = 30;
+constexpr Uint64 UPDATE_DELAY_MS = 20;
 
 constexpr float MOUSE_DELTA_DECAY_RATE_MS = .65f;
 

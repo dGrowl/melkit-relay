@@ -13,12 +13,16 @@ unsigned ComboBox::getIndex() const {
 	return _i;
 }
 
-void ComboBox::show() {
+bool ComboBox::show() {
 	const char* selectedData = _options[_i];
+	bool updated = false;
 	if (ImGui::BeginCombo(_label, selectedData, 0)) {
 		for (unsigned i = 0; i < _options.size(); i++) {
 			const bool isSelected = (_i == i);
 			if (ImGui::Selectable(_options[i], isSelected)) {
+				if (_i != i) {
+					updated = true;
+				}
 				_i = i;
 			}
 			if (isSelected) {
@@ -27,6 +31,7 @@ void ComboBox::show() {
 		}
 		ImGui::EndCombo();
 	}
+	return updated;
 }
 
 }  // namespace gui

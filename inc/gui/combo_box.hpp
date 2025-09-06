@@ -15,7 +15,7 @@ public:
 	ComboBox(const char* label, const std::vector<const char*>& options);
 
 	unsigned getIndex() const;
-	void show();
+	bool show();
 };
 
 }  // namespace gui

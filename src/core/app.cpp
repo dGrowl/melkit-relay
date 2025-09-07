@@ -4,6 +4,7 @@
 
 #include "core/app.hpp"
 #include "core/settings.hpp"
+#include "gui/utility.hpp"
 #include "mnk/event.hpp"
 #include "vts/request.hpp"
 #include "vts/response.hpp"
@@ -52,7 +53,9 @@ int App::init() {
 	auto& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
 	ImGui::StyleColorsDark();
+	gui::initColors();
 
 	_icon.setConfigCallback(App::openConfigCallback, this);
 	_icon.setQuitCallback(App::quitCallback, this);

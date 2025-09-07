@@ -6,7 +6,7 @@
 namespace ws {
 
 enum Event : Uint32 {
-	OPEN = SDL_EVENT_USER + 2,
+	OPEN    = SDL_EVENT_USER + 2,
 	MESSAGE = OPEN + 1,
 };
 

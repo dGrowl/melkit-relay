@@ -11,7 +11,7 @@ ComboBox::ComboBox(const char* label, const std::vector<const char*>& options) :
 
 bool ComboBox::show() {
 	const char* selectedData = _options[_i];
-	bool updated = false;
+	bool        updated      = false;
 	if (ImGui::BeginCombo(_label, selectedData, 0)) {
 		for (unsigned i = 0; i < _options.size(); i++) {
 			const bool isSelected = (_i == i);

@@ -14,8 +14,8 @@ InputData::InputData(const InputId id) :
     isInverted(false) {
 	const InputId event = id & 0xFFFF;
 	if (event == MOUSE_MOVE_REL) {
-		_inMin = -64.0f;
-		_inMax = 64.0f;
+		_inMin  = -64.0f;
+		_inMax  = 64.0f;
 		_outMin = -1.0f;
 	}
 };
@@ -50,7 +50,7 @@ float remap(float inValue,
 void InputData::update(float inValue) {
 	inValue = std::clamp(inValue, _inMin, _inMax);
 	inValue = remap(inValue, _inMin, _inMax, _outMin, _outMax);
-	_value = inValue;
+	_value  = inValue;
 }
 
 }  // namespace vts

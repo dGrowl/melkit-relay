@@ -95,7 +95,7 @@ Settings::~Settings() {
 bool Settings::validate() {
 	rj::Document baseDoc;
 	baseDoc.Parse(SCHEMA_STRING);
-	rj::SchemaDocument schemaDoc(baseDoc);
+	rj::SchemaDocument  schemaDoc(baseDoc);
 	rj::SchemaValidator validator(schemaDoc);
 	return _document.Accept(validator);
 }
@@ -160,7 +160,7 @@ void Settings::save() {
 }
 
 void Settings::saveUnlocked() {
-	rj::StringBuffer buffer;
+	rj::StringBuffer                   buffer;
 	rj::PrettyWriter<rj::StringBuffer> writer(buffer);
 	_document.Accept(writer);
 
@@ -249,7 +249,7 @@ void Settings::setParameter(const vts::Parameter& newParameter) {
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	auto& parameters = _document["parameters"];
-	auto& allocator = _document.GetAllocator();
+	auto& allocator  = _document.GetAllocator();
 
 	for (auto& parameter : parameters.GetArray()) {
 		if (parameter["name"].GetString() == newParameter.getName()) {

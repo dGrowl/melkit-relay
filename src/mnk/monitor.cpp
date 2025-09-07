@@ -25,34 +25,34 @@ Monitor::~Monitor() {
 	}
 }
 
-void Monitor::buildKeyDown(SDL_UserEvent& userEvent,
+void Monitor::buildKeyDown(SDL_UserEvent&       userEvent,
                            uiohook_event* const hookEvent) {
-	userEvent.code = vts::ActionCode::KEY_DOWN;
+	userEvent.code  = vts::ActionCode::KEY_DOWN;
 	userEvent.data1 = unsignedToPointer(hookEvent->data.keyboard.keycode);
 }
 
-void Monitor::buildKeyUp(SDL_UserEvent& userEvent,
+void Monitor::buildKeyUp(SDL_UserEvent&       userEvent,
                          uiohook_event* const hookEvent) {
-	userEvent.code = vts::ActionCode::KEY_UP;
+	userEvent.code  = vts::ActionCode::KEY_UP;
 	userEvent.data1 = unsignedToPointer(hookEvent->data.keyboard.keycode);
 }
 
-void Monitor::buildMouseMove(SDL_UserEvent& userEvent,
+void Monitor::buildMouseMove(SDL_UserEvent&       userEvent,
                              uiohook_event* const hookEvent) {
-	userEvent.code = vts::ActionCode::MOUSE_MOVE;
+	userEvent.code  = vts::ActionCode::MOUSE_MOVE;
 	userEvent.data1 = signedToPointer(hookEvent->data.mouse.x);
 	userEvent.data2 = signedToPointer(hookEvent->data.mouse.y);
 }
 
-void Monitor::buildMouseClick(SDL_UserEvent& userEvent,
+void Monitor::buildMouseClick(SDL_UserEvent&       userEvent,
                               uiohook_event* const hookEvent) {
-	userEvent.code = vts::ActionCode::MOUSE_CLICK;
+	userEvent.code  = vts::ActionCode::MOUSE_CLICK;
 	userEvent.data1 = unsignedToPointer(hookEvent->data.mouse.button << 16);
 }
 
-void Monitor::buildMouseRelease(SDL_UserEvent& userEvent,
+void Monitor::buildMouseRelease(SDL_UserEvent&       userEvent,
                                 uiohook_event* const hookEvent) {
-	userEvent.code = vts::ActionCode::MOUSE_RELEASE;
+	userEvent.code  = vts::ActionCode::MOUSE_RELEASE;
 	userEvent.data1 = unsignedToPointer(hookEvent->data.mouse.button << 16);
 }
 

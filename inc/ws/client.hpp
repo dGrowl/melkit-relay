@@ -16,29 +16,29 @@ namespace ws {
 
 class Client : public IController {
 private:
-	std::atomic<bool> _alive;
+	std::atomic<bool>   _alive;
 	std::atomic<Status> _status;
-	std::string _url;
-	std::thread _thread;
+	std::string         _url;
+	std::thread         _thread;
 
-	std::mutex _sendMutex;
+	std::mutex              _sendMutex;
 	std::queue<std::string> _sendQueue;
 
 public:
 	Client();
 	static void handleEvent(mg_connection* connection, int event, void* eventData);
-	void handleError(const char* description);
-	void handleOpen();
-	void setStatus(const Status newStatus);
-	void threadFn();
+	void        handleError(const char* description);
+	void        handleOpen();
+	void        setStatus(const Status newStatus);
+	void        threadFn();
 
 	// IController
 	const char* getUrl() override;
-	Status getStatus() override;
-	void sendMessage(const std::string& message) override;
-	void setUrl(const char* url) override;
-	void start() override;
-	void stop() override;
+	Status      getStatus() override;
+	void        sendMessage(const std::string& message) override;
+	void        setUrl(const char* url) override;
+	void        start() override;
+	void        stop() override;
 };
 
 }  // namespace ws

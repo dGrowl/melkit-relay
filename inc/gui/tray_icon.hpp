@@ -7,7 +7,7 @@ namespace gui {
 
 class TrayIcon {
 private:
-	SDL_Tray* _tray;
+	SDL_Tray*     _tray;
 	SDL_TrayMenu* _menu;
 
 	SDL_TrayEntry* _configEntry;

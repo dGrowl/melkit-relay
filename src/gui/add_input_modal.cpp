@@ -8,12 +8,12 @@
 
 namespace gui {
 
-static constexpr unsigned DEVICE_MOUSE = 0;
+static constexpr unsigned DEVICE_MOUSE    = 0;
 static constexpr unsigned DEVICE_KEYBOARD = 1;
 
 static std::vector<const char*> DEVICES{"Mouse", "Keyboard"};
 
-static constexpr unsigned MOUSE_EVENT_BUTTON = 0;
+static constexpr unsigned MOUSE_EVENT_BUTTON        = 0;
 static constexpr unsigned MOUSE_EVENT_MOVE_ABSOLUTE = 1;
 static constexpr unsigned MOUSE_EVENT_MOVE_RELATIVE = 2;
 
@@ -21,11 +21,11 @@ static std::vector<const char*> MOUSE_EVENTS{"Button",
                                              "Move (Absolute)",
                                              "Move (Relative)"};
 
-static constexpr unsigned MOUSE_BUTTON_LEFT = 0;
-static constexpr unsigned MOUSE_BUTTON_RIGHT = 1;
+static constexpr unsigned MOUSE_BUTTON_LEFT   = 0;
+static constexpr unsigned MOUSE_BUTTON_RIGHT  = 1;
 static constexpr unsigned MOUSE_BUTTON_MIDDLE = 2;
 static constexpr unsigned MOUSE_BUTTON_FOURTH = 3;
-static constexpr unsigned MOUSE_BUTTON_FIFTH = 4;
+static constexpr unsigned MOUSE_BUTTON_FIFTH  = 4;
 
 static std::vector<const char*> MOUSE_BUTTONS{"Left",
                                               "Right",
@@ -65,8 +65,8 @@ vts::InputId AddInputModal::getMouseButtonId() const {
 }
 
 vts::InputData AddInputModal::buildInputData() const {
-	vts::InputId id = 0;
-	const auto device = _deviceSelector.getIndex();
+	vts::InputId id     = 0;
+	const auto   device = _deviceSelector.getIndex();
 	if (device == DEVICE_MOUSE) {
 		const auto event = _mouseEventSelector.getIndex();
 		switch (event) {
@@ -167,7 +167,7 @@ void AddInputModal::showKeyboardControls() {
 
 	for (const ImGuiKey key : gui::validImGuiKeys()) {
 		if (ImGui::IsKeyPressed(key)) {
-			_selectedKey = key;
+			_selectedKey     = key;
 			_selectedKeyName = ImGui::GetKeyName(key);
 			break;
 		}

@@ -7,16 +7,16 @@ namespace gui {
 
 class ComboBox {
 private:
-	const char* _label;
+	const char*                     _label;
 	const std::vector<const char*>& _options;
-	unsigned _i;
+	unsigned                        _i;
 
 public:
 	ComboBox(const char* label, const std::vector<const char*>& options);
 
-	bool show();
+	bool     show();
 	unsigned getIndex() const;
-	void setIndex(const unsigned i);
+	void     setIndex(const unsigned i);
 };
 
 }  // namespace gui

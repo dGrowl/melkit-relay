@@ -10,10 +10,10 @@ namespace gui {
 class EditParameterModal {
 private:
 	ws::IController& _wsController;
-	vts::Parameter& _editingParameter;
+	vts::Parameter&  _editingParameter;
 
 	AddInputModal _addInputModal;
-	ComboBox _blendModeSelector;
+	ComboBox      _blendModeSelector;
 
 	vts::InputId _inputIdToDelete;
 
@@ -26,7 +26,7 @@ private:
 
 public:
 	EditParameterModal(ws::IController& wsController,
-	                   vts::Parameter& editingParameter);
+	                   vts::Parameter&  editingParameter);
 
 	void refresh();
 	void show();

@@ -12,14 +12,14 @@ namespace gui {
 class DeleteParametersModal {
 private:
 	vts::ParameterManager& _parameterManager;
-	ws::IController& _wsController;
+	ws::IController&       _wsController;
 
-	bool _allSelected = false;
+	bool                                  _allSelected = false;
 	std::unordered_map<std::string, bool> _selectedState;
 
 public:
 	DeleteParametersModal(vts::ParameterManager& parameterManager,
-	                      ws::IController& wsController);
+	                      ws::IController&       wsController);
 	void show();
 
 	constexpr static const char* NAME = "Delete Parameters";

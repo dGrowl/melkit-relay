@@ -20,7 +20,7 @@ static const char* STATUS_TEXT[] = {
     "CONNECTED",
 };
 
-ConfigWindow::ConfigWindow(ws::IController& wsController,
+ConfigWindow::ConfigWindow(ws::IController&       wsController,
                            vts::ParameterManager& paramManager) :
     _title("Configuration"),
     _height(540),
@@ -47,7 +47,7 @@ int ConfigWindow::open(SDL_GPUDevice* gpu) {
 	}
 
 	const SDL_DisplayID primaryDisplay = SDL_GetPrimaryDisplay();
-	const float mainScale = SDL_GetDisplayContentScale(primaryDisplay);
+	const float         mainScale = SDL_GetDisplayContentScale(primaryDisplay);
 
 	_window = SDL_CreateWindow(_title,
 	                           (int)(_width * mainScale),
@@ -74,9 +74,9 @@ int ConfigWindow::open(SDL_GPUDevice* gpu) {
 
 	ImGui_ImplSDL3_InitForSDLGPU(_window);
 	ImGui_ImplSDLGPU3_InitInfo initInfo = {};
-	initInfo.Device = gpu;
+	initInfo.Device                     = gpu;
 	initInfo.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(gpu, _window);
-	initInfo.MSAASamples = SDL_GPU_SAMPLECOUNT_1;
+	initInfo.MSAASamples       = SDL_GPU_SAMPLECOUNT_1;
 	ImGui_ImplSDLGPU3_Init(&initInfo);
 
 	return 0;
@@ -117,11 +117,11 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 	ImGui::End();
 
 	ImGui::Render();
-	auto drawData = ImGui::GetDrawData();
+	auto       drawData = ImGui::GetDrawData();
 	const bool isMinimized =
 	    (drawData->DisplaySize.x <= 0.0f || drawData->DisplaySize.y <= 0.0f);
 
-	auto commandBuffer = SDL_AcquireGPUCommandBuffer(gpu);
+	auto            commandBuffer    = SDL_AcquireGPUCommandBuffer(gpu);
 	SDL_GPUTexture* swapchainTexture = nullptr;
 	SDL_WaitAndAcquireGPUSwapchainTexture(commandBuffer,
 	                                      _window,
@@ -133,13 +133,13 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 		ImGui_ImplSDLGPU3_PrepareDrawData(drawData, commandBuffer);
 
 		SDL_GPUColorTargetInfo targetInfo = {};
-		targetInfo.texture = swapchainTexture;
-		targetInfo.clear_color = _clearColor;
-		targetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
-		targetInfo.store_op = SDL_GPU_STOREOP_STORE;
-		targetInfo.mip_level = 0;
-		targetInfo.layer_or_depth_plane = 0;
-		targetInfo.cycle = false;
+		targetInfo.texture                = swapchainTexture;
+		targetInfo.clear_color            = _clearColor;
+		targetInfo.load_op                = SDL_GPU_LOADOP_CLEAR;
+		targetInfo.store_op               = SDL_GPU_STOREOP_STORE;
+		targetInfo.mip_level              = 0;
+		targetInfo.layer_or_depth_plane   = 0;
+		targetInfo.cycle                  = false;
 
 		auto renderPass =
 		    SDL_BeginGPURenderPass(commandBuffer, &targetInfo, 1, nullptr);
@@ -229,10 +229,10 @@ void ConfigWindow::showCreateParameter() {
 
 		if (ImGui::Button("OK", ImVec2(120, 0))) {
 			vts::ParameterData newParam{
-			    .name = std::format("MK_{}", _newParamNameBuffer),
+			    .name         = std::format("MK_{}", _newParamNameBuffer),
 			    .defaultValue = 0.0f,
-			    .max = 1.0f,
-			    .min = 0.0f,
+			    .max          = 1.0f,
+			    .min          = 0.0f,
 			};
 			vts::createParameter(_wsController, newParam);
 			ImGui::CloseCurrentPopup();

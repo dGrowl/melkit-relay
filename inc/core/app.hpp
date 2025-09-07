@@ -14,16 +14,16 @@ namespace core {
 
 class App {
 private:
-	bool _alive;
+	bool           _alive;
 	SDL_GPUDevice* _gpu;
 
 	vts::ParameterManager _params;
 
-	ws::Client _wsClient;
+	ws::Client   _wsClient;
 	mnk::Monitor _mnkMonitor;
 
 	gui::ConfigWindow _config;
-	gui::TrayIcon _icon;
+	gui::TrayIcon     _icon;
 
 	void handleVtsAuthenticationFailure();
 	void handleVtsAuthenticationSuccess();
@@ -39,7 +39,7 @@ public:
 	App();
 	~App();
 
-	int init();
+	int  init();
 	void quit();
 	void run();
 	void openConfig();

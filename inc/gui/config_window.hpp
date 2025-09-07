@@ -23,22 +23,22 @@ constexpr Uint8 MAX_PARAM_NAME_LENGTH = 128;
 class ConfigWindow {
 private:
 	const char* _title;
-	int _height;
-	int _width;
-	SDL_FColor _clearColor;
+	int         _height;
+	int         _width;
+	SDL_FColor  _clearColor;
 
-	vts::Parameter& _editingParameter;
+	vts::Parameter&        _editingParameter;
 	vts::ParameterManager& _paramManager;
-	ws::IController& _wsController;
+	ws::IController&       _wsController;
 
 	char _urlBuffer[MAX_URL_LENGTH];
 	char _newParamNameBuffer[MAX_PARAM_NAME_LENGTH];
 
-	SDL_Window* _window;
+	SDL_Window*     _window;
 	SDL_WindowFlags _flags;
 
 	DeleteParametersModal _deleteParametersModal;
-	EditParameterModal _editParameterModal;
+	EditParameterModal    _editParameterModal;
 
 	void showCreateParameter();
 	void showDeleteParameters();
@@ -50,12 +50,12 @@ private:
 	void showVtsConnection();
 
 public:
-	ConfigWindow(ws::IController& wsController,
+	ConfigWindow(ws::IController&       wsController,
 	             vts::ParameterManager& paramManager);
-	int open(SDL_GPUDevice* gpu);
-	void close(SDL_GPUDevice* gpu);
-	void render(SDL_GPUDevice* gpu);
-	bool isOpen() const;
+	int          open(SDL_GPUDevice* gpu);
+	void         close(SDL_GPUDevice* gpu);
+	void         render(SDL_GPUDevice* gpu);
+	bool         isOpen() const;
 	SDL_WindowID id() const;
 };
 

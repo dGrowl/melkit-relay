@@ -29,8 +29,8 @@ struct InputParameterListData {
 };
 
 void buildResponseEvent(SDL_UserEvent& user,
-                        char* jsonString,
-                        const int nChars);
+                        char*          jsonString,
+                        const int      nChars);
 
 }  // namespace vts
 

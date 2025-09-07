@@ -10,7 +10,7 @@ namespace gui {
 
 DeleteParametersModal::DeleteParametersModal(
     vts::ParameterManager& parameterManager,
-    ws::IController& wsController) :
+    ws::IController&       wsController) :
     _parameterManager(parameterManager),
     _wsController(wsController) {}
 

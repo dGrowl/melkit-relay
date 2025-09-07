@@ -23,8 +23,8 @@ T pointerToSigned(const void* p) {
 namespace vts {
 
 void ParameterManager::handleKeyDown(SDL_UserEvent& event) {
-	auto keycode = pointerToUnsigned<Uint32>(event.data1);
-	const Uint32 id = InputEvent::KEY | (keycode << 16);
+	auto         keycode = pointerToUnsigned<Uint32>(event.data1);
+	const Uint32 id      = InputEvent::KEY | (keycode << 16);
 	for (auto& parameter : values()) {
 		parameter.handleInput(id, 1.0f);
 	}
@@ -32,8 +32,8 @@ void ParameterManager::handleKeyDown(SDL_UserEvent& event) {
 }
 
 void ParameterManager::handleKeyUp(SDL_UserEvent& event) {
-	auto keycode = pointerToUnsigned<Uint32>(event.data1);
-	const Uint32 id = InputEvent::KEY | (keycode << 16);
+	auto         keycode = pointerToUnsigned<Uint32>(event.data1);
+	const Uint32 id      = InputEvent::KEY | (keycode << 16);
 	for (auto& parameter : values()) {
 		parameter.handleInput(id, 0.0f);
 	}
@@ -41,9 +41,9 @@ void ParameterManager::handleKeyUp(SDL_UserEvent& event) {
 }
 
 void ParameterManager::handleMouseButton(SDL_UserEvent& event, bool isClicked) {
-	auto button = pointerToUnsigned<Uint32>(event.data1);
-	const Uint32 id = InputEvent::MOUSE_BUTTON | button;
-	const float newValue = isClicked ? 1.0f : 0.0f;
+	auto         button   = pointerToUnsigned<Uint32>(event.data1);
+	const Uint32 id       = InputEvent::MOUSE_BUTTON | button;
+	const float  newValue = isClicked ? 1.0f : 0.0f;
 	for (auto& parameter : values()) {
 		parameter.handleInput(id, newValue);
 	}
@@ -149,9 +149,9 @@ void ParameterManager::update() {
 	if (_mouse.dx == 0.0f && _mouse.dy == 0.0f) {
 		return;
 	}
-	const Uint64 dtMs = timeMs - _lastUpdateTimeMs;
-	const float decay = MOUSE_DELTA_DECAY_RATE_MS * dtMs;
-	_mouse.dx = sign(_mouse.dx)
+	const Uint64 dtMs  = timeMs - _lastUpdateTimeMs;
+	const float  decay = MOUSE_DELTA_DECAY_RATE_MS * dtMs;
+	_mouse.dx          = sign(_mouse.dx)
 	            * std::clamp(std::abs(_mouse.dx) - decay, 0.0f, MOUSE_DELTA_MAX);
 	_mouse.dy = sign(_mouse.dy)
 	            * std::clamp(std::abs(_mouse.dy) - decay, 0.0f, MOUSE_DELTA_MAX);

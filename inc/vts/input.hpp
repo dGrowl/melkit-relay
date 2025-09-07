@@ -50,11 +50,11 @@ public:
 
 	InputData(const InputId id);
 
-	float getMax() const;
-	float getMin() const;
-	float getValue() const;
+	float   getMax() const;
+	float   getMin() const;
+	float   getValue() const;
 	InputId getId() const;
-	void update(float inValue);
+	void    update(float inValue);
 };
 
 }  // namespace vts

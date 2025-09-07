@@ -13,11 +13,11 @@ namespace gui {
 
 static constexpr const char* UNKNOWN = "UNKNOWN";
 
-static constexpr const char* DEVICE_MOUSE = "Mouse";
+static constexpr const char* DEVICE_MOUSE    = "Mouse";
 static constexpr const char* DEVICE_KEYBOARD = "Keyboard";
 
-static constexpr const char* KEY_EVENT_PRESS = "Press";
-static constexpr const char* MOUSE_EVENT_BUTTON = "Button";
+static constexpr const char* KEY_EVENT_PRESS      = "Press";
+static constexpr const char* MOUSE_EVENT_BUTTON   = "Button";
 static constexpr const char* MOUSE_EVENT_MOVE_ABS = "Move (Abs)";
 static constexpr const char* MOUSE_EVENT_MOVE_REL = "Move (Rel)";
 
@@ -29,40 +29,40 @@ static const char* MOUSE_BUTTONS[] = {"Left",
 
 static const char* AXES[] = {"X", "Y"};
 
-static constexpr unsigned BLEND_MODE_MAX = 0;
+static constexpr unsigned BLEND_MODE_MAX         = 0;
 static constexpr unsigned BLEND_MODE_BOUNDED_SUM = 1;
 
 static std::vector<const char*> BLEND_MODES = {"Max", "Sum (Bound)"};
 
 struct InputStrings {
 	const char* device = UNKNOWN;
-	const char* event = UNKNOWN;
+	const char* event  = UNKNOWN;
 	const char* target = UNKNOWN;
 };
 
 InputStrings getInputStrings(const vts::InputId id) {
-	InputStrings strings;
-	const vts::InputId event = id & 0xFFFF;
+	InputStrings       strings;
+	const vts::InputId event  = id & 0xFFFF;
 	const vts::InputId target = id >> 16;
 	switch (event) {
 		case vts::InputEvent::MOUSE_BUTTON:
 			strings.device = DEVICE_MOUSE;
-			strings.event = MOUSE_EVENT_BUTTON;
+			strings.event  = MOUSE_EVENT_BUTTON;
 			strings.target = MOUSE_BUTTONS[target - 1];
 			break;
 		case vts::InputEvent::MOUSE_MOVE_ABS:
 			strings.device = DEVICE_MOUSE;
-			strings.event = MOUSE_EVENT_MOVE_ABS;
+			strings.event  = MOUSE_EVENT_MOVE_ABS;
 			strings.target = AXES[target - 1];
 			break;
 		case vts::InputEvent::MOUSE_MOVE_REL:
 			strings.device = DEVICE_MOUSE;
-			strings.event = MOUSE_EVENT_MOVE_REL;
+			strings.event  = MOUSE_EVENT_MOVE_REL;
 			strings.target = AXES[target - 1];
 			break;
 		case vts::InputEvent::KEY:
 			strings.device = DEVICE_KEYBOARD;
-			strings.event = KEY_EVENT_PRESS;
+			strings.event  = KEY_EVENT_PRESS;
 			strings.target = getUioKeyName(target);
 			break;
 	}
@@ -198,7 +198,7 @@ void EditParameterModal::updateBlendMode() {
 }
 
 EditParameterModal::EditParameterModal(ws::IController& wsController,
-                                       vts::Parameter& editingParameter) :
+                                       vts::Parameter&  editingParameter) :
     _wsController(wsController),
     _editingParameter(editingParameter),
     _addInputModal(editingParameter),

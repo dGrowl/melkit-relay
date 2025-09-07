@@ -2,6 +2,8 @@
 BasedOnStyle: Chromium
 
 AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveDeclarations: Consecutive
 AlignOperands: Align
 AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false

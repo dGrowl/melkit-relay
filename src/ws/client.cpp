@@ -30,8 +30,8 @@ Client::Client() :
 }
 
 void Client::handleEvent(mg_connection* connection,
-                         int event,
-                         void* eventData) {
+                         int            event,
+                         void*          eventData) {
 	Client* client = static_cast<Client*>(connection->fn_data);
 	switch (event) {
 		case MG_EV_OPEN:
@@ -123,7 +123,7 @@ void Client::start() {
 	if (_thread.joinable()) {
 		_thread.join();
 	}
-	_alive = true;
+	_alive  = true;
 	_thread = std::thread(&Client::threadFn, this);
 }
 

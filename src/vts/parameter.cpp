@@ -49,7 +49,7 @@ void Parameter::updateOutput() {
 		return;
 	}
 	_output = newOutput;
-	_fresh = true;
+	_fresh  = true;
 }
 
 Parameter::Parameter() :

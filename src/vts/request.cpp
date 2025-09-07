@@ -64,7 +64,7 @@ static constexpr const char* PARAMETER_CREATION_REQUEST = R"({{
 	}}
 }})";
 
-void createParameter(ws::IController& wsController,
+void createParameter(ws::IController&     wsController,
                      const ParameterData& parameter) {
 	wsController.sendMessage(std::format(PARAMETER_CREATION_REQUEST,
 	                                     parameter.name,
@@ -119,7 +119,7 @@ static constexpr auto INJECT_PARAMETER_DATA_REQUEST = R"({{
 	}}
 }})";
 
-void setParameters(ws::IController& wsController,
+void setParameters(ws::IController&       wsController,
                    const std::string_view objectsString) {
 	wsController.sendMessage(
 	    std::format(INJECT_PARAMETER_DATA_REQUEST, objectsString));

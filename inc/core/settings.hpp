@@ -14,15 +14,15 @@ namespace rj = rapidjson;
 namespace core {
 
 struct SettingsParameter {
-	std::string name;
-	vts::BlendMode blendMode;
+	std::string                 name;
+	vts::BlendMode              blendMode;
 	std::vector<vts::InputData> inputs;
 };
 
 class Settings {
 private:
 	mutable std::mutex _mutex;
-	rj::Document _document;
+	rj::Document       _document;
 
 	Settings();
 	bool validate();
@@ -36,20 +36,20 @@ public:
 	static Settings& instance();
 
 	~Settings();
-	Settings(const Settings&) = delete;
+	Settings(const Settings&)            = delete;
 	Settings& operator=(const Settings&) = delete;
-	Settings(Settings&&) = delete;
-	Settings& operator=(Settings&&) = delete;
+	Settings(Settings&&)                 = delete;
+	Settings& operator=(Settings&&)      = delete;
 
 	const char* getAuthToken();
-	void setAuthToken(const char* newAuthToken);
+	void        setAuthToken(const char* newAuthToken);
 
 	const char* getWsUrl();
-	void setWsUrl(const char* newWsUrl);
+	void        setWsUrl(const char* newWsUrl);
 
 	std::vector<SettingsParameter> getParameters();
-	void removeParameter(const std::string& name);
-	void setParameter(const vts::Parameter& parameter);
+	void                           removeParameter(const std::string& name);
+	void                           setParameter(const vts::Parameter& parameter);
 };
 
 };  // namespace core

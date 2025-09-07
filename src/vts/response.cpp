@@ -28,21 +28,21 @@ static const auto PARAMETER_DELETION_TYPESTRING =
 
 static const auto PLUGIN_NAME_VALUE = rj::Value(rj::StringRef(PLUGIN_NAME));
 
-void buildAuthenticationTokenEvent(SDL_UserEvent& event,
+void buildAuthenticationTokenEvent(SDL_UserEvent&      event,
                                    const rj::Document& json) {
-	const auto& data = json["data"];
-	const auto& token = data["authenticationToken"];
-	event.code = ResponseCode::AUTHENTICATION_TOKEN;
-	event.data1 = new AuthenticationTokenData();
-	auto* authTokenResponse = static_cast<AuthenticationTokenData*>(event.data1);
+	const auto& data         = json["data"];
+	const auto& token        = data["authenticationToken"];
+	event.code               = ResponseCode::AUTHENTICATION_TOKEN;
+	event.data1              = new AuthenticationTokenData();
+	auto* authTokenResponse  = static_cast<AuthenticationTokenData*>(event.data1);
 	authTokenResponse->token = token.GetString();
 }
 
 void buildAuthenticationEvent(SDL_UserEvent& event, const rj::Document& json) {
-	const auto& data = json["data"];
+	const auto& data    = json["data"];
 	const auto& success = data["authenticated"];
-	event.code = success.GetBool() ? ResponseCode::AUTHENTICATION_SUCCESS
-	                               : ResponseCode::AUTHENTICATION_FAILURE;
+	event.code          = success.GetBool() ? ResponseCode::AUTHENTICATION_SUCCESS
+	                                        : ResponseCode::AUTHENTICATION_FAILURE;
 }
 
 std::vector<ParameterData> extractParameters(const rapidjson::Value& array) {
@@ -83,17 +83,17 @@ std::vector<ParameterData> extractParameters(const rapidjson::Value& array) {
 	return params;
 }
 
-void buildInputParameterListEvent(SDL_UserEvent& event,
+void buildInputParameterListEvent(SDL_UserEvent&      event,
                                   const rj::Document& json) {
-	const auto& data = json["data"];
+	const auto& data             = json["data"];
 	const auto& customParameters = data["customParameters"];
-	event.code = ResponseCode::INPUT_PARAMETER_LIST;
-	auto* responseData = new InputParameterListData();
-	responseData->parameters = extractParameters(customParameters);
-	event.data1 = static_cast<void*>(responseData);
+	event.code                   = ResponseCode::INPUT_PARAMETER_LIST;
+	auto* responseData           = new InputParameterListData();
+	responseData->parameters     = extractParameters(customParameters);
+	event.data1                  = static_cast<void*>(responseData);
 }
 
-void buildParameterCreationEvent(SDL_UserEvent& event,
+void buildParameterCreationEvent(SDL_UserEvent&      event,
                                  const rj::Document& json) {
 	const auto& data = json["data"];
 	if (!data.HasMember("parameterName") || !data["parameterName"].IsString()) {
@@ -102,7 +102,7 @@ void buildParameterCreationEvent(SDL_UserEvent& event,
 	event.code = ResponseCode::PARAMETER_CREATION;
 }
 
-void buildParameterDeletionEvent(SDL_UserEvent& event,
+void buildParameterDeletionEvent(SDL_UserEvent&      event,
                                  const rj::Document& json) {
 	const auto& data = json["data"];
 	if (!data.HasMember("parameterName") || !data["parameterName"].IsString()) {
@@ -112,8 +112,8 @@ void buildParameterDeletionEvent(SDL_UserEvent& event,
 }
 
 void buildResponseEvent(SDL_UserEvent& event,
-                        char* jsonString,
-                        const int nChars) {
+                        char*          jsonString,
+                        const int      nChars) {
 	rj::Document json;
 	json.Parse(jsonString, nChars);
 

@@ -18,12 +18,12 @@ class IController {
 public:
 	virtual ~IController() = default;
 
-	virtual const char* getUrl() = 0;
-	virtual Status getStatus() = 0;
-	virtual void sendMessage(const std::string& message) = 0;
-	virtual void setUrl(const char* url) = 0;
-	virtual void start() = 0;
-	virtual void stop() = 0;
+	virtual const char* getUrl()                                = 0;
+	virtual Status      getStatus()                             = 0;
+	virtual void        sendMessage(const std::string& message) = 0;
+	virtual void        setUrl(const char* url)                 = 0;
+	virtual void        start()                                 = 0;
+	virtual void        stop()                                  = 0;
 };
 
 };  // namespace ws

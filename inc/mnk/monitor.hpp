@@ -11,23 +11,23 @@ class Monitor {
 private:
 	std::thread _thread;
 
-	static void buildKeyDown(SDL_UserEvent& userEvent,
+	static void buildKeyDown(SDL_UserEvent&       userEvent,
 	                         uiohook_event* const hookEvent);
-	static void buildKeyUp(SDL_UserEvent& userEvent,
+	static void buildKeyUp(SDL_UserEvent&       userEvent,
 	                       uiohook_event* const hookEvent);
-	static void buildMouseMove(SDL_UserEvent& userEvent,
+	static void buildMouseMove(SDL_UserEvent&       userEvent,
 	                           uiohook_event* const hookEvent);
-	static void buildMouseClick(SDL_UserEvent& userEvent,
+	static void buildMouseClick(SDL_UserEvent&       userEvent,
 	                            uiohook_event* const hookEvent);
-	static void buildMouseRelease(SDL_UserEvent& userEvent,
+	static void buildMouseRelease(SDL_UserEvent&       userEvent,
 	                              uiohook_event* const hookEvent);
 
 public:
 	Monitor();
 	~Monitor();
 	static void handleEvent(uiohook_event* const event);
-	void stop();
-	void threadFn();
+	void        stop();
+	void        threadFn();
 };
 
 }  // namespace mnk

@@ -14,8 +14,8 @@
 namespace vts {
 
 struct MouseState {
-	int x = 0;
-	int y = 0;
+	int   x  = 0;
+	int   y  = 0;
 	float dx = 0;
 	float dy = 0;
 };
@@ -26,8 +26,8 @@ using ParameterView =
 
 class ParameterManager {
 private:
-	MouseState _mouse;
-	Parameter _sample;
+	MouseState                                 _mouse;
+	Parameter                                  _sample;
 	std::unordered_map<std::string, Parameter> _params;
 
 	Uint64 _lastUpdateTimeMs;
@@ -45,12 +45,12 @@ public:
 	std::unordered_map<std::string, Parameter>::iterator end();
 	std::unordered_map<std::string, Parameter>::iterator find(
 	    const std::string& name);
-	Parameter& getSample();
+	Parameter&    getSample();
 	ParameterView values();
-	void add(const ParameterData& data);
-	void clear();
-	void handleEvent(SDL_UserEvent& event);
-	void update();
+	void          add(const ParameterData& data);
+	void          clear();
+	void          handleEvent(SDL_UserEvent& event);
+	void          update();
 };
 
 }  // namespace vts

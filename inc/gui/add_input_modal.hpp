@@ -11,7 +11,7 @@ namespace gui {
 class AddInputModal {
 private:
 	std::string _selectedKeyName;
-	ImGuiKey _selectedKey;
+	ImGuiKey    _selectedKey;
 
 	vts::Parameter& _editingParameter;
 
@@ -21,8 +21,8 @@ private:
 	ComboBox _mouseButtonSelector;
 	ComboBox _mouseEventSelector;
 
-	vts::InputId getMouseAxisId() const;
-	vts::InputId getMouseButtonId() const;
+	vts::InputId   getMouseAxisId() const;
+	vts::InputId   getMouseButtonId() const;
 	vts::InputData buildInputData() const;
 
 	void showCloseButtons();

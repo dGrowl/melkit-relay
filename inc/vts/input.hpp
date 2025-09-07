@@ -41,14 +41,18 @@ private:
 
 	float _inMax;
 	float _inMin;
+	float _outMax;
+	float _outMin;
+	float _value;
 
 public:
-	float outMax;
-	float outMin;
-	float value;
+	bool isInverted;
 
 	InputData(const InputId id);
 
+	float getMax() const;
+	float getMin() const;
+	float getValue() const;
 	InputId getId() const;
 	void update(float inValue);
 };

@@ -36,7 +36,6 @@ private:
 
 	float calcInputSum();
 	float calcMajorInput();
-	void updateBounds();
 	void updateOutput();
 
 public:
@@ -58,6 +57,7 @@ public:
 	void removeInput(const InputId id);
 	void setBlendMode(const BlendMode mode);
 	void setInputs(const std::vector<InputData>& inputs);
+	void updateBounds();
 };
 
 }  // namespace vts

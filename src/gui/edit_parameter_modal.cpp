@@ -80,10 +80,11 @@ void EditParameterModal::showAddInput() {
 void EditParameterModal::showInputs() {
 	ImGui::SeparatorText("Input");
 
-	if (ImGui::BeginTable("Input Table", 5, ImGuiTableFlags_SizingFixedFit)) {
+	if (ImGui::BeginTable("Input Table", 6, ImGuiTableFlags_SizingFixedFit)) {
 		ImGui::TableSetupColumn("Device", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Event", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Target", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Invert", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
 		ImGui::TableSetupColumn("Remove", ImGuiTableColumnFlags_WidthFixed);
 		if (_editingParameter.hasInputs()) {
@@ -103,12 +104,17 @@ void EditParameterModal::showInputs() {
 			ImGui::TableNextColumn();
 			ImGui::Text(fields.target);
 			ImGui::TableNextColumn();
+			if (ImGui::Checkbox("##invert-value", &data.isInverted)) {
+				_editingParameter.updateBounds();
+			}
+			ImGui::TableNextColumn();
 			ImGui::SetNextItemWidth(128.0f);
 			ImGui::BeginDisabled();
+			float value = data.getValue();
 			ImGui::SliderFloat("##input-value",
-			                   &data.value,
-			                   data.outMin,
-			                   data.outMax,
+			                   &value,
+			                   data.getMin(),
+			                   data.getMax(),
 			                   "%.3f",
 			                   ImGuiSliderFlags_NoInput);
 			ImGui::EndDisabled();

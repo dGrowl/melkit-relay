@@ -45,10 +45,14 @@ static const char* SCHEMA_STRING = R"({
 								"id": {
 									"type": "integer",
 									"minimum": 0
+								},
+								"isInverted": {
+									"type": "boolean"
 								}
 							},
 							"required": [
-								"id"
+								"id",
+								"isInverted"
 							]
 						}
 					}
@@ -216,7 +220,9 @@ std::vector<SettingsParameter> Settings::getParameters() {
 			settingsParam.blendMode = vts::BlendMode::BOUNDED_SUM;
 		}
 		for (const auto& input : parameter["inputs"].GetArray()) {
-			settingsParam.inputs.emplace_back(input["id"].GetInt());
+			vts::InputData data(input["id"].GetInt());
+			data.isInverted = input["isInverted"].GetBool();
+			settingsParam.inputs.emplace_back(std::move(data));
 		}
 
 		result.push_back(std::move(settingsParam));
@@ -262,6 +268,7 @@ void Settings::setParameter(const vts::Parameter& newParameter) {
 			for (const auto& [inputId, input] : newParameter.getInputs()) {
 				rj::Value inputObject(rj::kObjectType);
 				inputObject.AddMember("id", rj::Value(inputId), allocator);
+				inputObject.AddMember("isInverted", rj::Value(input.isInverted), allocator);
 				inputs.PushBack(inputObject, allocator);
 			}
 
@@ -288,6 +295,7 @@ void Settings::setParameter(const vts::Parameter& newParameter) {
 	for (const auto& [inputId, input] : newParameter.getInputs()) {
 		rj::Value inputObject(rj::kObjectType);
 		inputObject.AddMember("id", rj::Value(inputId), allocator);
+		inputObject.AddMember("isInverted", rj::Value(input.isInverted), allocator);
 		inputs.PushBack(inputObject, allocator);
 	}
 

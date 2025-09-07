@@ -12,24 +12,10 @@ namespace vts {
 
 static constexpr const char* DEFAULT_PARAMETER_NAME = "MK_DEFAULT_NAME";
 
-void Parameter::updateBounds() {
-	if (_inputs.empty()) {
-		_max = 1.0f;
-		_min = 0.0f;
-		return;
-	}
-	_max = _defaultValue;
-	_min = _defaultValue;
-	for (const auto& input : _inputs | std::views::values) {
-		_max = std::max(_max, input.outMax);
-		_min = std::min(_min, input.outMin);
-	}
-}
-
 float Parameter::calcInputSum() {
 	float total = 0;
 	for (InputData& data : _inputs | std::views::values) {
-		total += data.value;
+		total += data.getValue();
 	}
 	return total;
 }
@@ -38,10 +24,10 @@ float Parameter::calcMajorInput() {
 	float majorValue = 0;
 	float majorDelta = 0;
 	for (InputData& data : _inputs | std::views::values) {
-		const float delta = std::abs(data.value - _defaultValue);
+		const float delta = std::abs(data.getValue() - _defaultValue);
 		if ((delta > majorDelta)
-		    || (delta == majorDelta && data.value > majorValue)) {
-			majorValue = data.value;
+		    || (delta == majorDelta && data.getValue() > majorValue)) {
+			majorValue = data.getValue();
 			majorDelta = delta;
 		}
 	}
@@ -149,6 +135,11 @@ void Parameter::removeInput(const InputId id) {
 	updateBounds();
 }
 
+void Parameter::setBlendMode(const BlendMode mode) {
+	_blendMode = mode;
+	updateBounds();
+}
+
 void Parameter::setInputs(const std::vector<InputData>& inputs) {
 	for (const auto& input : inputs) {
 		_inputs.insert_or_assign(input.getId(), input);
@@ -156,9 +147,18 @@ void Parameter::setInputs(const std::vector<InputData>& inputs) {
 	updateBounds();
 }
 
-void Parameter::setBlendMode(const BlendMode mode) {
-	_blendMode = mode;
-	updateBounds();
+void Parameter::updateBounds() {
+	if (_inputs.empty()) {
+		_max = 1.0f;
+		_min = 0.0f;
+		return;
+	}
+	_max = _defaultValue;
+	_min = _defaultValue;
+	for (const auto& input : _inputs | std::views::values) {
+		_max = std::max(_max, input.getMax());
+		_min = std::min(_min, input.getMin());
+	}
 }
 
 }  // namespace vts

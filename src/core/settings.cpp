@@ -216,7 +216,7 @@ std::vector<SettingsParameter> Settings::getParameters() {
 		if (parameter["blendMode"] == BLEND_MODE_MAX_VALUE) {
 			settingsParam.blendMode = vts::BlendMode::MAX;
 		}
-		else if (parameter["blendMode"] == BLEND_MODE_MAX_VALUE) {
+		else if (parameter["blendMode"] == BLEND_MODE_BOUNDED_SUM_VALUE) {
 			settingsParam.blendMode = vts::BlendMode::BOUNDED_SUM;
 		}
 		for (const auto& input : parameter["inputs"].GetArray()) {

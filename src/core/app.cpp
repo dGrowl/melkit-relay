@@ -193,6 +193,7 @@ void App::loadParameterSettings() {
 			SETTINGS.removeParameter(settingsParameter.name);
 		}
 		else {
+			it->second.setBlendMode(settingsParameter.blendMode);
 			it->second.setInputs(settingsParameter.inputs);
 		}
 	}

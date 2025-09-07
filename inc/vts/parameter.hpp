@@ -16,33 +16,47 @@ struct ParameterData {
 	float min = 0.0f;
 };
 
+enum class BlendMode : Uint8 {
+	MAX,
+	BOUNDED_SUM,
+};
+
 using InputMap = std::unordered_map<InputId, InputData>;
 
 class Parameter {
 private:
-	std::string _name;
-	InputMap _inputs;
-	float _output;
+	BlendMode _blendMode;
 	bool _fresh;
+	float _defaultValue;
+	float _max;
+	float _min;
+	float _output;
+	InputMap _inputs;
+	std::string _name;
+
+	float calcInputSum();
+	float calcMajorInput();
+	void updateBounds();
+	void updateOutput();
 
 public:
-	float defaultValue;
-	float max;
-	float min;
-
 	Parameter();
 	Parameter(const ParameterData& data);
 
+	BlendMode getBlendMode() const;
 	bool hasInputs() const;
 	bool isFresh();
 	const InputMap& getInputs() const;
 	const std::string& getName() const;
+	float getMax() const;
+	float getMin() const;
 	float getNormalized() const;
 	float getOutput() const;
 	InputMap& getInputs();
 	void addInput(const InputData& data);
 	void handleInput(const InputId id, const float value);
 	void removeInput(const InputId id);
+	void setBlendMode(const BlendMode mode);
 	void setInputs(const std::vector<InputData>& inputs);
 };
 

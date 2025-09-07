@@ -264,6 +264,7 @@ void ConfigWindow::showParameterData() {
 	for (auto& p : _paramManager.values()) {
 		if (ImGui::Button(p.getName().c_str(), ImVec2(-1.0f, 0.0f))) {
 			_editingParameter = p;
+			_editParameterModal.refresh();
 			ImGui::OpenPopup(EditParameterModal::NAME);
 		}
 	}

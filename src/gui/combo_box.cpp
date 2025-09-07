@@ -9,10 +9,6 @@ ComboBox::ComboBox(const char* label, const std::vector<const char*>& options) :
     _options(options),
     _i(0) {}
 
-unsigned ComboBox::getIndex() const {
-	return _i;
-}
-
 bool ComboBox::show() {
 	const char* selectedData = _options[_i];
 	bool updated = false;
@@ -32,6 +28,14 @@ bool ComboBox::show() {
 		ImGui::EndCombo();
 	}
 	return updated;
+}
+
+unsigned ComboBox::getIndex() const {
+	return _i;
+}
+
+void ComboBox::setIndex(const unsigned i) {
+	_i = i;
 }
 
 }  // namespace gui

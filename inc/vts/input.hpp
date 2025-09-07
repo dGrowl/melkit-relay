@@ -38,12 +38,13 @@ enum Button : Uint32 {
 class InputData {
 private:
 	InputId _id;
-	float _inMin;
+
 	float _inMax;
+	float _inMin;
 
 public:
-	float outMin;
 	float outMax;
+	float outMin;
 	float value;
 
 	InputData(const InputId id);

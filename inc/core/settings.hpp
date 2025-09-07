@@ -15,6 +15,7 @@ namespace core {
 
 struct SettingsParameter {
 	std::string name;
+	vts::BlendMode blendMode;
 	std::vector<vts::InputData> inputs;
 };
 

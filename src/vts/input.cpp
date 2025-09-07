@@ -6,10 +6,10 @@ namespace vts {
 
 InputData::InputData(const InputId id) :
     _id(id),
-    _inMin(0.0f),
     _inMax(1.0f),
-    outMin(0.0f),
+    _inMin(0.0f),
     outMax(1.0f),
+    outMin(0.0f),
     value(0.0f) {
 	const InputId event = id & 0xFFFF;
 	if (event == MOUSE_MOVE_REL) {

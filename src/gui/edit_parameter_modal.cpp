@@ -3,8 +3,10 @@
 #include "imgui/imgui.h"
 
 #include "core/settings.hpp"
+#include "gui/combo_box.hpp"
 #include "gui/edit_parameter_modal.hpp"
 #include "gui/utility.hpp"
+#include "vts/parameter.hpp"
 #include "vts/request.hpp"
 
 namespace gui {
@@ -25,7 +27,12 @@ static const char* MOUSE_BUTTONS[] = {"Left",
                                       "Fourth",
                                       "Fifth"};
 
-static const char* AXES[]{"X", "Y"};
+static const char* AXES[] = {"X", "Y"};
+
+static constexpr unsigned BLEND_MODE_MAX = 0;
+static constexpr unsigned BLEND_MODE_BOUNDED_SUM = 1;
+
+static std::vector<const char*> BLEND_MODES = {"Max", "Sum (Bound)"};
 
 struct InputStrings {
 	const char* device = UNKNOWN;
@@ -126,29 +133,25 @@ void EditParameterModal::showOutput() {
 
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn();
+		ImGui::Text("Blend Mode");
+		ImGui::TableNextColumn();
+		if (_blendModeSelector.show()) {
+			updateBlendMode();
+		}
+
+		ImGui::TableNextRow();
+		ImGui::TableNextColumn();
 		ImGui::Text("Minimum");
 		ImGui::TableNextColumn();
 		ImGui::SetNextItemWidth(-1.0f);
-		ImGui::InputScalar("##minimum",
-		                   ImGuiDataType_Float,
-		                   &_editingParameter.min,
-		                   nullptr,
-		                   nullptr,
-		                   nullptr,
-		                   ImGuiInputTextFlags_None);
+		ImGui::Text("%.2f", _editingParameter.getMin());
 
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn();
 		ImGui::Text("Maximum");
 		ImGui::TableNextColumn();
 		ImGui::SetNextItemWidth(-1.0f);
-		ImGui::InputScalar("##maximum",
-		                   ImGuiDataType_Float,
-		                   &_editingParameter.max,
-		                   nullptr,
-		                   nullptr,
-		                   nullptr,
-		                   ImGuiInputTextFlags_None);
+		ImGui::Text("%.2f", _editingParameter.getMax());
 
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn();
@@ -159,9 +162,9 @@ void EditParameterModal::showOutput() {
 		ImGui::BeginDisabled();
 		ImGui::SliderFloat("##output-value",
 		                   &outputValue,
-		                   _editingParameter.min,
-		                   _editingParameter.max,
-		                   "%.3f",
+		                   _editingParameter.getMin(),
+		                   _editingParameter.getMax(),
+		                   "%.2f",
 		                   ImGuiSliderFlags_NoInput);
 		ImGui::EndDisabled();
 
@@ -177,12 +180,35 @@ void EditParameterModal::checkDeleteInput() {
 	_inputIdToDelete = 0;
 }
 
+void EditParameterModal::updateBlendMode() {
+	switch (_blendModeSelector.getIndex()) {
+		case BLEND_MODE_MAX:
+			_editingParameter.setBlendMode(vts::BlendMode::MAX);
+			break;
+		case BLEND_MODE_BOUNDED_SUM:
+			_editingParameter.setBlendMode(vts::BlendMode::BOUNDED_SUM);
+			break;
+	}
+}
+
 EditParameterModal::EditParameterModal(ws::IController& wsController,
                                        vts::Parameter& editingParameter) :
     _wsController(wsController),
     _editingParameter(editingParameter),
     _addInputModal(editingParameter),
+    _blendModeSelector("##blend-mode-selector", BLEND_MODES),
     _inputIdToDelete(0) {}
+
+void EditParameterModal::refresh() {
+	switch (_editingParameter.getBlendMode()) {
+		case vts::BlendMode::MAX:
+			_blendModeSelector.setIndex(BLEND_MODE_MAX);
+			break;
+		case vts::BlendMode::BOUNDED_SUM:
+			_blendModeSelector.setIndex(BLEND_MODE_BOUNDED_SUM);
+			break;
+	}
+}
 
 void EditParameterModal::show() {
 	if (ImGui::BeginPopupModal(

@@ -13,6 +13,7 @@ private:
 	vts::Parameter& _editingParameter;
 
 	AddInputModal _addInputModal;
+	ComboBox _blendModeSelector;
 
 	vts::InputId _inputIdToDelete;
 
@@ -21,10 +22,13 @@ private:
 	void showOutput();
 
 	void checkDeleteInput();
+	void updateBlendMode();
 
 public:
 	EditParameterModal(ws::IController& wsController,
 	                   vts::Parameter& editingParameter);
+
+	void refresh();
 	void show();
 
 	constexpr static const char* NAME = "Edit Parameter";

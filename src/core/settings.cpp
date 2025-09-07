@@ -34,6 +34,9 @@ static const char* SCHEMA_STRING = R"({
 					"name": {
 						"type": "string"
 					},
+					"blendMode": {
+						"enum": ["max", "bounded_sum"]
+					},
 					"inputs": {
 						"type": "array",
 						"items": {
@@ -42,12 +45,6 @@ static const char* SCHEMA_STRING = R"({
 								"id": {
 									"type": "integer",
 									"minimum": 0
-								},
-								"min": {
-									"type": "number"
-								},
-								"max": {
-									"type": "number"
 								}
 							},
 							"required": [
@@ -58,6 +55,7 @@ static const char* SCHEMA_STRING = R"({
 				},
 				"required": [
 					"name",
+					"blendMode",
 					"inputs"
 				]
 			}
@@ -71,6 +69,10 @@ static const char* SCHEMA_STRING = R"({
 })";
 
 static const char* FILE_PATH = "settings.json";
+
+static auto BLEND_MODE_MAX_VALUE = rj::Value("max");
+
+static auto BLEND_MODE_BOUNDED_SUM_VALUE = rj::Value("bounded_sum");
 
 Settings::Settings() :
     _document() {
@@ -207,18 +209,14 @@ std::vector<SettingsParameter> Settings::getParameters() {
 	for (const auto& parameter : _document["parameters"].GetArray()) {
 		SettingsParameter settingsParam;
 		settingsParam.name = parameter["name"].GetString();
-
+		if (parameter["blendMode"] == BLEND_MODE_MAX_VALUE) {
+			settingsParam.blendMode = vts::BlendMode::MAX;
+		}
+		else if (parameter["blendMode"] == BLEND_MODE_MAX_VALUE) {
+			settingsParam.blendMode = vts::BlendMode::BOUNDED_SUM;
+		}
 		for (const auto& input : parameter["inputs"].GetArray()) {
-			vts::InputData data(input["id"].GetInt());
-
-			if (input.HasMember("min")) {
-				data.outMin = input["min"].GetFloat();
-			}
-			if (input.HasMember("max")) {
-				data.outMax = input["max"].GetFloat();
-			}
-
-			settingsParam.inputs.push_back(data);
+			settingsParam.inputs.emplace_back(input["id"].GetInt());
 		}
 
 		result.push_back(std::move(settingsParam));
@@ -249,14 +247,21 @@ void Settings::setParameter(const vts::Parameter& newParameter) {
 
 	for (auto& parameter : parameters.GetArray()) {
 		if (parameter["name"].GetString() == newParameter.getName()) {
+			switch (newParameter.getBlendMode()) {
+				case vts::BlendMode::MAX:
+					parameter["blendMode"] = "max";
+					break;
+				case vts::BlendMode::BOUNDED_SUM:
+					parameter["blendMode"] = "bounded_sum";
+					break;
+			}
+
 			auto& inputs = parameter["inputs"];
 			inputs.Clear();
 
 			for (const auto& [inputId, input] : newParameter.getInputs()) {
 				rj::Value inputObject(rj::kObjectType);
 				inputObject.AddMember("id", rj::Value(inputId), allocator);
-				inputObject.AddMember("min", rj::Value(input.outMin), allocator);
-				inputObject.AddMember("max", rj::Value(input.outMax), allocator);
 				inputs.PushBack(inputObject, allocator);
 			}
 
@@ -270,12 +275,19 @@ void Settings::setParameter(const vts::Parameter& newParameter) {
 	                   rj::Value(newParameter.getName().c_str(), allocator),
 	                   allocator);
 
+	switch (newParameter.getBlendMode()) {
+		case vts::BlendMode::MAX:
+			newParam.AddMember("blendMode", BLEND_MODE_MAX_VALUE, allocator);
+			break;
+		case vts::BlendMode::BOUNDED_SUM:
+			newParam.AddMember("blendMode", BLEND_MODE_BOUNDED_SUM_VALUE, allocator);
+			break;
+	}
+
 	rj::Value inputs(rj::kArrayType);
 	for (const auto& [inputId, input] : newParameter.getInputs()) {
 		rj::Value inputObject(rj::kObjectType);
 		inputObject.AddMember("id", rj::Value(inputId), allocator);
-		inputObject.AddMember("min", rj::Value(input.outMin), allocator);
-		inputObject.AddMember("max", rj::Value(input.outMax), allocator);
 		inputs.PushBack(inputObject, allocator);
 	}
 

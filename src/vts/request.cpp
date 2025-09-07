@@ -76,8 +76,8 @@ void createParameter(ws::IController& wsController,
                      const Parameter& parameter) {
 	wsController.sendMessage(std::format(PARAMETER_CREATION_REQUEST,
 	                                     parameter.getName(),
-	                                     parameter.min,
-	                                     parameter.max));
+	                                     parameter.getMin(),
+	                                     parameter.getMax()));
 }
 
 static constexpr auto PARAMETER_DELETION_REQUEST = R"({{

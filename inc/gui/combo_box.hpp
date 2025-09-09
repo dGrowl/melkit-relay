@@ -9,14 +9,14 @@ class ComboBox {
 private:
 	const char*                     _label;
 	const std::vector<const char*>& _options;
-	unsigned                        _i;
+	size_t                          _i;
 
 public:
 	ComboBox(const char* label, const std::vector<const char*>& options);
 
-	bool     show();
-	unsigned getIndex() const;
-	void     setIndex(const unsigned i);
+	bool   show();
+	size_t getIndex() const;
+	void   setIndex(const size_t i);
 };
 
 }  // namespace gui

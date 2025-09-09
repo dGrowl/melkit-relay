@@ -13,7 +13,7 @@ bool ComboBox::show() {
 	const char* selectedData = _options[_i];
 	bool        updated      = false;
 	if (ImGui::BeginCombo(_label, selectedData, 0)) {
-		for (unsigned i = 0; i < _options.size(); i++) {
+		for (size_t i = 0; i < _options.size(); i++) {
 			const bool isSelected = (_i == i);
 			if (ImGui::Selectable(_options[i], isSelected)) {
 				if (_i != i) {
@@ -30,11 +30,11 @@ bool ComboBox::show() {
 	return updated;
 }
 
-unsigned ComboBox::getIndex() const {
+size_t ComboBox::getIndex() const {
 	return _i;
 }
 
-void ComboBox::setIndex(const unsigned i) {
+void ComboBox::setIndex(const size_t i) {
 	_i = i;
 }
 

@@ -60,6 +60,8 @@ int App::init() {
 	_icon.setConfigCallback(App::openConfigCallback, this);
 	_icon.setQuitCallback(App::quitCallback, this);
 
+	openConfig();
+
 	return 0;
 }
 

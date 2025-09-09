@@ -1,3 +1,5 @@
+#include <SDL3/SDL_assert.h>
+
 #include "imgui/imgui.h"
 
 #include "gui/combo_box.hpp"
@@ -10,6 +12,10 @@ ComboBox::ComboBox(const char* label, const std::vector<const char*>& options) :
     _i(0) {}
 
 bool ComboBox::show() {
+	if (_options.empty()) {
+		ImGui::Text("N/A");
+		return false;
+	}
 	const char* selectedData = _options[_i];
 	bool        updated      = false;
 	if (ImGui::BeginCombo(_label, selectedData, 0)) {
@@ -35,6 +41,8 @@ size_t ComboBox::getIndex() const {
 }
 
 void ComboBox::setIndex(const size_t i) {
+	SDL_assert(i < _options.size());
+
 	_i = i;
 }
 

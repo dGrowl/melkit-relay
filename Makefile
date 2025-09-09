@@ -85,7 +85,7 @@ $(OBJ_DIR)/libuiohook/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CC_FLAGS) -c -o $@ $<
 
-debug: CXXFLAGS += -g -Wall -Wextra -pedantic
+debug: CXXFLAGS += -g -Wall -Wextra -pedantic -O0 -DSDL_ASSERT_LEVEL=2
 debug: all
 
 release: CXXFLAGS += -s -Ofast -DNDEBUG -fno-rtti -static-libgcc -static-libstdc++

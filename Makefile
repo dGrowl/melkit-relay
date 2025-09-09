@@ -88,6 +88,9 @@ $(OBJ_DIR)/libuiohook/%.o: %.c
 debug: CXXFLAGS += -g -Wall -Wextra -pedantic
 debug: all
 
+release: CXXFLAGS += -s -Ofast -DNDEBUG -fno-rtti -static-libgcc -static-libstdc++
+release: all
+
 all: $(EXE)
 	@echo Build complete for $(ECHO_MESSAGE)
 

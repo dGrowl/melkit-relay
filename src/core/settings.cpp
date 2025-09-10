@@ -284,10 +284,10 @@ void Settings::setParameter(const vts::Parameter& newParameter) {
 
 	switch (newParameter.getBlendMode()) {
 		case vts::BlendMode::MAX:
-			newParam.AddMember("blendMode", BLEND_MODE_MAX_VALUE, allocator);
+			newParam.AddMember("blendMode", rj::Value("max"), allocator);
 			break;
 		case vts::BlendMode::BOUNDED_SUM:
-			newParam.AddMember("blendMode", BLEND_MODE_BOUNDED_SUM_VALUE, allocator);
+			newParam.AddMember("blendMode", rj::Value("bounded_sum"), allocator);
 			break;
 	}
 

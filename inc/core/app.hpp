@@ -7,6 +7,7 @@
 #include "gui/config_window.hpp"
 #include "gui/tray_icon.hpp"
 #include "mnk/monitor.hpp"
+#include "pad/manager.hpp"
 #include "vts/parameter_manager.hpp"
 #include "ws/client.hpp"
 
@@ -21,6 +22,7 @@ private:
 
 	ws::Client   _wsClient;
 	mnk::Monitor _mnkMonitor;
+	pad::Manager _gamepadManager;
 
 	gui::ConfigWindow _config;
 	gui::TrayIcon     _icon;

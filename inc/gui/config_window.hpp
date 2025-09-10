@@ -11,6 +11,7 @@
 
 #include "gui/delete_parameters_modal.hpp"
 #include "gui/edit_parameter_modal.hpp"
+#include "pad/manager.hpp"
 #include "vts/parameter_manager.hpp"
 #include "ws/controller.hpp"
 
@@ -27,12 +28,14 @@ private:
 	int         _width;
 	SDL_FColor  _clearColor;
 
+	pad::Manager&          _gamepadManager;
 	vts::Parameter&        _editingParameter;
 	vts::ParameterManager& _paramManager;
 	ws::IController&       _wsController;
 
-	char _urlBuffer[MAX_URL_LENGTH];
-	char _newParamNameBuffer[MAX_PARAM_NAME_LENGTH];
+	char     _newParamNameBuffer[MAX_PARAM_NAME_LENGTH];
+	char     _urlBuffer[MAX_URL_LENGTH];
+	ComboBox _gamepadSelector;
 
 	SDL_Window*     _window;
 	SDL_WindowFlags _flags;
@@ -47,16 +50,21 @@ private:
 	void showParameterPanel();
 	void showParameters();
 
-	void showVtsConnection();
+	void showGamepadSettings();
+	void showSettingsPanel();
+	void showVtsSettings();
 
 public:
-	ConfigWindow(ws::IController&       wsController,
+	ConfigWindow(pad::Manager&          gamepadManager,
+	             ws::IController&       wsController,
 	             vts::ParameterManager& paramManager);
+
 	int          open(SDL_GPUDevice* gpu);
 	void         close(SDL_GPUDevice* gpu);
 	void         render(SDL_GPUDevice* gpu);
 	bool         isOpen() const;
 	SDL_WindowID id() const;
+	void         setActiveGamepadIndex(const size_t activeIndex);
 };
 
 }  // namespace gui

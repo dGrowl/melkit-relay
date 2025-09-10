@@ -18,7 +18,8 @@ App::App() :
     _params(),
     _wsClient(),
     _mnkMonitor(),
-    _config(_wsClient, _params),
+    _gamepadManager(),
+    _config(_gamepadManager, _wsClient, _params),
     _icon() {
 	ws::allocateEvents();
 	mnk::allocateEvents();
@@ -132,6 +133,15 @@ void App::handleEvent(SDL_Event& event) {
 			break;
 		case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
 			handleWindowClose(event);
+			break;
+		case SDL_EVENT_GAMEPAD_ADDED:
+			_gamepadManager.refreshDevices();
+			_config.setActiveGamepadIndex(_gamepadManager.getActiveIndex());
+			break;
+		case SDL_EVENT_GAMEPAD_REMOVED:
+			_gamepadManager.clearActive();
+			_gamepadManager.refreshDevices();
+			_config.setActiveGamepadIndex(_gamepadManager.getActiveIndex());
 			break;
 	}
 }

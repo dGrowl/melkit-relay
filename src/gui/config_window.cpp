@@ -11,6 +11,12 @@
 #include "vts/parameter.hpp"
 #include "vts/request.hpp"
 
+static constexpr int DEFAULT_WINDOW_WIDTH  = 960;
+static constexpr int DEFAULT_WINDOW_HEIGHT = 540;
+
+static constexpr int MIN_WINDOW_WIDTH  = 512;
+static constexpr int MIN_WINDOW_HEIGHT = 256;
+
 namespace gui {
 
 static const char* STATUS_TEXT[] = {
@@ -53,8 +59,8 @@ ConfigWindow::ConfigWindow(pad::Manager&          gamepadManager,
                            ws::IController&       wsController,
                            vts::ParameterManager& paramManager) :
     _title("Configuration"),
-    _height(540),
-    _width(960),
+    _height(DEFAULT_WINDOW_HEIGHT),
+    _width(DEFAULT_WINDOW_WIDTH),
     _clearColor{.03f, .02f, .04f, 1.0f},
     _gamepadManager(gamepadManager),
     _editingParameter(paramManager.getSample()),
@@ -89,6 +95,7 @@ int ConfigWindow::open(SDL_GPUDevice* gpu) {
 		return 2;
 	}
 
+	SDL_SetWindowMinimumSize(_window, MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT);
 	SDL_SetWindowPosition(_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	SDL_ShowWindow(_window);
 

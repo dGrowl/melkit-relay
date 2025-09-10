@@ -15,17 +15,37 @@ static constexpr const char* UNKNOWN = "UNKNOWN";
 
 static constexpr const char* DEVICE_MOUSE    = "Mouse";
 static constexpr const char* DEVICE_KEYBOARD = "Keyboard";
+static constexpr const char* DEVICE_GAMEPAD  = "Controller";
 
-static constexpr const char* KEY_EVENT_PRESS      = "Press";
-static constexpr const char* MOUSE_EVENT_BUTTON   = "Button";
-static constexpr const char* MOUSE_EVENT_MOVE_ABS = "Move (Abs)";
-static constexpr const char* MOUSE_EVENT_MOVE_REL = "Move (Rel)";
+static constexpr const char* MOUSE_EVENT_BUTTON        = "Button";
+static constexpr const char* MOUSE_EVENT_MOVE_ABS      = "Move (Abs)";
+static constexpr const char* MOUSE_EVENT_MOVE_REL      = "Move (Rel)";
+static constexpr const char* KEY_EVENT_PRESS           = "Press";
+static constexpr const char* GAMEPAD_EVENT_BUTTON      = "Button";
+static constexpr const char* GAMEPAD_EVENT_TRIGGER     = "Trigger";
+static constexpr const char* GAMEPAD_EVENT_STICK_LEFT  = "Motion (LStick)";
+static constexpr const char* GAMEPAD_EVENT_STICK_RIGHT = "Motion (RStick)";
 
 static const char* MOUSE_BUTTONS[] = {"Left",
                                       "Right",
                                       "Middle",
                                       "Fourth",
                                       "Fifth"};
+
+static const char* GAMEPAD_BUTTONS[] = {"North",
+                                        "South",
+                                        "West",
+                                        "East",
+                                        "Shoulder (Left)",
+                                        "Shoulder (Right)",
+                                        "DPad (Up)",
+                                        "DPad (Down)",
+                                        "DPad (Left)",
+                                        "DPad (Right)",
+                                        "Stick (Left)",
+                                        "Stick (Right)"};
+
+static const char* GAMEPAD_TRIGGERS[] = {"Left", "Right"};
 
 static const char* AXES[] = {"X", "Y"};
 
@@ -45,6 +65,11 @@ InputStrings getInputStrings(const vts::InputId id) {
 	const vts::InputId event  = id & 0xFFFF;
 	const vts::InputId target = id >> 16;
 	switch (event) {
+		case vts::InputEvent::KEY:
+			strings.device = DEVICE_KEYBOARD;
+			strings.event  = KEY_EVENT_PRESS;
+			strings.target = getUioKeyName(target);
+			break;
 		case vts::InputEvent::MOUSE_BUTTON:
 			strings.device = DEVICE_MOUSE;
 			strings.event  = MOUSE_EVENT_BUTTON;
@@ -60,10 +85,25 @@ InputStrings getInputStrings(const vts::InputId id) {
 			strings.event  = MOUSE_EVENT_MOVE_REL;
 			strings.target = AXES[target - 1];
 			break;
-		case vts::InputEvent::KEY:
-			strings.device = DEVICE_KEYBOARD;
-			strings.event  = KEY_EVENT_PRESS;
-			strings.target = getUioKeyName(target);
+		case vts::InputEvent::GAMEPAD_BUTTON:
+			strings.device = DEVICE_GAMEPAD;
+			strings.event  = GAMEPAD_EVENT_BUTTON;
+			strings.target = GAMEPAD_BUTTONS[target - 1];
+			break;
+		case vts::InputEvent::GAMEPAD_TRIGGER:
+			strings.device = DEVICE_GAMEPAD;
+			strings.event  = GAMEPAD_EVENT_TRIGGER;
+			strings.target = GAMEPAD_TRIGGERS[target - 1];
+			break;
+		case vts::InputEvent::GAMEPAD_STICK_LEFT:
+			strings.device = DEVICE_GAMEPAD;
+			strings.event  = GAMEPAD_EVENT_STICK_LEFT;
+			strings.target = AXES[target - 1];
+			break;
+		case vts::InputEvent::GAMEPAD_STICK_RIGHT:
+			strings.device = DEVICE_GAMEPAD;
+			strings.event  = GAMEPAD_EVENT_STICK_RIGHT;
+			strings.target = AXES[target - 1];
 			break;
 	}
 	return strings;

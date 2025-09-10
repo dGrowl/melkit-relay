@@ -10,8 +10,9 @@ namespace gui {
 
 static constexpr unsigned DEVICE_MOUSE    = 0;
 static constexpr unsigned DEVICE_KEYBOARD = 1;
+static constexpr unsigned DEVICE_GAMEPAD  = 2;
 
-static std::vector<const char*> DEVICES{"Mouse", "Keyboard"};
+static std::vector<const char*> DEVICES{"Mouse", "Keyboard", "Controller"};
 
 static constexpr unsigned MOUSE_EVENT_BUTTON        = 0;
 static constexpr unsigned MOUSE_EVENT_MOVE_ABSOLUTE = 1;
@@ -38,6 +39,51 @@ static constexpr unsigned MOUSE_AXIS_Y = 1;
 
 static std::vector<const char*> AXES{"X (Left-Right)", "Y (Up-Down)"};
 
+static constexpr unsigned GAMEPAD_EVENT_BUTTON      = 0;
+static constexpr unsigned GAMEPAD_EVENT_LEFT_STICK  = 1;
+static constexpr unsigned GAMEPAD_EVENT_RIGHT_STICK = 2;
+static constexpr unsigned GAMEPAD_EVENT_TRIGGER     = 3;
+
+static std::vector<const char*> GAMEPAD_EVENTS{"Button",
+                                               "Stick (Left)",
+                                               "Stick (Right)",
+                                               "Trigger"};
+
+static constexpr unsigned GAMEPAD_BUTTON_NORTH          = 0;
+static constexpr unsigned GAMEPAD_BUTTON_SOUTH          = 1;
+static constexpr unsigned GAMEPAD_BUTTON_WEST           = 2;
+static constexpr unsigned GAMEPAD_BUTTON_EAST           = 3;
+static constexpr unsigned GAMEPAD_BUTTON_LEFT_SHOULDER  = 4;
+static constexpr unsigned GAMEPAD_BUTTON_RIGHT_SHOULDER = 5;
+static constexpr unsigned GAMEPAD_BUTTON_DPAD_UP        = 6;
+static constexpr unsigned GAMEPAD_BUTTON_DPAD_DOWN      = 7;
+static constexpr unsigned GAMEPAD_BUTTON_DPAD_LEFT      = 8;
+static constexpr unsigned GAMEPAD_BUTTON_DPAD_RIGHT     = 9;
+
+static std::vector<const char*> GAMEPAD_BUTTONS{"North",
+                                                "South",
+                                                "West",
+                                                "East",
+                                                "Shoulder (Left)",
+                                                "Shoulder (Right)",
+                                                "DPad (Up)",
+                                                "DPad (Down)",
+                                                "DPad (Left)",
+                                                "DPad (Right)"};
+
+static constexpr unsigned GAMEPAD_STICK_ACTION_X     = 0;
+static constexpr unsigned GAMEPAD_STICK_ACTION_Y     = 1;
+static constexpr unsigned GAMEPAD_STICK_ACTION_PRESS = 2;
+
+static std::vector<const char*> GAMEPAD_STICK_ACTIONS{"X (Left-Right)",
+                                                      "Y (Up-Down)",
+                                                      "Press"};
+
+static constexpr unsigned GAMEPAD_SIDE_LEFT  = 0;
+static constexpr unsigned GAMEPAD_SIDE_RIGHT = 1;
+
+static std::vector<const char*> GAMEPAD_SIDES{"Left", "Right"};
+
 vts::InputId AddInputModal::getMouseAxisId() const {
 	switch (_mouseAxisSelector.getIndex()) {
 		case MOUSE_AXIS_X:
@@ -51,15 +97,74 @@ vts::InputId AddInputModal::getMouseAxisId() const {
 vts::InputId AddInputModal::getMouseButtonId() const {
 	switch (_mouseButtonSelector.getIndex()) {
 		case MOUSE_BUTTON_LEFT:
-			return vts::Button::LEFT;
+			return vts::MouseButton::LEFT;
 		case MOUSE_BUTTON_RIGHT:
-			return vts::Button::RIGHT;
+			return vts::MouseButton::RIGHT;
 		case MOUSE_BUTTON_MIDDLE:
-			return vts::Button::MIDDLE;
+			return vts::MouseButton::MIDDLE;
 		case MOUSE_BUTTON_FOURTH:
-			return vts::Button::FOURTH;
+			return vts::MouseButton::FOURTH;
 		case MOUSE_BUTTON_FIFTH:
-			return vts::Button::FIFTH;
+			return vts::MouseButton::FIFTH;
+	}
+	return 0;
+}
+
+vts::InputId AddInputModal::getGamepadButtonId() const {
+	switch (_gamepadButtonSelector.getIndex()) {
+		case GAMEPAD_BUTTON_NORTH:
+			return vts::GamepadButton::NORTH;
+		case GAMEPAD_BUTTON_SOUTH:
+			return vts::GamepadButton::SOUTH;
+		case GAMEPAD_BUTTON_WEST:
+			return vts::GamepadButton::WEST;
+		case GAMEPAD_BUTTON_EAST:
+			return vts::GamepadButton::EAST;
+		case GAMEPAD_BUTTON_LEFT_SHOULDER:
+			return vts::GamepadButton::LEFT_SHOULDER;
+		case GAMEPAD_BUTTON_RIGHT_SHOULDER:
+			return vts::GamepadButton::RIGHT_SHOULDER;
+		case GAMEPAD_BUTTON_DPAD_UP:
+			return vts::GamepadButton::DPAD_UP;
+		case GAMEPAD_BUTTON_DPAD_DOWN:
+			return vts::GamepadButton::DPAD_DOWN;
+		case GAMEPAD_BUTTON_DPAD_LEFT:
+			return vts::GamepadButton::DPAD_LEFT;
+		case GAMEPAD_BUTTON_DPAD_RIGHT:
+			return vts::GamepadButton::DPAD_RIGHT;
+	}
+	return 0;
+}
+
+vts::InputId AddInputModal::getGamepadStickActionId(
+    const bool isLeftStick) const {
+	vts::InputId id = 0;
+	switch (_gamepadStickActionSelector.getIndex()) {
+		case GAMEPAD_STICK_ACTION_X:
+			id |= isLeftStick ? vts::InputEvent::GAMEPAD_STICK_LEFT
+			                  : vts::InputEvent::GAMEPAD_STICK_RIGHT;
+			id |= vts::Axis::X;
+			break;
+		case GAMEPAD_STICK_ACTION_Y:
+			id |= isLeftStick ? vts::InputEvent::GAMEPAD_STICK_LEFT
+			                  : vts::InputEvent::GAMEPAD_STICK_RIGHT;
+			id |= vts::Axis::Y;
+			break;
+		case GAMEPAD_STICK_ACTION_PRESS:
+			id |= vts::InputEvent::GAMEPAD_BUTTON;
+			id |= isLeftStick ? vts::GamepadButton::LEFT_STICK
+			                  : vts::GamepadButton::RIGHT_STICK;
+			break;
+	}
+	return id;
+}
+
+vts::InputId AddInputModal::getGamepadTriggerId() const {
+	switch (_gamepadTriggerSelector.getIndex()) {
+		case GAMEPAD_SIDE_LEFT:
+			return vts::Side::LEFT;
+		case GAMEPAD_SIDE_RIGHT:
+			return vts::Side::RIGHT;
 	}
 	return 0;
 }
@@ -88,6 +193,25 @@ vts::InputData AddInputModal::buildInputData() const {
 		id |= vts::InputEvent::KEY;
 		if (_selectedKey != ImGuiKey_None) {
 			id |= gui::convertImGuiToUioKey(_selectedKey) << 16;
+		}
+	}
+	else if (device == DEVICE_GAMEPAD) {
+		const auto event = _gamepadEventSelector.getIndex();
+		switch (event) {
+			case GAMEPAD_EVENT_BUTTON:
+				id |= vts::InputEvent::GAMEPAD_BUTTON;
+				id |= getGamepadButtonId();
+				break;
+			case GAMEPAD_EVENT_LEFT_STICK:
+				id |= getGamepadStickActionId(true);
+				break;
+			case GAMEPAD_EVENT_RIGHT_STICK:
+				id |= getGamepadStickActionId(false);
+				break;
+			case GAMEPAD_EVENT_TRIGGER:
+				id |= vts::InputEvent::GAMEPAD_TRIGGER;
+				id |= getGamepadTriggerId();
+				break;
 		}
 	};
 	return vts::InputData(id);
@@ -179,6 +303,54 @@ void AddInputModal::showKeyboardControls() {
 	                 ImGuiInputTextFlags_ReadOnly);
 }
 
+void AddInputModal::showGamepadButtonSelector() {
+	ImGui::TableNextRow();
+	ImGui::TableNextColumn();
+	ImGui::Text("Button");
+	ImGui::TableNextColumn();
+	_gamepadButtonSelector.show();
+}
+
+void AddInputModal::showGamepadControls() {
+	showGamepadEventSelector();
+	switch (_gamepadEventSelector.getIndex()) {
+		case GAMEPAD_EVENT_BUTTON:
+			showGamepadButtonSelector();
+			break;
+		case GAMEPAD_EVENT_LEFT_STICK:
+		case GAMEPAD_EVENT_RIGHT_STICK:
+			showGamepadStickActionSelector();
+			break;
+		case GAMEPAD_EVENT_TRIGGER:
+			showGamepadTriggerSelector();
+			break;
+	}
+}
+
+void AddInputModal::showGamepadEventSelector() {
+	ImGui::TableNextRow();
+	ImGui::TableNextColumn();
+	ImGui::Text("Event");
+	ImGui::TableNextColumn();
+	_gamepadEventSelector.show();
+}
+
+void AddInputModal::showGamepadStickActionSelector() {
+	ImGui::TableNextRow();
+	ImGui::TableNextColumn();
+	ImGui::Text("Action");
+	ImGui::TableNextColumn();
+	_gamepadStickActionSelector.show();
+}
+
+void AddInputModal::showGamepadTriggerSelector() {
+	ImGui::TableNextRow();
+	ImGui::TableNextColumn();
+	ImGui::Text("Side");
+	ImGui::TableNextColumn();
+	_gamepadTriggerSelector.show();
+}
+
 AddInputModal::AddInputModal(vts::Parameter& editingParameter) :
     _selectedKeyName(),
     _selectedKey(ImGuiKey_None),
@@ -186,7 +358,12 @@ AddInputModal::AddInputModal(vts::Parameter& editingParameter) :
     _deviceSelector("##device-selector", DEVICES),
     _mouseAxisSelector("##mouse-axis-selector", AXES),
     _mouseButtonSelector("##mouse-button-selector", MOUSE_BUTTONS),
-    _mouseEventSelector("##mouse-event-selector", MOUSE_EVENTS) {}
+    _mouseEventSelector("##mouse-event-selector", MOUSE_EVENTS),
+    _gamepadButtonSelector("##gamepad-button-selector", GAMEPAD_BUTTONS),
+    _gamepadEventSelector("##gamepad-event-selector", GAMEPAD_EVENTS),
+    _gamepadStickActionSelector("##gamepad-stick-action-selector",
+                                GAMEPAD_STICK_ACTIONS),
+    _gamepadTriggerSelector("##gamepad-trigger-selector", GAMEPAD_SIDES) {}
 
 void AddInputModal::show() {
 	if (ImGui::BeginPopupModal(NAME,
@@ -205,6 +382,9 @@ void AddInputModal::show() {
 					break;
 				case DEVICE_KEYBOARD:
 					showKeyboardControls();
+					break;
+				case DEVICE_GAMEPAD:
+					showGamepadControls();
 					break;
 			}
 

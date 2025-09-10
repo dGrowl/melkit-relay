@@ -33,6 +33,9 @@ private:
 	Uint64 _lastUpdateTimeMs;
 	Uint64 _nextUpdateTimeMs;
 
+	void handleGamepadAxisMotion(SDL_GamepadAxisEvent& event);
+	void handleGamepadButton(SDL_GamepadButtonEvent& event, const bool isPressed);
+
 	void handleKeyDown(SDL_UserEvent& event);
 	void handleKeyUp(SDL_UserEvent& event);
 	void handleMouseButton(SDL_UserEvent& event, bool isClicked);
@@ -49,6 +52,8 @@ public:
 	ParameterView values();
 	void          add(const ParameterData& data);
 	void          clear();
+	void          handleGamepadEvent(SDL_Event&           event,
+	                                 const SDL_JoystickID activeGamepadId);
 	void          handleEvent(SDL_UserEvent& event);
 	void          update();
 };

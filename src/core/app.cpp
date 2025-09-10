@@ -143,6 +143,11 @@ void App::handleEvent(SDL_Event& event) {
 			_gamepadManager.refreshDevices();
 			_config.setActiveGamepadIndex(_gamepadManager.getActiveIndex());
 			break;
+		case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
+		case SDL_EVENT_GAMEPAD_BUTTON_UP:
+		case SDL_EVENT_GAMEPAD_AXIS_MOTION:
+			_params.handleGamepadEvent(event, _gamepadManager.getActiveId());
+			break;
 	}
 }
 

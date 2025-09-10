@@ -21,8 +21,18 @@ private:
 	ComboBox _mouseButtonSelector;
 	ComboBox _mouseEventSelector;
 
-	vts::InputId   getMouseAxisId() const;
-	vts::InputId   getMouseButtonId() const;
+	ComboBox _gamepadButtonSelector;
+	ComboBox _gamepadEventSelector;
+	ComboBox _gamepadStickActionSelector;
+	ComboBox _gamepadTriggerSelector;
+
+	vts::InputId getMouseAxisId() const;
+	vts::InputId getMouseButtonId() const;
+
+	vts::InputId getGamepadButtonId() const;
+	vts::InputId getGamepadStickActionId(const bool isLeftStick) const;
+	vts::InputId getGamepadTriggerId() const;
+
 	vts::InputData buildInputData() const;
 
 	void showCloseButtons();
@@ -34,6 +44,12 @@ private:
 	void showMouseEventSelector();
 
 	void showKeyboardControls();
+
+	void showGamepadButtonSelector();
+	void showGamepadControls();
+	void showGamepadEventSelector();
+	void showGamepadStickActionSelector();
+	void showGamepadTriggerSelector();
 
 public:
 	AddInputModal(vts::Parameter& editingParameter);

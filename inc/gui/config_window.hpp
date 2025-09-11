@@ -59,11 +59,11 @@ public:
 	             ws::IController&       wsController,
 	             vts::ParameterManager& paramManager);
 
+	bool         isOpen() const;
 	int          open(SDL_GPUDevice* gpu);
+	SDL_WindowID id() const;
 	void         close(SDL_GPUDevice* gpu);
 	void         render(SDL_GPUDevice* gpu);
-	bool         isOpen() const;
-	SDL_WindowID id() const;
 	void         setActiveGamepadIndex(const size_t activeIndex);
 };
 

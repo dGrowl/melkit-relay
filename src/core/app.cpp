@@ -38,6 +38,7 @@ App::~App() {
 }
 
 int App::init() {
+	SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
 		return 1;
 	}

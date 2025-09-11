@@ -143,14 +143,18 @@ void EditParameterModal::showInputs() {
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
 			ImGui::Text(fields.device);
+
 			ImGui::TableNextColumn();
 			ImGui::Text(fields.event);
+
 			ImGui::TableNextColumn();
 			ImGui::Text(fields.target);
+
 			ImGui::TableNextColumn();
 			if (ImGui::Checkbox("##invert-value", &data.isInverted)) {
 				_editingParameter.updateBounds();
 			}
+
 			ImGui::TableNextColumn();
 			ImGui::SetNextItemWidth(128.0f);
 			ImGui::BeginDisabled();
@@ -162,8 +166,10 @@ void EditParameterModal::showInputs() {
 			                   "%.3f",
 			                   ImGuiSliderFlags_NoInput);
 			ImGui::EndDisabled();
+
 			ImGui::TableNextColumn();
-			if (ImGui::Button("x", ImVec2(16.0f, 0.0f))) {
+			const float rowHeight = ImGui::GetTextLineHeightWithSpacing();
+			if (ImGui::Button("X", ImVec2(rowHeight, rowHeight))) {
 				_inputIdToDelete = id;
 			}
 

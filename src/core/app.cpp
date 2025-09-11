@@ -4,6 +4,7 @@
 
 #include "core/app.hpp"
 #include "core/settings.hpp"
+#include "gui/fonts.hpp"
 #include "gui/utility.hpp"
 #include "mnk/event.hpp"
 #include "vts/request.hpp"
@@ -57,6 +58,7 @@ int App::init() {
 
 	ImGui::StyleColorsDark();
 	gui::initColors();
+	gui::Fonts::init();
 
 	_icon.setConfigCallback(App::openConfigCallback, this);
 	_icon.setQuitCallback(App::quitCallback, this);

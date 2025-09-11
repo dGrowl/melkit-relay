@@ -8,6 +8,7 @@
 #include "imgui/imgui.h"
 
 #include "gui/config_window.hpp"
+#include "gui/fonts.hpp"
 #include "vts/parameter.hpp"
 #include "vts/request.hpp"
 
@@ -27,7 +28,10 @@ static const char* STATUS_TEXT[] = {
 };
 
 void ConfigWindow::showGamepadSettings() {
-	ImGui::SeparatorText("Controller");
+	{
+		FONT_SCOPE(FontType::BOLD);
+		ImGui::SeparatorText("Controller");
+	}
 
 	if (ImGui::BeginTable("Gamepad Settings", 2, ImGuiTableFlags_SizingFixedFit)) {
 		ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);
@@ -212,7 +216,10 @@ SDL_WindowID ConfigWindow::id() const {
 }
 
 void ConfigWindow::showVtsSettings() {
-	ImGui::SeparatorText("VTS Connection");
+	{
+		FONT_SCOPE(FontType::BOLD);
+		ImGui::SeparatorText("VTS Connection");
+	}
 
 	if (ImGui::BeginTable("VTS Config", 2, ImGuiTableFlags_SizingFixedFit)) {
 		ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);
@@ -257,7 +264,10 @@ void ConfigWindow::showCreateParameter() {
 	if (ImGui::BeginPopupModal("Create Parameter",
 	                           nullptr,
 	                           ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::SeparatorText("Details");
+		{
+			FONT_SCOPE(FontType::BOLD);
+			ImGui::SeparatorText("Details");
+		}
 		ImGui::Text("MK_");
 		ImGui::SameLine();
 		ImGui::InputText("Name",
@@ -310,8 +320,10 @@ void ConfigWindow::showParameterData() {
 }
 
 void ConfigWindow::showParameterPanel() {
-	ImGui::SeparatorText("Parameters");
-	ImGui::Separator();
+	{
+		FONT_SCOPE(FontType::BOLD);
+		ImGui::SeparatorText("Parameters");
+	}
 	if (_wsController.getStatus() == ws::Status::CONNECTED) {
 		showParameters();
 	}

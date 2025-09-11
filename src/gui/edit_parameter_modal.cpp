@@ -5,6 +5,7 @@
 #include "core/settings.hpp"
 #include "gui/combo_box.hpp"
 #include "gui/edit_parameter_modal.hpp"
+#include "gui/fonts.hpp"
 #include "gui/utility.hpp"
 #include "vts/parameter.hpp"
 #include "vts/request.hpp"
@@ -118,7 +119,10 @@ void EditParameterModal::showAddInput() {
 }
 
 void EditParameterModal::showInputs() {
-	ImGui::SeparatorText("Input");
+	{
+		FONT_SCOPE(FontType::BOLD);
+		ImGui::SeparatorText("Input");
+	}
 
 	if (ImGui::BeginTable("Input Table", 6, ImGuiTableFlags_SizingFixedFit)) {
 		ImGui::TableSetupColumn("Device", ImGuiTableColumnFlags_WidthFixed);
@@ -171,7 +175,10 @@ void EditParameterModal::showInputs() {
 }
 
 void EditParameterModal::showOutput() {
-	ImGui::SeparatorText("Output");
+	{
+		FONT_SCOPE(FontType::BOLD);
+		ImGui::SeparatorText("Output");
+	}
 
 	if (ImGui::BeginTable("Output Table", 2, ImGuiTableFlags_SizingFixedFit)) {
 		ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);

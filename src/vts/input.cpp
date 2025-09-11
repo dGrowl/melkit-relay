@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <limits>
 
 #include "vts/input.hpp"
 
@@ -13,10 +14,21 @@ InputData::InputData(const InputId id) :
     _value(0.0f),
     isInverted(false) {
 	const InputId event = id & 0xFFFF;
-	if (event == MOUSE_MOVE_REL) {
-		_inMin  = -64.0f;
-		_inMax  = 64.0f;
-		_outMin = -1.0f;
+	switch (event) {
+		case MOUSE_MOVE_REL:
+			_inMin  = -64.0f;
+			_inMax  = 64.0f;
+			_outMin = -1.0f;
+			break;
+		case GAMEPAD_STICK_RIGHT:
+		case GAMEPAD_STICK_LEFT:
+			_inMin  = std::numeric_limits<Sint16>::min();
+			_inMax  = std::numeric_limits<Sint16>::max();
+			_outMin = -1.0f;
+			break;
+		case GAMEPAD_TRIGGER:
+			_inMax = std::numeric_limits<Sint16>::max();
+			break;
 	}
 };
 

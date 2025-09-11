@@ -52,11 +52,10 @@ void ParameterManager::handleGamepadAxisMotion(SDL_GamepadAxisEvent& event) {
 			id |= Side::RIGHT;
 			break;
 	}
-	const float value = event.value - std::numeric_limits<Sint16>::min();
 	for (auto& parameter : values()) {
-		parameter.handleInput(id, value);
+		parameter.handleInput(id, event.value);
 	}
-	_sample.handleInput(id, value);
+	_sample.handleInput(id, event.value);
 }
 
 void ParameterManager::handleGamepadButton(SDL_GamepadButtonEvent& event,

@@ -21,8 +21,6 @@ vts::InputId convertImGuiToUioKey(const ImGuiKey keycode);
 
 const char* getUioKeyName(const Uint32 keycode);
 
-void initColors();
-
 }  // namespace gui
 
 #endif  // GUI_UTILITY_HPP_

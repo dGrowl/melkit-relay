@@ -5,6 +5,7 @@
 #include "core/app.hpp"
 #include "core/settings.hpp"
 #include "gui/fonts.hpp"
+#include "gui/theme.hpp"
 #include "gui/utility.hpp"
 #include "mnk/event.hpp"
 #include "vts/request.hpp"
@@ -56,8 +57,7 @@ int App::init() {
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-	ImGui::StyleColorsDark();
-	gui::initColors();
+	gui::Theme::init();
 	gui::Fonts::init();
 
 	_icon.setConfigCallback(App::openConfigCallback, this);

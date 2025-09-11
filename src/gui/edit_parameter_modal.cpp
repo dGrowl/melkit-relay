@@ -124,7 +124,12 @@ void EditParameterModal::showInputs() {
 		ImGui::SeparatorText("Input");
 	}
 
-	if (ImGui::BeginTable("Input Table", 6, ImGuiTableFlags_SizingFixedFit)) {
+	ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(12.0f, 2.0f));
+
+	if (ImGui::BeginTable(
+	        "Input Table",
+	        6,
+	        ImGuiTableFlags_PadOuterX | ImGuiTableFlags_SizingFixedFit)) {
 		ImGui::TableSetupColumn("Device", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Event", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Target", ImGuiTableColumnFlags_WidthFixed);
@@ -178,6 +183,8 @@ void EditParameterModal::showInputs() {
 
 		ImGui::EndTable();
 	}
+
+	ImGui::PopStyleVar();
 }
 
 void EditParameterModal::showOutput() {

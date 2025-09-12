@@ -2,7 +2,6 @@
 #define GUI_CONFIG_WINDOW_HPP_
 
 #include <SDL3/SDL_gpu.h>
-#include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_video.h>
 
 #include "imgui/backends/imgui_impl_sdl3.h"
@@ -23,11 +22,6 @@ constexpr Uint8 MAX_PARAM_NAME_LENGTH = 128;
 
 class ConfigWindow {
 private:
-	const char* _title;
-	int         _height;
-	int         _width;
-	SDL_FColor  _clearColor;
-
 	pad::Manager&          _gamepadManager;
 	vts::Parameter&        _editingParameter;
 	vts::ParameterManager& _paramManager;
@@ -37,8 +31,7 @@ private:
 	char     _urlBuffer[MAX_URL_LENGTH];
 	ComboBox _gamepadSelector;
 
-	SDL_Window*     _window;
-	SDL_WindowFlags _flags;
+	SDL_Window* _window;
 
 	DeleteParametersModal _deleteParametersModal;
 	EditParameterModal    _editParameterModal;

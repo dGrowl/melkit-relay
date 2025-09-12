@@ -4,6 +4,7 @@
 #include <ranges>
 
 #include <SDL3/SDL_events.h>
+#include <SDL3/SDL_pixels.h>
 
 #include "imgui/imgui.h"
 
@@ -14,11 +15,17 @@
 #include "vts/parameter.hpp"
 #include "vts/request.hpp"
 
-static constexpr int DEFAULT_WINDOW_WIDTH  = 960;
-static constexpr int DEFAULT_WINDOW_HEIGHT = 540;
+static constexpr auto WINDOW_TITLE = "Relay: Configuration";
 
-static constexpr int MIN_WINDOW_WIDTH  = 512;
-static constexpr int MIN_WINDOW_HEIGHT = 256;
+static constexpr SDL_WindowFlags WINDOW_FLAGS =
+    SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY;
+
+static constexpr int WINDOW_WIDTH_DEFAULT  = 960;
+static constexpr int WINDOW_HEIGHT_DEFAULT = 540;
+static constexpr int WINDOW_WIDTH_MIN      = 512;
+static constexpr int WINDOW_HEIGHT_MIN     = 256;
+
+static const SDL_FColor CLEAR_COLOR{.03f, .02f, .04f, 1.0f};
 
 namespace gui {
 
@@ -234,10 +241,6 @@ void ConfigWindow::showVtsSettings() {
 ConfigWindow::ConfigWindow(pad::Manager&          gamepadManager,
                            ws::IController&       wsController,
                            vts::ParameterManager& paramManager) :
-    _title("Configuration"),
-    _height(DEFAULT_WINDOW_HEIGHT),
-    _width(DEFAULT_WINDOW_WIDTH),
-    _clearColor{.03f, .02f, .04f, 1.0f},
     _gamepadManager(gamepadManager),
     _editingParameter(paramManager.getSample()),
     _paramManager(paramManager),
@@ -246,9 +249,6 @@ ConfigWindow::ConfigWindow(pad::Manager&          gamepadManager,
     _urlBuffer(),
     _gamepadSelector("##active-gamepad", _gamepadManager.getNames()),
     _window(nullptr),
-    _flags(SDL_WINDOW_RESIZABLE
-           | SDL_WINDOW_HIDDEN
-           | SDL_WINDOW_HIGH_PIXEL_DENSITY),
     _deleteParametersModal(_paramManager, _wsController),
     _editParameterModal(wsController, _editingParameter) {
 	SDL_strlcpy(_urlBuffer, wsController.getUrl(), sizeof(_urlBuffer));
@@ -267,15 +267,15 @@ int ConfigWindow::open(SDL_GPUDevice* gpu) {
 	const SDL_DisplayID primaryDisplay = SDL_GetPrimaryDisplay();
 	const float         mainScale = SDL_GetDisplayContentScale(primaryDisplay);
 
-	_window = SDL_CreateWindow(_title,
-	                           (int)(_width * mainScale),
-	                           (int)(_height * mainScale),
-	                           _flags);
+	_window = SDL_CreateWindow(WINDOW_TITLE,
+	                           (int)(WINDOW_WIDTH_DEFAULT * mainScale),
+	                           (int)(WINDOW_HEIGHT_DEFAULT * mainScale),
+	                           WINDOW_FLAGS);
 	if (_window == nullptr) {
 		return 2;
 	}
 
-	SDL_SetWindowMinimumSize(_window, MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT);
+	SDL_SetWindowMinimumSize(_window, WINDOW_WIDTH_MIN, WINDOW_HEIGHT_MIN);
 	SDL_SetWindowPosition(_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	SDL_ShowWindow(_window);
 
@@ -371,7 +371,7 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 
 		SDL_GPUColorTargetInfo targetInfo = {};
 		targetInfo.texture                = swapchainTexture;
-		targetInfo.clear_color            = _clearColor;
+		targetInfo.clear_color            = CLEAR_COLOR;
 		targetInfo.load_op                = SDL_GPU_LOADOP_CLEAR;
 		targetInfo.store_op               = SDL_GPU_STOREOP_STORE;
 		targetInfo.mip_level              = 0;

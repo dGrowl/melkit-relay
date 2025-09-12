@@ -10,6 +10,8 @@ namespace gui {
 enum class FontType : std::uint8_t {
 	DEFAULT,
 	BOLD,
+	MOUSE_KEYBOARD,
+	GAMEPAD,
 };
 
 class FontScope {
@@ -17,14 +19,15 @@ private:
 	bool _pushed;
 
 public:
-	FontScope(ImFont* font);
+	FontScope(ImFont* font, const float size);
 	~FontScope();
 };
 
 class Fonts {
 public:
-	static void      init();
 	static FontScope scope(const FontType type);
+	static void      init();
+	static void      push(const FontType type);
 };
 
 }  // namespace gui

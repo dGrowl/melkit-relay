@@ -9,6 +9,8 @@
 
 #include "gui/config_window.hpp"
 #include "gui/fonts.hpp"
+#include "gui/icon.hpp"
+#include "math/formula.hpp"
 #include "vts/parameter.hpp"
 #include "vts/request.hpp"
 
@@ -79,12 +81,59 @@ void ConfigWindow::showParameterControls() {
 }
 
 void ConfigWindow::showParameterData() {
-	for (auto& p : _paramManager.values()) {
-		if (ImGui::Button(p.getName().c_str(), ImVec2(-1.0f, 0.0f))) {
-			_editingParameter = p;
-			_editParameterModal.refresh();
-			ImGui::OpenPopup(EditParameterModal::NAME);
+	bool shouldOpenModal = false;
+
+	ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(12.0f, 2.0f));
+
+	if (ImGui::BeginTable("Parameter Table",
+	                      3,
+	                      ImGuiTableFlags_PadOuterX
+	                          | ImGuiTableFlags_RowBg
+	                          | ImGuiTableFlags_ScrollY
+	                          | ImGuiTableFlags_SizingFixedFit,
+	                      ImVec2(0.0f, 0.0f))) {
+		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableSetupColumn("Inputs", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Output", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableHeadersRow();
+
+		for (auto& p : _paramManager.values()) {
+			ImGui::PushID(p.getName().c_str());
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+
+			if (ImGui::Button(p.getName().c_str(), ImVec2(-1.0f, 36.0f))) {
+				_editingParameter = p;
+				_editParameterModal.refresh();
+				shouldOpenModal = true;
+			}
+
+			ImGui::TableNextColumn();
+			{
+				FONT_SCOPE(FontType::MOUSE_KEYBOARD);
+				for (const auto& input : p.getInputs() | std::views::values) {
+					const float alpha =
+					    math::remapLinear(input.getValue(), -1.0f, 1.0f, 0.1f, 1.0f);
+					drawIcon(input.getId(), alpha);
+				}
+			}
+
+			ImGui::TableNextColumn();
+			ImVec2 cursorPos = ImGui::GetCursorPos();
+			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + 5.0f));
+			ImGui::Text("%.2f", p.getOutput());
+
+			ImGui::PopID();
 		}
+
+		ImGui::EndTable();
+	}
+
+	ImGui::PopStyleVar();
+
+	if (shouldOpenModal) {
+		ImGui::OpenPopup(EditParameterModal::NAME);
 	}
 
 	_editParameterModal.show();

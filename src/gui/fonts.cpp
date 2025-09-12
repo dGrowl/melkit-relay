@@ -2,52 +2,82 @@
 
 #include "gui/fonts.hpp"
 
-static constexpr auto DEFAULT_FONT_PATH = "./font/NotoSans-Medium.ttf";
-static constexpr auto BOLD_FONT_PATH    = "./font/NotoSans-Bold.ttf";
+static constexpr auto DEFAULT_FONT_PATH        = "./font/NotoSans-Medium.ttf";
+static constexpr auto BOLD_FONT_PATH           = "./font/NotoSans-Bold.ttf";
+static constexpr auto MOUSE_KEYBOARD_FONT_PATH = "./font/KenneyMouseKey.ttf";
+static constexpr auto GAMEPAD_FONT_PATH        = "./font/KenneyGamepad.ttf";
 
 static constexpr float DEFAULT_SIZE = 20.0f;
+static constexpr float ICON_SIZE    = 32.0f;
 
-static ImFont* DEFAULT_FONT = nullptr;
-static ImFont* BOLD_FONT    = nullptr;
+static ImFont* DEFAULT_FONT        = nullptr;
+static ImFont* BOLD_FONT           = nullptr;
+static ImFont* MOUSE_KEYBOARD_FONT = nullptr;
+static ImFont* GAMEPAD_FONT        = nullptr;
 
 namespace gui {
 
-FontScope::FontScope(ImFont* font) {
-	ImGui::PushFont(font, 0.0f);
+ImFont* loadTtf(const char* path, const ImFontConfig* config) {
+	ImGuiIO& io   = ImGui::GetIO();
+	ImFont*  font = io.Fonts->AddFontFromFileTTF(path, DEFAULT_SIZE, config);
+	return font == nullptr ? io.FontDefault : font;
+}
+
+FontScope::FontScope(ImFont* font, const float size) {
+	ImGui::PushFont(font, size);
 }
 
 FontScope::~FontScope() {
 	ImGui::PopFont();
 }
 
-void Fonts::init() {
-	ImGuiIO& io = ImGui::GetIO();
+FontScope Fonts::scope(const FontType type) {
+	switch (type) {
+		case FontType::DEFAULT:
+			return FontScope(DEFAULT_FONT, DEFAULT_SIZE);
+		case FontType::BOLD:
+			return FontScope(BOLD_FONT, DEFAULT_SIZE);
+		case FontType::MOUSE_KEYBOARD:
+			return FontScope(MOUSE_KEYBOARD_FONT, ICON_SIZE);
+		case FontType::GAMEPAD:
+			return FontScope(GAMEPAD_FONT, ICON_SIZE);
+	}
+	return FontScope(DEFAULT_FONT, DEFAULT_SIZE);
+}
 
+void Fonts::init() {
 	ImFontConfig config;
 	config.GlyphOffset.y = -1.0f;
 	config.OversampleH   = 3;
 
-	DEFAULT_FONT =
-	    io.Fonts->AddFontFromFileTTF(DEFAULT_FONT_PATH, DEFAULT_SIZE, &config);
-	if (DEFAULT_FONT == nullptr) {
-		DEFAULT_FONT = io.FontDefault;
-	}
+	DEFAULT_FONT = loadTtf(DEFAULT_FONT_PATH, &config);
+	BOLD_FONT    = loadTtf(BOLD_FONT_PATH, &config);
 
-	BOLD_FONT =
-	    io.Fonts->AddFontFromFileTTF(BOLD_FONT_PATH, DEFAULT_SIZE, &config);
-	if (BOLD_FONT == nullptr) {
-		BOLD_FONT = io.FontDefault;
-	}
+	ImFontConfig iconConfig;
+	iconConfig.GlyphOffset.y = -4.0f;
+	iconConfig.OversampleH   = 3;
+
+	MOUSE_KEYBOARD_FONT = loadTtf(MOUSE_KEYBOARD_FONT_PATH, &iconConfig);
+	GAMEPAD_FONT        = loadTtf(GAMEPAD_FONT_PATH, &iconConfig);
 }
 
-FontScope Fonts::scope(const FontType type) {
+void Fonts::push(const FontType type) {
 	switch (type) {
 		case FontType::DEFAULT:
-			return FontScope(DEFAULT_FONT);
+			ImGui::PushFont(DEFAULT_FONT, DEFAULT_SIZE);
+			return;
 		case FontType::BOLD:
-			return FontScope(BOLD_FONT);
+			ImGui::PushFont(BOLD_FONT, DEFAULT_SIZE);
+			return;
+		case FontType::MOUSE_KEYBOARD:
+			ImGui::PushFont(MOUSE_KEYBOARD_FONT, ICON_SIZE);
+			return;
+		case FontType::GAMEPAD:
+			ImGui::PushFont(GAMEPAD_FONT, ICON_SIZE);
+			return;
 	}
-	return FontScope(DEFAULT_FONT);
+	ImGuiIO& io = ImGui::GetIO();
+	ImGui::PushFont(io.FontDefault, 0.0f);
 }
 
 }  // namespace gui

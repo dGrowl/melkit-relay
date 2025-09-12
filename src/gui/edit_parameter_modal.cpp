@@ -126,10 +126,11 @@ void EditParameterModal::showInputs() {
 
 	ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(12.0f, 2.0f));
 
-	if (ImGui::BeginTable(
-	        "Input Table",
-	        6,
-	        ImGuiTableFlags_PadOuterX | ImGuiTableFlags_SizingFixedFit)) {
+	if (ImGui::BeginTable("Input Table",
+	                      6,
+	                      ImGuiTableFlags_PadOuterX
+	                          | ImGuiTableFlags_RowBg
+	                          | ImGuiTableFlags_SizingFixedFit)) {
 		ImGui::TableSetupColumn("Device", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Event", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Target", ImGuiTableColumnFlags_WidthFixed);

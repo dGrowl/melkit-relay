@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <limits>
 
+#include "math/formula.hpp"
 #include "vts/input.hpp"
 
 namespace vts {
@@ -48,20 +49,9 @@ InputId InputData::getId() const {
 	return _id;
 }
 
-float remap(float inValue,
-            float inLower,
-            float inUpper,
-            float outLower,
-            float outUpper) {
-	return outLower
-	       + (inValue - inLower)
-	       * (outUpper - outLower)
-	       / (inUpper - inLower);
-}
-
 void InputData::update(float inValue) {
 	inValue = std::clamp(inValue, _inMin, _inMax);
-	inValue = remap(inValue, _inMin, _inMax, _outMin, _outMax);
+	inValue = math::remapLinear(inValue, _inMin, _inMax, _outMin, _outMax);
 	_value  = inValue;
 }
 

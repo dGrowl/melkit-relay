@@ -220,7 +220,7 @@ std::vector<SettingsParameter> Settings::getParameters() {
 			settingsParam.blendMode = vts::BlendMode::BOUNDED_SUM;
 		}
 		for (const auto& input : parameter["inputs"].GetArray()) {
-			vts::InputData data(input["id"].GetInt());
+			vts::InputData data(input["id"].GetUint());
 			data.isInverted = input["isInverted"].GetBool();
 			settingsParam.inputs.emplace_back(std::move(data));
 		}

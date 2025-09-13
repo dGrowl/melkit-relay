@@ -88,13 +88,10 @@ void ConfigWindow::showParameterData() {
 			}
 
 			ImGui::TableNextColumn();
-			{
-				FONT_SCOPE(FontType::MOUSE_KEYBOARD);
-				for (const auto& input : p.getInputs() | std::views::values) {
-					const float alpha =
-					    math::remapLinear(input.getValue(), -1.0f, 1.0f, 0.1f, 1.0f);
-					drawIcon(input.getId(), alpha);
-				}
+			for (const auto& input : p.getInputs() | std::views::values) {
+				const float alpha =
+				    math::remapLinear(input.getValue(), -1.0f, 1.0f, 0.1f, 1.0f);
+				drawIcon(input.getId(), alpha);
 			}
 
 			ImGui::TableNextColumn();

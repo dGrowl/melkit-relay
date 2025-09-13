@@ -199,7 +199,11 @@ void drawIcon(const vts::InputId id, const float alpha) {
 		case vts::InputEvent::MOUSE_MOVE_ABS:
 		case vts::InputEvent::MOUSE_MOVE_REL:
 			Fonts::push(FontType::MOUSE_KEYBOARD);
-			drawIconOrDefault(target, alpha, mouseMoveStrings, "\uE0E6", target == vts::Axis::X ? -3.0f : 3.0f);
+			drawIconOrDefault(target,
+			                  alpha,
+			                  mouseMoveStrings,
+			                  "\uE0E6",
+			                  target == vts::Axis::X ? -3.0f : 3.0f);
 			break;
 		case vts::InputEvent::GAMEPAD_BUTTON:
 			Fonts::push(FontType::GAMEPAD);

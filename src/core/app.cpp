@@ -16,6 +16,7 @@ namespace core {
 
 App::App() :
     _alive(true),
+    _pacer(),
     _gpu(nullptr),
     _params(),
     _wsClient(),
@@ -93,6 +94,8 @@ void App::quitCallback(void* userdata, SDL_TrayEntry*) {
 void App::run() {
 	SDL_Event event;
 	while (_alive) {
+		_pacer.startFrame();
+
 		while (SDL_PollEvent(&event)) {
 			handleEvent(event);
 		}
@@ -101,7 +104,7 @@ void App::run() {
 		_params.update();
 		checkParameterValues();
 
-		SDL_Delay(10);
+		_pacer.endFrame();
 	}
 }
 

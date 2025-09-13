@@ -4,6 +4,7 @@
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_tray.h>
 
+#include "core/pacer.hpp"
 #include "gui/config_window.hpp"
 #include "gui/tray_icon.hpp"
 #include "mnk/monitor.hpp"
@@ -16,6 +17,7 @@ namespace core {
 class App {
 private:
 	bool           _alive;
+	Pacer          _pacer;
 	SDL_GPUDevice* _gpu;
 
 	vts::ParameterManager _params;

@@ -236,8 +236,8 @@ int ConfigWindow::open(SDL_GPUDevice* gpu) {
 	const float         mainScale = SDL_GetDisplayContentScale(primaryDisplay);
 
 	_window = SDL_CreateWindow(WINDOW_TITLE,
-	                           (int)(WINDOW_WIDTH_DEFAULT * mainScale),
-	                           (int)(WINDOW_HEIGHT_DEFAULT * mainScale),
+	                           static_cast<int>(WINDOW_WIDTH_DEFAULT * mainScale),
+	                           static_cast<int>(WINDOW_HEIGHT_DEFAULT * mainScale),
 	                           WINDOW_FLAGS);
 	if (_window == nullptr) {
 		return 2;

@@ -10,7 +10,7 @@
 
 namespace vts {
 
-static constexpr const char* DEFAULT_PARAMETER_NAME = "MK_DEFAULT_NAME";
+static constexpr const char* DEFAULT_PARAMETER_NAME = "MK_NewParameter";
 
 float Parameter::calcInputSum() {
 	float total = 0;
@@ -145,6 +145,10 @@ void Parameter::setInputs(const std::vector<InputData>& inputs) {
 		_inputs.insert_or_assign(input.getId(), input);
 	}
 	updateBounds();
+}
+
+void Parameter::setName(const std::string& name) {
+	_name = name;
 }
 
 void Parameter::updateBounds() {

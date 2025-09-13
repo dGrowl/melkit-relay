@@ -38,38 +38,9 @@ static const char* STATUS_TEXT[] = {
 
 void ConfigWindow::showCreateParameter() {
 	if (ImGui::Button("Create", ImVec2(128.0f, 0.0f))) {
-		ImGui::OpenPopup("Create Parameter");
-	}
-
-	if (ImGui::BeginPopupModal("Create Parameter",
-	                           nullptr,
-	                           ImGuiWindowFlags_AlwaysAutoResize)) {
-		{
-			FONT_SCOPE(FontType::BOLD);
-			ImGui::SeparatorText("Details");
-		}
-		ImGui::Text("MK_");
-		ImGui::SameLine();
-		ImGui::InputText("Name",
-		                 _newParamNameBuffer,
-		                 IM_ARRAYSIZE(_newParamNameBuffer));
-
-		if (ImGui::Button("OK", ImVec2(120, 0))) {
-			vts::ParameterData newParam{
-			    .name         = std::format("MK_{}", _newParamNameBuffer),
-			    .defaultValue = 0.0f,
-			    .max          = 1.0f,
-			    .min          = 0.0f,
-			};
-			vts::createParameter(_wsController, newParam);
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::SetItemDefaultFocus();
-		ImGui::SameLine();
-		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::EndPopup();
+		_editingParameter = vts::Parameter();
+		_editParameterModal.refresh();
+		ImGui::OpenPopup(EditParameterModal::NAME);
 	}
 }
 

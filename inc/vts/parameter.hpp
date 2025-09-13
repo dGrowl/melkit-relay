@@ -57,6 +57,7 @@ public:
 	void               removeInput(const InputId id);
 	void               setBlendMode(const BlendMode mode);
 	void               setInputs(const std::vector<InputData>& inputs);
+	void               setName(const std::string& name);
 	void               updateBounds();
 };
 

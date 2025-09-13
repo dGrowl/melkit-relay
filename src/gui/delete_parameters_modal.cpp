@@ -39,7 +39,7 @@ void DeleteParametersModal::show() {
 		if (ImGui::Button("Delete", ImVec2(128.0f, 0.0f))) {
 			for (auto& p : _parameterManager.values()) {
 				if (_selectedState[p.getName()]) {
-					vts::deleteParameter(_wsController, p);
+					vts::deleteParameter(_wsController, p.getName());
 				}
 			}
 			ImGui::CloseCurrentPopup();

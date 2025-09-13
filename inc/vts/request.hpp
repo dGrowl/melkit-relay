@@ -17,7 +17,8 @@ void createParameter(ws::IController&     wsController,
 
 void createParameter(ws::IController& wsController, const Parameter& parameter);
 
-void deleteParameter(ws::IController& wsController, const Parameter& parameter);
+void deleteParameter(ws::IController&       wsController,
+                     const std::string_view name);
 
 void getParameters(ws::IController& wsController);
 

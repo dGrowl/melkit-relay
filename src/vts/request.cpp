@@ -90,10 +90,9 @@ static constexpr auto PARAMETER_DELETION_REQUEST = R"({{
 	}}
 }})";
 
-void deleteParameter(ws::IController& wsController,
-                     const Parameter& parameter) {
-	wsController.sendMessage(
-	    std::format(PARAMETER_DELETION_REQUEST, parameter.getName()));
+void deleteParameter(ws::IController&       wsController,
+                     const std::string_view name) {
+	wsController.sendMessage(std::format(PARAMETER_DELETION_REQUEST, name));
 }
 
 static constexpr auto INPUT_PARAMETER_LIST_REQUEST = R"({

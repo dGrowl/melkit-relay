@@ -55,6 +55,10 @@ static constexpr unsigned BLEND_MODE_BOUNDED_SUM = 1;
 
 static std::vector<const char*> BLEND_MODES = {"Max", "Sum (Bound)"};
 
+static constexpr auto NAME_PREFIX = "MK_";
+static constexpr int  NAME_PREFIX_LENGTH =
+    std::char_traits<char>::length(NAME_PREFIX);
+
 struct InputStrings {
 	const char* device = UNKNOWN;
 	const char* event  = UNKNOWN;
@@ -188,6 +192,33 @@ void EditParameterModal::showInputs() {
 	ImGui::PopStyleVar();
 }
 
+void EditParameterModal::showMeta() {
+	{
+		FONT_SCOPE(FontType::BOLD);
+		ImGui::SeparatorText("Meta");
+	}
+
+	if (ImGui::BeginTable("Meta Table", 2, ImGuiTableFlags_SizingFixedFit)) {
+		ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+
+		ImGui::TableNextRow();
+		ImGui::TableNextColumn();
+		ImGui::Text("Name");
+		ImGui::TableNextColumn();
+		if (ImGui::InputText("##name-input",
+		                     _nameInputBuffer,
+		                     IM_ARRAYSIZE(_nameInputBuffer),
+		                     ImGuiInputTextFlags_CallbackAlways,
+		                     inputNameCallback,
+		                     this)) {
+			_editingParameter.setName(_nameInputBuffer);
+		};
+
+		ImGui::EndTable();
+	}
+}
+
 void EditParameterModal::showOutput() {
 	{
 		FONT_SCOPE(FontType::BOLD);
@@ -239,12 +270,48 @@ void EditParameterModal::showOutput() {
 	}
 }
 
+int EditParameterModal::restrictInputName(ImGuiInputTextCallbackData* data) {
+	bool isPrefixValid =
+	    (data->BufTextLen >= NAME_PREFIX_LENGTH)
+	    && (SDL_strncmp(data->Buf, NAME_PREFIX, NAME_PREFIX_LENGTH) == 0);
+
+	if (isPrefixValid) {
+		_editingParameter.setName(std::string(data->Buf, data->BufTextLen));
+	}
+	else {
+		SDL_strlcpy(data->Buf,
+		            _editingParameter.getName().c_str(),
+		            MAX_NAME_BUFFER_LENGTH);
+		data->BufTextLen = static_cast<int>(_editingParameter.getName().length());
+		data->BufDirty   = true;
+	}
+	data->CursorPos      = std::max(data->CursorPos, NAME_PREFIX_LENGTH);
+	data->SelectionStart = std::max(data->SelectionStart, NAME_PREFIX_LENGTH);
+	data->SelectionEnd   = std::max(data->SelectionEnd, NAME_PREFIX_LENGTH);
+
+	return 0;
+}
+
+int EditParameterModal::inputNameCallback(ImGuiInputTextCallbackData* data) {
+	auto instance = static_cast<EditParameterModal*>(data->UserData);
+	return instance->restrictInputName(data);
+}
+
 void EditParameterModal::checkDeleteInput() {
 	if (_inputIdToDelete == 0) {
 		return;
 	}
 	_editingParameter.removeInput(_inputIdToDelete);
 	_inputIdToDelete = 0;
+}
+
+void EditParameterModal::save() {
+	if (_initialName != _editingParameter.getName()) {
+		SETTINGS.removeParameter(_initialName);
+		vts::deleteParameter(_wsController, _initialName);
+	}
+	SETTINGS.setParameter(_editingParameter);
+	vts::createParameter(_wsController, _editingParameter);
 }
 
 void EditParameterModal::updateBlendMode() {
@@ -267,6 +334,8 @@ EditParameterModal::EditParameterModal(ws::IController& wsController,
     _inputIdToDelete(0) {}
 
 void EditParameterModal::refresh() {
+	_initialName = _editingParameter.getName();
+	SDL_strlcpy(_nameInputBuffer, _initialName.c_str(), MAX_NAME_BUFFER_LENGTH);
 	switch (_editingParameter.getBlendMode()) {
 		case vts::BlendMode::MAX:
 			_blendModeSelector.setIndex(BLEND_MODE_MAX);
@@ -282,16 +351,14 @@ void EditParameterModal::show() {
 	        NAME,
 	        nullptr,
 	        ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
-		ImGui::Text(_editingParameter.getName().c_str());
-
+		showMeta();
 		showInputs();
 		showAddInput();
 		showOutput();
 		checkDeleteInput();
 
 		if (ImGui::Button("Save", ImVec2(128.0f, 0.0f))) {
-			SETTINGS.setParameter(_editingParameter);
-			vts::createParameter(_wsController, _editingParameter);
+			save();
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SetItemDefaultFocus();

@@ -10,6 +10,7 @@
 
 #include "gui/delete_parameters_modal.hpp"
 #include "gui/edit_parameter_modal.hpp"
+#include "gui/parameter_template_modal.hpp"
 #include "pad/manager.hpp"
 #include "vts/parameter_manager.hpp"
 #include "ws/controller.hpp"
@@ -33,11 +34,11 @@ private:
 
 	SDL_Window* _window;
 
-	DeleteParametersModal _deleteParametersModal;
-	EditParameterModal    _editParameterModal;
+	DeleteParametersModal  _deleteParametersModal;
+	EditParameterModal     _editParameterModal;
+	ParameterTemplateModal _parameterTemplateModal;
 
-	void showCreateParameter();
-	void showDeleteParameters();
+	bool showCreateParameter();
 	void showParameterControls();
 	void showParameterData();
 	void showParameterPanel();
@@ -46,6 +47,8 @@ private:
 	void showGamepadSettings();
 	void showSettingsPanel();
 	void showVtsSettings();
+
+	void showParameterModals();
 
 public:
 	ConfigWindow(pad::Manager&          gamepadManager,

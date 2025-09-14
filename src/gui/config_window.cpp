@@ -36,26 +36,59 @@ static const char* STATUS_TEXT[] = {
     "CONNECTED",
 };
 
-void ConfigWindow::showCreateParameter() {
-	if (ImGui::Button("Create", ImVec2(128.0f, 0.0f))) {
+bool ConfigWindow::showCreateParameter() {
+	if (ImGui::Selectable("Create")) {
 		_editingParameter = vts::Parameter();
 		_editParameterModal.refresh();
-		ImGui::OpenPopup(EditParameterModal::NAME);
-	}
-}
-
-void ConfigWindow::showDeleteParameters() {
-	if (ImGui::Button("Delete", ImVec2(128.0f, 0.0f))) {
-		ImGui::OpenPopup(DeleteParametersModal::NAME);
+		return true;
 	}
 
-	_deleteParametersModal.show();
+	return false;
 }
 
 void ConfigWindow::showParameterControls() {
-	showCreateParameter();
-	ImGui::SameLine();
-	showDeleteParameters();
+	static char filterBuffer[33]   = "";
+	bool        shouldOpenEditMenu = false;
+	if (ImGui::BeginTable("Parameter Top Row", 2)) {
+		ImGui::TableSetupColumn("Filter", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableSetupColumn("Edit", ImGuiTableColumnFlags_WidthFixed);
+
+		ImGui::TableNextColumn();
+		ImGui::SetNextItemWidth(-1.0f);
+		ImGui::InputText("##filter", filterBuffer, IM_ARRAYSIZE(filterBuffer));
+
+		ImGui::TableNextColumn();
+		if (ImGui::Button("Edit", ImVec2(128.0f, 0.0f))) {
+			shouldOpenEditMenu = true;
+		}
+		ImGui::EndTable();
+	}
+	if (shouldOpenEditMenu) {
+		ImGui::OpenPopup("Edit Menu");
+	}
+	bool shouldOpenCreate   = false;
+	bool shouldOpenDelete   = false;
+	bool shouldOpenTemplate = false;
+	if (ImGui::BeginPopupContextItem("Edit Menu")) {
+		shouldOpenCreate   = showCreateParameter();
+		shouldOpenTemplate = ImGui::Selectable("Template");
+		shouldOpenDelete =
+		    ImGui::Selectable("Delete",
+		                      false,
+		                      ImGuiSelectableFlags_None,
+		                      ImVec2(128.0f, 0.0f));  // sets the width of the menu
+
+		ImGui::EndPopup();
+	}
+	if (shouldOpenCreate) {
+		ImGui::OpenPopup(EditParameterModal::NAME);
+	}
+	if (shouldOpenTemplate) {
+		ImGui::OpenPopup(ParameterTemplateModal::NAME);
+	}
+	if (shouldOpenDelete) {
+		ImGui::OpenPopup(DeleteParametersModal::NAME);
+	}
 }
 
 void ConfigWindow::showParameterData() {
@@ -110,8 +143,6 @@ void ConfigWindow::showParameterData() {
 	if (shouldOpenModal) {
 		ImGui::OpenPopup(EditParameterModal::NAME);
 	}
-
-	_editParameterModal.show();
 }
 
 void ConfigWindow::showParameterPanel() {
@@ -218,7 +249,8 @@ ConfigWindow::ConfigWindow(pad::Manager&          gamepadManager,
     _gamepadSelector("##active-gamepad", _gamepadManager.getNames()),
     _window(nullptr),
     _deleteParametersModal(_paramManager, _wsController),
-    _editParameterModal(wsController, _editingParameter) {
+    _editParameterModal(wsController, _editingParameter),
+    _parameterTemplateModal() {
 	SDL_strlcpy(_urlBuffer, wsController.getUrl(), sizeof(_urlBuffer));
 }
 
@@ -306,7 +338,7 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 	                               | ImGuiWindowFlags_NoBringToFrontOnFocus;
 	if (ImGui::Begin("Settings", nullptr, windowFlags)) {
 		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
-		if (ImGui::BeginTable("Columns",
+		if (ImGui::BeginTable("Panels",
 		                      2,
 		                      ImGuiTableFlags_Resizable,
 		                      contentRegion)) {
@@ -315,6 +347,8 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 
 			ImGui::TableNextColumn();
 			showParameterPanel();
+
+			showParameterModals();
 
 			ImGui::EndTable();
 		}
@@ -357,6 +391,12 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 
 void ConfigWindow::setActiveGamepadIndex(const size_t activeIndex) {
 	_gamepadSelector.setIndex(activeIndex);
+}
+
+void ConfigWindow::showParameterModals() {
+	_deleteParametersModal.show();
+	_editParameterModal.show();
+	_parameterTemplateModal.show();
 }
 
 }  // namespace gui

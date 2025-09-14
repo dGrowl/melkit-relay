@@ -10,9 +10,13 @@ static std::vector<const char*> TEMPLATES{"Controller"};
 namespace gui {
 
 void ParameterTemplateModal::showCloseButtons() {
+	bool isValid = (_hasPress || _hasShoulders || _hasSticks || _hasTriggers)
+	               && (_useController || _useKeyboard || _useMouse);
+	ImGui::BeginDisabled(!isValid);
 	if (ImGui::Button("Create", ImVec2(128.0f, 0.0f))) {
 		ImGui::CloseCurrentPopup();
 	}
+	ImGui::EndDisabled();
 	ImGui::SetItemDefaultFocus();
 	ImGui::SameLine();
 	if (ImGui::Button("Cancel", ImVec2(128.0f, 0.0f))) {
@@ -21,13 +25,13 @@ void ParameterTemplateModal::showCloseButtons() {
 }
 
 ParameterTemplateModal::ParameterTemplateModal() :
-    _hasPress(false),
-    _hasShoulders(false),
-    _hasSticks(false),
-    _hasTriggers(false),
-    _useController(false),
-    _useKeyboard(false),
-    _useMouse(false),
+    _hasPress(true),
+    _hasShoulders(true),
+    _hasSticks(true),
+    _hasTriggers(true),
+    _useController(true),
+    _useKeyboard(true),
+    _useMouse(true),
     _templateSelector("##template-selector", TEMPLATES) {}
 
 void ParameterTemplateModal::show() {

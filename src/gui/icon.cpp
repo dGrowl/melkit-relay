@@ -123,6 +123,13 @@ static IconMap keyStrings{
     {VC_KP_ADD,        "\uE09C"},
     {VC_KP_ENTER,      "\uE09A"},
     {VC_KP_EQUALS,     "\uE060"},
+
+    {VC_ALT_L,         "\uE017"},
+    {VC_ALT_R,         "\uE017"},
+    {VC_CONTROL_L,     "\uE054"},
+    {VC_CONTROL_R,     "\uE054"},
+    {VC_SHIFT_L,       "\uE0BE"},
+    {VC_SHIFT_R,       "\uE0BE"},
 };
 
 static IconMap mouseButtonStrings{

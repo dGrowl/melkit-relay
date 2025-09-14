@@ -347,10 +347,13 @@ void EditParameterModal::refresh() {
 }
 
 void EditParameterModal::show() {
-	if (ImGui::BeginPopupModal(
-	        NAME,
-	        nullptr,
-	        ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav)) {
+	centerNextWindow();
+	if (ImGui::BeginPopupModal(NAME,
+	                           nullptr,
+	                           ImGuiWindowFlags_AlwaysAutoResize
+	                               | ImGuiWindowFlags_NoMove
+	                               | ImGuiWindowFlags_NoNav
+	                               | ImGuiWindowFlags_NoSavedSettings)) {
 		showMeta();
 		showInputs();
 		showAddInput();

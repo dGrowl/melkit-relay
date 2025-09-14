@@ -366,6 +366,7 @@ AddInputModal::AddInputModal(vts::Parameter& editingParameter) :
     _gamepadTriggerSelector("##gamepad-trigger-selector", GAMEPAD_SIDES) {}
 
 void AddInputModal::show() {
+	centerNextWindow();
 	if (ImGui::BeginPopupModal(NAME,
 	                           nullptr,
 	                           ImGuiWindowFlags_AlwaysAutoResize

@@ -4,6 +4,7 @@
 #include "imgui/imgui.h"
 
 #include "gui/delete_parameters_modal.hpp"
+#include "gui/utility.hpp"
 #include "vts/request.hpp"
 
 namespace gui {
@@ -15,11 +16,16 @@ DeleteParametersModal::DeleteParametersModal(
     _wsController(wsController) {}
 
 void DeleteParametersModal::show() {
-	if (ImGui::BeginPopupModal(NAME, nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+	centerNextWindow();
+	if (ImGui::BeginPopupModal(NAME,
+	                           nullptr,
+	                           ImGuiWindowFlags_AlwaysAutoResize
+	                               | ImGuiWindowFlags_NoMove
+	                               | ImGuiWindowFlags_NoSavedSettings)) {
 		ImGui::Text("Select which parameters to delete.");
 
 		if (ImGui::BeginChild("##delete-selection",
-		                      ImVec2(-1.0f, ImGui::GetFontSize() * 20),
+		                      ImVec2(-1.0f, ImGui::GetFontSize() * 12),
 		                      ImGuiChildFlags_Borders)) {
 			for (auto& p : _parameterManager.values()) {
 				if (ImGui::Checkbox(p.getName().c_str(), &_selectedState[p.getName()])) {

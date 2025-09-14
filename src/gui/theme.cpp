@@ -9,8 +9,6 @@ void Theme::initColors() {
 
 	auto& style = ImGui::GetStyle();
 
-	style.DisabledAlpha = 1.0f;
-
 	auto& colors = style.Colors;
 
 	colors[ImGuiCol_TextDisabled]        = ImVec4(0.0f, 1.0f, 0.0f, 1.0f);

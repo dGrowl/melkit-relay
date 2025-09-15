@@ -124,7 +124,6 @@ static const std::unordered_map<ImGuiKey, vts::InputId> imguiToUioKeyMap = {
     {ImGuiKey_RightAlt,       VC_ALT_R        },
     {ImGuiKey_RightCtrl,      VC_CONTROL_R    },
     {ImGuiKey_RightShift,     VC_SHIFT_R      },
-    {ImGuiKey_RightAlt,       VC_ALT_R        },
 };
 
 std::unordered_map<vts::InputId, const char*> uioToStringMap = []() {

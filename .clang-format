@@ -12,6 +12,7 @@ AllowShortEnumsOnASingleLine: false
 BinPackArguments: false
 BinPackParameters: OnePerLine
 BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeTernaryOperators: true
 BreakBinaryOperations: OnePerLine
 BreakConstructorInitializers: AfterColon
 IndentWidth: 1

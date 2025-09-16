@@ -12,12 +12,12 @@
 namespace gui {
 
 using KeycodeView =
-    decltype(std::declval<const std::unordered_map<ImGuiKey, vts::InputId>&>()
+    decltype(std::declval<const std::unordered_map<ImGuiKey, vts::TargetTag>&>()
              | std::views::keys);
 
 KeycodeView validImGuiKeys();
 
-vts::InputId convertImGuiToUioKey(const ImGuiKey keycode);
+vts::TargetTag convertImGuiToUioKey(const ImGuiKey keycode);
 
 const char* getUioKeyName(const Uint32 keycode);
 

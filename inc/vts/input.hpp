@@ -5,7 +5,9 @@
 
 namespace vts {
 
-using InputId = Uint32;
+using InputId   = Uint32;
+using EventTag  = Uint32;
+using TargetTag = Uint32;
 
 enum ActionCode : Sint32 {
 	KEY_DOWN = 1,
@@ -15,48 +17,48 @@ enum ActionCode : Sint32 {
 	MOUSE_RELEASE
 };
 
-enum InputEvent : Uint32 {
-	KEY = 1,
-	MOUSE_BUTTON,
-	MOUSE_MOVE_ABS,
-	MOUSE_MOVE_REL,
-	GAMEPAD_BUTTON,
-	GAMEPAD_TRIGGER,
-	GAMEPAD_STICK_LEFT,
-	GAMEPAD_STICK_RIGHT
+struct InputEvent {
+	static constexpr EventTag KEY                 = 1;
+	static constexpr EventTag MOUSE_BUTTON        = 2;
+	static constexpr EventTag MOUSE_MOVE_ABS      = 3;
+	static constexpr EventTag MOUSE_MOVE_REL      = 4;
+	static constexpr EventTag GAMEPAD_BUTTON      = 5;
+	static constexpr EventTag GAMEPAD_TRIGGER     = 6;
+	static constexpr EventTag GAMEPAD_STICK_LEFT  = 7;
+	static constexpr EventTag GAMEPAD_STICK_RIGHT = 8;
 };
 
-enum Axis : Uint32 {
-	X = 1 << 16,
-	Y = 2 << 16,
+struct Axis {
+	static constexpr TargetTag X = 1 << 16;
+	static constexpr TargetTag Y = 2 << 16;
 };
 
 struct Side {
-	static constexpr Uint32 LEFT  = 1 << 16;
-	static constexpr Uint32 RIGHT = 2 << 16;
+	static constexpr TargetTag LEFT  = 1 << 16;
+	static constexpr TargetTag RIGHT = 2 << 16;
 };
 
-enum MouseButton : Uint32 {
-	LEFT   = 1 << 16,
-	RIGHT  = 2 << 16,
-	MIDDLE = 3 << 16,
-	FOURTH = 4 << 16,
-	FIFTH  = 5 << 16,
+struct MouseButton {
+	static constexpr TargetTag LEFT   = 1 << 16;
+	static constexpr TargetTag RIGHT  = 2 << 16;
+	static constexpr TargetTag MIDDLE = 3 << 16;
+	static constexpr TargetTag FOURTH = 4 << 16;
+	static constexpr TargetTag FIFTH  = 5 << 16;
 };
 
-enum GamepadButton : Uint32 {
-	NORTH          = 1 << 16,
-	SOUTH          = 2 << 16,
-	WEST           = 3 << 16,
-	EAST           = 4 << 16,
-	LEFT_SHOULDER  = 5 << 16,
-	RIGHT_SHOULDER = 6 << 16,
-	DPAD_UP        = 7 << 16,
-	DPAD_DOWN      = 8 << 16,
-	DPAD_LEFT      = 9 << 16,
-	DPAD_RIGHT     = 10 << 16,
-	LEFT_STICK     = 11 << 16,
-	RIGHT_STICK    = 12 << 16,
+struct GamepadButton {
+	static constexpr TargetTag NORTH          = 1 << 16;
+	static constexpr TargetTag SOUTH          = 2 << 16;
+	static constexpr TargetTag WEST           = 3 << 16;
+	static constexpr TargetTag EAST           = 4 << 16;
+	static constexpr TargetTag LEFT_SHOULDER  = 5 << 16;
+	static constexpr TargetTag RIGHT_SHOULDER = 6 << 16;
+	static constexpr TargetTag DPAD_UP        = 7 << 16;
+	static constexpr TargetTag DPAD_DOWN      = 8 << 16;
+	static constexpr TargetTag DPAD_LEFT      = 9 << 16;
+	static constexpr TargetTag DPAD_RIGHT     = 10 << 16;
+	static constexpr TargetTag LEFT_STICK     = 11 << 16;
+	static constexpr TargetTag RIGHT_STICK    = 12 << 16;
 };
 
 class InputData {

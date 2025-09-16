@@ -66,9 +66,9 @@ struct InputStrings {
 };
 
 InputStrings getInputStrings(const vts::InputId id) {
-	InputStrings       strings;
-	const vts::InputId event  = id & 0xFFFF;
-	const vts::InputId target = id >> 16;
+	InputStrings         strings;
+	const vts::EventTag  event  = id & 0xFFFF;
+	const vts::TargetTag target = id >> 16;
 	switch (event) {
 		case vts::InputEvent::KEY:
 			strings.device = DEVICE_KEYBOARD;

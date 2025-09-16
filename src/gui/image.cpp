@@ -1,5 +1,5 @@
-#include <SDL3_image/SDL_image.h>
 #include <SDL3/SDL_surface.h>
+#include <SDL3_image/SDL_image.h>
 
 #include "gui/image.hpp"
 
@@ -17,4 +17,4 @@ Surface::operator SDL_Surface*() const {
 	return _surface;
 }
 
-}
+}  // namespace gui

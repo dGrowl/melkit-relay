@@ -16,15 +16,11 @@ static std::vector<const char*> TEMPLATES{"Controller"};
 const std::array<vts::InputId, 2> PRESS_LEFT_KEY_INPUTS = {
     VC_CONTROL_L << 16 | vts::InputEvent::KEY,
     VC_SHIFT_L << 16 | vts::InputEvent::KEY};
-const std::array<vts::InputId, 10> PRESS_RIGHT_KEY_INPUTS = {
+const std::array<vts::InputId, 4> PRESS_RIGHT_KEY_INPUTS = {
     VC_R << 16 | vts::InputEvent::KEY,
     VC_F << 16 | vts::InputEvent::KEY,
     VC_G << 16 | vts::InputEvent::KEY,
     VC_SPACE << 16 | vts::InputEvent::KEY,
-    vts::GamepadButton::NORTH | vts::InputEvent::GAMEPAD_BUTTON,
-    vts::GamepadButton::SOUTH | vts::InputEvent::GAMEPAD_BUTTON,
-    vts::GamepadButton::WEST | vts::InputEvent::GAMEPAD_BUTTON,
-    vts::GamepadButton::EAST | vts::InputEvent::GAMEPAD_BUTTON,
 };
 const std::array<vts::InputId, 1> PRESS_LEFT_GAMEPAD_INPUTS = {
     vts::GamepadButton::LEFT_STICK | vts::InputEvent::GAMEPAD_BUTTON};

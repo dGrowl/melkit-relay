@@ -14,20 +14,20 @@ InputData::InputData(const InputId id, const bool isInverted) :
     _outMax(1.0f),
     _outMin(0.0f),
     _value(0.0f) {
-	const InputId event = id & 0xFFFF;
+	const EventTag event = id & 0xFFFF;
 	switch (event) {
-		case MOUSE_MOVE_REL:
+		case InputEvent::MOUSE_MOVE_REL:
 			_inMin  = -64.0f;
 			_inMax  = 64.0f;
 			_outMin = -1.0f;
 			break;
-		case GAMEPAD_STICK_RIGHT:
-		case GAMEPAD_STICK_LEFT:
+		case InputEvent::GAMEPAD_STICK_RIGHT:
+		case InputEvent::GAMEPAD_STICK_LEFT:
 			_inMin  = std::numeric_limits<Sint16>::min();
 			_inMax  = std::numeric_limits<Sint16>::max();
 			_outMin = -1.0f;
 			break;
-		case GAMEPAD_TRIGGER:
+		case InputEvent::GAMEPAD_TRIGGER:
 			_inMax = std::numeric_limits<Sint16>::max();
 			break;
 	}

@@ -84,7 +84,7 @@ static constexpr unsigned GAMEPAD_SIDE_RIGHT = 1;
 
 static std::vector<const char*> GAMEPAD_SIDES{"Left", "Right"};
 
-vts::InputId AddInputModal::getMouseAxisId() const {
+vts::TargetTag AddInputModal::getMouseAxisTag() const {
 	switch (_mouseAxisSelector.getIndex()) {
 		case MOUSE_AXIS_X:
 			return vts::Axis::X;
@@ -94,7 +94,7 @@ vts::InputId AddInputModal::getMouseAxisId() const {
 	return 0;
 }
 
-vts::InputId AddInputModal::getMouseButtonId() const {
+vts::TargetTag AddInputModal::getMouseButtonTag() const {
 	switch (_mouseButtonSelector.getIndex()) {
 		case MOUSE_BUTTON_LEFT:
 			return vts::MouseButton::LEFT;
@@ -110,7 +110,7 @@ vts::InputId AddInputModal::getMouseButtonId() const {
 	return 0;
 }
 
-vts::InputId AddInputModal::getGamepadButtonId() const {
+vts::TargetTag AddInputModal::getGamepadButtonTag() const {
 	switch (_gamepadButtonSelector.getIndex()) {
 		case GAMEPAD_BUTTON_NORTH:
 			return vts::GamepadButton::NORTH;
@@ -136,9 +136,9 @@ vts::InputId AddInputModal::getGamepadButtonId() const {
 	return 0;
 }
 
-vts::InputId AddInputModal::getGamepadStickActionId(
+vts::TargetTag AddInputModal::getGamepadStickActionTag(
     const bool isLeftStick) const {
-	vts::InputId id = 0;
+	vts::TargetTag id = 0;
 	switch (_gamepadStickActionSelector.getIndex()) {
 		case GAMEPAD_STICK_ACTION_X:
 			id |= isLeftStick ? vts::InputEvent::GAMEPAD_STICK_LEFT
@@ -159,7 +159,7 @@ vts::InputId AddInputModal::getGamepadStickActionId(
 	return id;
 }
 
-vts::InputId AddInputModal::getGamepadTriggerId() const {
+vts::TargetTag AddInputModal::getGamepadTriggerTag() const {
 	switch (_gamepadTriggerSelector.getIndex()) {
 		case GAMEPAD_SIDE_LEFT:
 			return vts::Side::LEFT;
@@ -177,15 +177,15 @@ vts::InputId AddInputModal::buildInputId() const {
 		switch (event) {
 			case MOUSE_EVENT_BUTTON:
 				id |= vts::InputEvent::MOUSE_BUTTON;
-				id |= getMouseButtonId();
+				id |= getMouseButtonTag();
 				break;
 			case MOUSE_EVENT_MOVE_ABSOLUTE:
 				id |= vts::InputEvent::MOUSE_MOVE_ABS;
-				id |= getMouseAxisId();
+				id |= getMouseAxisTag();
 				break;
 			case MOUSE_EVENT_MOVE_RELATIVE:
 				id |= vts::InputEvent::MOUSE_MOVE_REL;
-				id |= getMouseAxisId();
+				id |= getMouseAxisTag();
 				break;
 		}
 	}
@@ -200,17 +200,17 @@ vts::InputId AddInputModal::buildInputId() const {
 		switch (event) {
 			case GAMEPAD_EVENT_BUTTON:
 				id |= vts::InputEvent::GAMEPAD_BUTTON;
-				id |= getGamepadButtonId();
+				id |= getGamepadButtonTag();
 				break;
 			case GAMEPAD_EVENT_LEFT_STICK:
-				id |= getGamepadStickActionId(true);
+				id |= getGamepadStickActionTag(true);
 				break;
 			case GAMEPAD_EVENT_RIGHT_STICK:
-				id |= getGamepadStickActionId(false);
+				id |= getGamepadStickActionTag(false);
 				break;
 			case GAMEPAD_EVENT_TRIGGER:
 				id |= vts::InputEvent::GAMEPAD_TRIGGER;
-				id |= getGamepadTriggerId();
+				id |= getGamepadTriggerTag();
 				break;
 		}
 	};

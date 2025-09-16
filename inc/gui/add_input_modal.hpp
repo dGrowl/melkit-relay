@@ -26,12 +26,12 @@ private:
 	ComboBox _gamepadStickActionSelector;
 	ComboBox _gamepadTriggerSelector;
 
-	vts::InputId getMouseAxisId() const;
-	vts::InputId getMouseButtonId() const;
+	vts::TargetTag getMouseAxisTag() const;
+	vts::TargetTag getMouseButtonTag() const;
 
-	vts::InputId getGamepadButtonId() const;
-	vts::InputId getGamepadStickActionId(const bool isLeftStick) const;
-	vts::InputId getGamepadTriggerId() const;
+	vts::TargetTag getGamepadButtonTag() const;
+	vts::TargetTag getGamepadStickActionTag(const bool isLeftStick) const;
+	vts::TargetTag getGamepadTriggerTag() const;
 
 	vts::InputId buildInputId() const;
 

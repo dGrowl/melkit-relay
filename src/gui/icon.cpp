@@ -8,7 +8,7 @@
 
 namespace gui {
 
-using IconMap = std::unordered_map<vts::InputId, const char*>;
+using IconMap = std::unordered_map<vts::TargetTag, const char*>;
 
 static IconMap keyStrings{
     {VC_TAB,           "\u242B"},
@@ -179,10 +179,10 @@ static const std::unordered_map<const char*, float> Y_OFFSETS{
     {"\uE0F2", 3.0f },
 };
 
-void drawIconOrDefault(const vts::InputId target,
-                       const float        alpha,
-                       const IconMap&     lookup,
-                       const char*        defaultString) {
+void drawIconOrDefault(const vts::TargetTag target,
+                       const float          alpha,
+                       const IconMap&       lookup,
+                       const char*          defaultString) {
 	const char* iconString = defaultString;
 	auto        stringIter = lookup.find(target);
 	if (stringIter != lookup.end()) {

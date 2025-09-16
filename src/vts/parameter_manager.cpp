@@ -134,17 +134,10 @@ void ParameterManager::handleMouseButton(SDL_UserEvent& event, bool isClicked) {
 	_sample.handleInput(id, newValue);
 }
 
-constexpr InputId MOUSE_MOVE_ABS_X =
-    InputEvent::MOUSE_MOVE_ABS | static_cast<InputId>(Axis::X);
-
-constexpr InputId MOUSE_MOVE_ABS_Y =
-    InputEvent::MOUSE_MOVE_ABS | static_cast<InputId>(Axis::Y);
-
-constexpr InputId MOUSE_MOVE_REL_X =
-    InputEvent::MOUSE_MOVE_REL | static_cast<InputId>(Axis::X);
-
-constexpr InputId MOUSE_MOVE_REL_Y =
-    InputEvent::MOUSE_MOVE_REL | static_cast<InputId>(Axis::Y);
+constexpr InputId MOUSE_MOVE_ABS_X = InputEvent::MOUSE_MOVE_ABS | Axis::X;
+constexpr InputId MOUSE_MOVE_ABS_Y = InputEvent::MOUSE_MOVE_ABS | Axis::Y;
+constexpr InputId MOUSE_MOVE_REL_X = InputEvent::MOUSE_MOVE_REL | Axis::X;
+constexpr InputId MOUSE_MOVE_REL_Y = InputEvent::MOUSE_MOVE_REL | Axis::Y;
 
 void ParameterManager::handleMouseMove(SDL_UserEvent& event) {
 	auto x = pointerToSigned<Sint16>(event.data1);

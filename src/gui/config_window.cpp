@@ -27,6 +27,8 @@ static constexpr int WINDOW_HEIGHT_MIN     = 256;
 
 static const SDL_FColor CLEAR_COLOR{.03f, .02f, .04f, 1.0f};
 
+static constexpr unsigned N_INPUT_ICONS_PER_ROW = 8;
+
 namespace gui {
 
 static const char* STATUS_TEXT[] = {
@@ -122,11 +124,17 @@ void ConfigWindow::showParameterData() {
 				shouldOpenModal = true;
 			}
 
+			unsigned iIcon = 0;
 			ImGui::TableNextColumn();
 			for (const auto& input : p.getInputs() | std::views::values) {
 				const float alpha =
 				    math::remapLinear(input.getValue(), -1.0f, 1.0f, 0.1f, 1.0f);
+				if (iIcon == N_INPUT_ICONS_PER_ROW) {
+					iIcon = 0;
+					ImGui::NewLine();
+				}
 				drawIcon(input.getId(), alpha);
+				iIcon += 1;
 			}
 
 			ImGui::TableNextColumn();

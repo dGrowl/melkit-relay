@@ -10,8 +10,7 @@ namespace gui {
 enum class FontType : std::uint8_t {
 	DEFAULT,
 	BOLD,
-	MOUSE_KEYBOARD,
-	GAMEPAD,
+	INPUT,
 };
 
 class FontScope {

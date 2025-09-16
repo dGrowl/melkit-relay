@@ -2,18 +2,16 @@
 
 #include "gui/fonts.hpp"
 
-static constexpr auto DEFAULT_FONT_PATH        = "./font/NotoSans-Medium.ttf";
-static constexpr auto BOLD_FONT_PATH           = "./font/NotoSans-Bold.ttf";
-static constexpr auto MOUSE_KEYBOARD_FONT_PATH = "./font/KenneyMouseKey.ttf";
-static constexpr auto GAMEPAD_FONT_PATH        = "./font/KenneyGamepad.ttf";
+static constexpr auto DEFAULT_FONT_PATH = "./font/NotoSans-Medium.ttf";
+static constexpr auto BOLD_FONT_PATH    = "./font/NotoSans-Bold.ttf";
+static constexpr auto INPUT_FONT_PATH   = "./font/promptfont.ttf";
 
 static constexpr float DEFAULT_SIZE = 20.0f;
 static constexpr float ICON_SIZE    = 32.0f;
 
-static ImFont* DEFAULT_FONT        = nullptr;
-static ImFont* BOLD_FONT           = nullptr;
-static ImFont* MOUSE_KEYBOARD_FONT = nullptr;
-static ImFont* GAMEPAD_FONT        = nullptr;
+static ImFont* DEFAULT_FONT = nullptr;
+static ImFont* BOLD_FONT    = nullptr;
+static ImFont* INPUT_FONT   = nullptr;
 
 namespace gui {
 
@@ -37,10 +35,8 @@ FontScope Fonts::scope(const FontType type) {
 			return FontScope(DEFAULT_FONT, DEFAULT_SIZE);
 		case FontType::BOLD:
 			return FontScope(BOLD_FONT, DEFAULT_SIZE);
-		case FontType::MOUSE_KEYBOARD:
-			return FontScope(MOUSE_KEYBOARD_FONT, ICON_SIZE);
-		case FontType::GAMEPAD:
-			return FontScope(GAMEPAD_FONT, ICON_SIZE);
+		case FontType::INPUT:
+			return FontScope(INPUT_FONT, ICON_SIZE);
 	}
 	return FontScope(DEFAULT_FONT, DEFAULT_SIZE);
 }
@@ -54,11 +50,9 @@ void Fonts::init() {
 	BOLD_FONT    = loadTtf(BOLD_FONT_PATH, &config);
 
 	ImFontConfig iconConfig;
-	iconConfig.GlyphOffset.y = -4.0f;
-	iconConfig.OversampleH   = 3;
+	iconConfig.GlyphOffset.y = -2.0f;
 
-	MOUSE_KEYBOARD_FONT = loadTtf(MOUSE_KEYBOARD_FONT_PATH, &iconConfig);
-	GAMEPAD_FONT        = loadTtf(GAMEPAD_FONT_PATH, &iconConfig);
+	INPUT_FONT = loadTtf(INPUT_FONT_PATH, &iconConfig);
 }
 
 void Fonts::push(const FontType type) {
@@ -69,11 +63,9 @@ void Fonts::push(const FontType type) {
 		case FontType::BOLD:
 			ImGui::PushFont(BOLD_FONT, DEFAULT_SIZE);
 			return;
-		case FontType::MOUSE_KEYBOARD:
-			ImGui::PushFont(MOUSE_KEYBOARD_FONT, ICON_SIZE);
 			return;
-		case FontType::GAMEPAD:
-			ImGui::PushFont(GAMEPAD_FONT, ICON_SIZE);
+		case FontType::INPUT:
+			ImGui::PushFont(INPUT_FONT, ICON_SIZE);
 			return;
 	}
 	ImGuiIO& io = ImGui::GetIO();

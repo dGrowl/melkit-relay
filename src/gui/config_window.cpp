@@ -114,7 +114,9 @@ void ConfigWindow::showParameterData() {
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
 
-			if (ImGui::Button(p.getName().c_str(), ImVec2(-1.0f, 36.0f))) {
+			ImVec2 cursorPos = ImGui::GetCursorPos();
+			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + 9.0f));
+			if (ImGui::Button(p.getName().c_str(), ImVec2(-1.0f, 0.0f))) {
 				_editingParameter = p;
 				_editParameterModal.refresh();
 				shouldOpenModal = true;
@@ -128,8 +130,8 @@ void ConfigWindow::showParameterData() {
 			}
 
 			ImGui::TableNextColumn();
-			ImVec2 cursorPos = ImGui::GetCursorPos();
-			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + 5.0f));
+			cursorPos = ImGui::GetCursorPos();
+			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + 8.0f));
 			ImGui::Text("%.2f", p.getOutput());
 
 			ImGui::PopID();

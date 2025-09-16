@@ -40,6 +40,7 @@ private:
 
 public:
 	Parameter();
+	Parameter(const char* name);
 	Parameter(const ParameterData& data);
 
 	BlendMode          getBlendMode() const;

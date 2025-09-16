@@ -53,6 +53,9 @@ void Parameter::updateOutput() {
 }
 
 Parameter::Parameter() :
+    Parameter(DEFAULT_PARAMETER_NAME) {}
+
+Parameter::Parameter(const char* name) :
     _blendMode(BlendMode::MAX),
     _fresh(false),
     _defaultValue(0.0f),
@@ -60,7 +63,7 @@ Parameter::Parameter() :
     _min(0.0f),
     _output(0.0f),
     _inputs(),
-    _name(DEFAULT_PARAMETER_NAME) {}
+    _name(name) {}
 
 Parameter::Parameter(const ParameterData& data) :
     _blendMode(BlendMode::MAX),

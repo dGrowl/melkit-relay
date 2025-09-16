@@ -50,7 +50,7 @@ void Fonts::init() {
 	BOLD_FONT    = loadTtf(BOLD_FONT_PATH, &config);
 
 	ImFontConfig iconConfig;
-	iconConfig.GlyphOffset.y = -2.0f;
+	iconConfig.GlyphOffset.y = -4.0f;
 
 	INPUT_FONT = loadTtf(INPUT_FONT_PATH, &iconConfig);
 }

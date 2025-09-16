@@ -1,3 +1,6 @@
+#include <SDL3_image/SDL_image.h>
+
+#include "gui/image.hpp"
 #include "gui/tray_icon.hpp"
 
 namespace gui {
@@ -7,7 +10,8 @@ TrayIcon::TrayIcon() :
     _menu(nullptr),
     _configEntry(nullptr),
     _quitEntry(nullptr) {
-	_tray = SDL_CreateTray(nullptr, "Relay");
+	Surface image(ICON_PATH);
+	_tray = SDL_CreateTray(image, "Relay");
 	_menu = SDL_CreateTrayMenu(_tray);
 	_configEntry =
 	    SDL_InsertTrayEntryAt(_menu, -1, "Configure", SDL_TRAYENTRY_BUTTON);

@@ -11,6 +11,7 @@
 #include "gui/config_window.hpp"
 #include "gui/fonts.hpp"
 #include "gui/icon.hpp"
+#include "gui/image.hpp"
 #include "math/formula.hpp"
 #include "vts/parameter.hpp"
 #include "vts/request.hpp"
@@ -282,15 +283,17 @@ int ConfigWindow::open(SDL_GPUDevice* gpu) {
 	                           static_cast<int>(WINDOW_HEIGHT_DEFAULT * mainScale),
 	                           WINDOW_FLAGS);
 	if (_window == nullptr) {
-		return 2;
+		return 1;
 	}
 
 	SDL_SetWindowMinimumSize(_window, WINDOW_WIDTH_MIN, WINDOW_HEIGHT_MIN);
 	SDL_SetWindowPosition(_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+	Surface icon(ICON_PATH);
+	SDL_SetWindowIcon(_window, icon);
 	SDL_ShowWindow(_window);
 
 	if (!SDL_ClaimWindowForGPUDevice(gpu, _window)) {
-		return 3;
+		return 2;
 	}
 	SDL_SetGPUSwapchainParameters(gpu,
 	                              _window,

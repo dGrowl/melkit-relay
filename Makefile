@@ -14,7 +14,7 @@ UNAME_S := $(shell uname -s)
 
 CC_FLAGS = -I$(LIBUIOHOOK_DIR)
 CXXFLAGS = -std=c++20 -I$(LIB_DIR) -I$(IMGUI_DIR) -Iinc
-LIBS = -lmongoose
+LIBS = -lmongoose -lSDL3_image
 
 ifeq ($(UNAME_S), Linux) #LINUX
 	ECHO_MESSAGE = "Linux"

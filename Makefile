@@ -12,8 +12,8 @@ LIBUIOHOOK_DIR = $(LIB_DIR)/libuiohook
 
 UNAME_S := $(shell uname -s)
 
-CC_FLAGS = -I$(LIBUIOHOOK_DIR)
-CXXFLAGS = -std=c++20 -I$(LIB_DIR) -I$(IMGUI_DIR) -Iinc
+CCFLAGS = -I$(LIBUIOHOOK_DIR)
+CXXFLAGS = -std=c++23 -I$(LIB_DIR) -I$(IMGUI_DIR) -Iinc
 LIBS = -lmongoose -lSDL3_image
 
 ifeq ($(UNAME_S), Linux) #LINUX
@@ -21,7 +21,6 @@ ifeq ($(UNAME_S), Linux) #LINUX
 	LIBS += -ldl `pkg-config sdl3 --libs`
 
 	CXXFLAGS += `pkg-config sdl3 --cflags`
-	CFLAGS = $(CXXFLAGS)
 
 	OS_DIR = x11
 endif
@@ -33,7 +32,6 @@ ifeq ($(UNAME_S), Darwin) #APPLE
 
 	CXXFLAGS += `pkg-config sdl3 --cflags`
 	CXXFLAGS += -I/usr/local/include -I/opt/local/include
-	CFLAGS = $(CXXFLAGS)
 
 	OS_DIR = darwin
 endif
@@ -43,7 +41,6 @@ ifeq ($(OS), Windows_NT)
 	LIBS += -lgdi32 -limm32 `pkg-config --static --libs sdl3`
 
 	CXXFLAGS += `pkg-config --cflags sdl3`
-	CFLAGS = $(CXXFLAGS)
 
 	OS_DIR = windows
 endif
@@ -83,12 +80,13 @@ $(OBJ_DIR)/imgui/%.o: %.cpp
 
 $(OBJ_DIR)/libuiohook/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CC_FLAGS) -c -o $@ $<
+	$(CC) $(CCFLAGS) -c -o $@ $<
 
 debug: CXXFLAGS += -g -Wall -Wextra -pedantic -O0 -DSDL_ASSERT_LEVEL=2
 debug: all
 
 release: CXXFLAGS += -s -Ofast -DNDEBUG -fno-rtti -static-libgcc -static-libstdc++
+release: CCFLAGS += -s -Ofast -DNDEBUG
 release: all
 
 all: $(EXE)

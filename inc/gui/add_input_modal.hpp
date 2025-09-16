@@ -33,7 +33,7 @@ private:
 	vts::InputId getGamepadStickActionId(const bool isLeftStick) const;
 	vts::InputId getGamepadTriggerId() const;
 
-	vts::InputData buildInputData() const;
+	vts::InputId buildInputId() const;
 
 	void showCloseButtons();
 	void showDeviceSelector();

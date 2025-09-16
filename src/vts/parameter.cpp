@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <ranges>
+#include <tuple>
 
 #include <SDL3/SDL_events.h>
 #include <libuiohook/uiohook.h>
@@ -119,8 +120,10 @@ float Parameter::getOutput() const {
 	return _output;
 }
 
-void Parameter::addInput(const InputData& data) {
-	_inputs.emplace(data.getId(), std::move(data));
+void Parameter::addInput(const InputId id, const bool isInverted) {
+	_inputs.emplace(std::piecewise_construct,
+	                std::forward_as_tuple(id),
+	                std::forward_as_tuple(id, isInverted));
 	updateBounds();
 }
 

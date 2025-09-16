@@ -53,7 +53,7 @@ public:
 	float              getNormalized() const;
 	float              getOutput() const;
 	InputMap&          getInputs();
-	void               addInput(const InputData& data);
+	void               addInput(const InputId id, const bool isInverted = false);
 	void               handleInput(const InputId id, const float value);
 	void               removeInput(const InputId id);
 	void               setBlendMode(const BlendMode mode);

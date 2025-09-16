@@ -161,7 +161,7 @@ void EditParameterModal::showInputs() {
 			ImGui::Text(fields.target);
 
 			ImGui::TableNextColumn();
-			if (ImGui::Checkbox("##invert-value", &data.isInverted)) {
+			if (ImGui::Checkbox("##invert-value", &data.isInvertedRef())) {
 				_editingParameter.updateBounds();
 			}
 

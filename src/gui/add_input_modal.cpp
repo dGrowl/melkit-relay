@@ -169,7 +169,7 @@ vts::InputId AddInputModal::getGamepadTriggerId() const {
 	return 0;
 }
 
-vts::InputData AddInputModal::buildInputData() const {
+vts::InputId AddInputModal::buildInputId() const {
 	vts::InputId id     = 0;
 	const auto   device = _deviceSelector.getIndex();
 	if (device == DEVICE_MOUSE) {
@@ -214,14 +214,14 @@ vts::InputData AddInputModal::buildInputData() const {
 				break;
 		}
 	};
-	return vts::InputData(id);
+	return id;
 }
 
 void AddInputModal::showCloseButtons() {
 	if (ImGui::Button("Add", ImVec2(128.0f, 0.0f))) {
-		vts::InputData data = buildInputData();
-		if (data.getId() != vts::InputEvent::KEY) {
-			_editingParameter.addInput(data);
+		vts::InputId id = buildInputId();
+		if (id != vts::InputEvent::KEY) {
+			_editingParameter.addInput(id);
 			ImGui::CloseCurrentPopup();
 		}
 	}

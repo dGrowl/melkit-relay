@@ -258,9 +258,9 @@ ConfigWindow::ConfigWindow(pad::Manager&          gamepadManager,
     _urlBuffer(),
     _gamepadSelector("##active-gamepad", _gamepadManager.getNames()),
     _window(nullptr),
-    _deleteParametersModal(_paramManager, _wsController),
+    _deleteParametersModal(_paramManager, wsController),
     _editParameterModal(wsController, _editingParameter),
-    _parameterTemplateModal() {
+    _parameterTemplateModal(wsController) {
 	SDL_strlcpy(_urlBuffer, wsController.getUrl(), sizeof(_urlBuffer));
 }
 

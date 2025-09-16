@@ -6,14 +6,14 @@
 
 namespace vts {
 
-InputData::InputData(const InputId id) :
+InputData::InputData(const InputId id, const bool isInverted) :
     _id(id),
+    _isInverted(isInverted),
     _inMax(1.0f),
     _inMin(0.0f),
     _outMax(1.0f),
     _outMin(0.0f),
-    _value(0.0f),
-    isInverted(false) {
+    _value(0.0f) {
 	const InputId event = id & 0xFFFF;
 	switch (event) {
 		case MOUSE_MOVE_REL:
@@ -33,16 +33,24 @@ InputData::InputData(const InputId id) :
 	}
 };
 
+bool InputData::getIsInverted() const {
+	return _isInverted;
+}
+
+bool& InputData::isInvertedRef() {
+	return _isInverted;
+}
+
 float InputData::getMax() const {
-	return isInverted ? -_outMin : _outMax;
+	return _isInverted ? -_outMin : _outMax;
 }
 
 float InputData::getMin() const {
-	return isInverted ? -_outMax : _outMin;
+	return _isInverted ? -_outMax : _outMin;
 }
 
 float InputData::getValue() const {
-	return isInverted ? _value * -1.0f : _value;
+	return _isInverted ? _value * -1.0f : _value;
 }
 
 InputId InputData::getId() const {

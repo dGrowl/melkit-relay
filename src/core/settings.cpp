@@ -221,7 +221,7 @@ std::vector<SettingsParameter> Settings::getParameters() {
 		}
 		for (const auto& input : parameter["inputs"].GetArray()) {
 			vts::InputData data(input["id"].GetUint());
-			data.isInverted = input["isInverted"].GetBool();
+			data.isInvertedRef() = input["isInverted"].GetBool();
 			settingsParam.inputs.emplace_back(std::move(data));
 		}
 
@@ -268,7 +268,9 @@ void Settings::setParameter(const vts::Parameter& newParameter) {
 			for (const auto& [inputId, input] : newParameter.getInputs()) {
 				rj::Value inputObject(rj::kObjectType);
 				inputObject.AddMember("id", rj::Value(inputId), allocator);
-				inputObject.AddMember("isInverted", rj::Value(input.isInverted), allocator);
+				inputObject.AddMember("isInverted",
+				                      rj::Value(input.getIsInverted()),
+				                      allocator);
 				inputs.PushBack(inputObject, allocator);
 			}
 
@@ -295,7 +297,9 @@ void Settings::setParameter(const vts::Parameter& newParameter) {
 	for (const auto& [inputId, input] : newParameter.getInputs()) {
 		rj::Value inputObject(rj::kObjectType);
 		inputObject.AddMember("id", rj::Value(inputId), allocator);
-		inputObject.AddMember("isInverted", rj::Value(input.isInverted), allocator);
+		inputObject.AddMember("isInverted",
+		                      rj::Value(input.getIsInverted()),
+		                      allocator);
 		inputs.PushBack(inputObject, allocator);
 	}
 

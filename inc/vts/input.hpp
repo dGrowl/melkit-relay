@@ -1,6 +1,6 @@
 #ifndef VTS_INPUT_HPP_
 #define VTS_INPUT_HPP_
-#include <SDL3/SDL_gamepad.h>
+
 #include <SDL3/SDL_stdinc.h>
 
 namespace vts {
@@ -63,6 +63,7 @@ class InputData {
 private:
 	InputId _id;
 
+	bool  _isInverted;
 	float _inMax;
 	float _inMin;
 	float _outMax;
@@ -70,10 +71,10 @@ private:
 	float _value;
 
 public:
-	bool isInverted;
+	InputData(const InputId id, const bool isInverted = false);
 
-	InputData(const InputId id);
-
+	bool    getIsInverted() const;
+	bool&   isInvertedRef();
 	float   getMax() const;
 	float   getMin() const;
 	float   getValue() const;

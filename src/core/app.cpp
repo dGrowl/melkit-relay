@@ -55,9 +55,6 @@ int App::init() {
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	auto& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
 	gui::Theme::init();
 	gui::Fonts::init();

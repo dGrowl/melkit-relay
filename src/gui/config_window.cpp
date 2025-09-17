@@ -58,7 +58,9 @@ void ConfigWindow::showParameterControls() {
 
 		ImGui::TableNextColumn();
 		ImGui::SetNextItemWidth(-1.0f);
+		ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
 		ImGui::InputText("##filter", filterBuffer, IM_ARRAYSIZE(filterBuffer));
+		ImGui::PopItemFlag();
 
 		ImGui::TableNextColumn();
 		if (ImGui::Button("Edit", ImVec2(128.0f, 0.0f))) {
@@ -222,9 +224,11 @@ void ConfigWindow::showVtsSettings() {
 		ImGui::Text("API Address");
 		ImGui::TableNextColumn();
 		ImGui::SetNextItemWidth(-1.0f);
+		ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
 		if (ImGui::InputText("##vts-url", _urlBuffer, IM_ARRAYSIZE(_urlBuffer))) {
 			_wsController.setUrl(_urlBuffer);
 		}
+		ImGui::PopItemFlag();
 
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn();

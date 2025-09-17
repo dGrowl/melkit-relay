@@ -121,6 +121,16 @@ void ParameterTemplateModal::createStickParameters() {
 	if (_useController) {
 		leftStickX.addInput(vts::Axis::X | vts::InputEvent::GAMEPAD_STICK_LEFT);
 		leftStickY.addInput(vts::Axis::Y | vts::InputEvent::GAMEPAD_STICK_LEFT, true);
+		leftStickX.addInput(
+		    vts::GamepadButton::DPAD_LEFT | vts::InputEvent::GAMEPAD_BUTTON,
+		    true);
+		leftStickX.addInput(vts::GamepadButton::DPAD_RIGHT
+		                    | vts::InputEvent::GAMEPAD_BUTTON);
+		leftStickY.addInput(vts::GamepadButton::DPAD_UP
+		                    | vts::InputEvent::GAMEPAD_BUTTON);
+		leftStickY.addInput(
+		    vts::GamepadButton::DPAD_DOWN | vts::InputEvent::GAMEPAD_BUTTON,
+		    true);
 
 		rightStickX.addInput(vts::Axis::X | vts::InputEvent::GAMEPAD_STICK_RIGHT);
 		rightStickY.addInput(vts::Axis::Y | vts::InputEvent::GAMEPAD_STICK_RIGHT,

@@ -119,11 +119,12 @@ void ParameterTemplateModal::createStickParameters() {
 	}
 
 	if (_useController) {
-		leftStickX.addInput(vts::Axis::X | vts::InputEvent::GAMEPAD_STICK_LEFT, true);
+		leftStickX.addInput(vts::Axis::X | vts::InputEvent::GAMEPAD_STICK_LEFT);
 		leftStickY.addInput(vts::Axis::Y | vts::InputEvent::GAMEPAD_STICK_LEFT, true);
 
 		rightStickX.addInput(vts::Axis::X | vts::InputEvent::GAMEPAD_STICK_RIGHT);
-		rightStickY.addInput(vts::Axis::Y | vts::InputEvent::GAMEPAD_STICK_RIGHT);
+		rightStickY.addInput(vts::Axis::Y | vts::InputEvent::GAMEPAD_STICK_RIGHT,
+		                     true);
 	}
 
 	SETTINGS.setParameter(leftStickX);

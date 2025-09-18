@@ -31,7 +31,6 @@ private:
 	std::unordered_map<std::string, Parameter> _params;
 
 	Uint64 _lastUpdateTimeMs;
-	Uint64 _nextUpdateTimeMs;
 
 	void handleGamepadAxisMotion(SDL_GamepadAxisEvent& event);
 	void handleGamepadButton(SDL_GamepadButtonEvent& event, const bool isPressed);

@@ -152,8 +152,7 @@ ParameterManager::ParameterManager() :
     _mouse(),
     _sample(),
     _params(),
-    _lastUpdateTimeMs(0),
-    _nextUpdateTimeMs(0) {}
+    _lastUpdateTimeMs(0) {}
 
 Parameter& ParameterManager::operator[](const char* name) {
 	return _params[name];
@@ -237,26 +236,23 @@ constexpr float sign(const float x) {
 	return 0.0f;
 }
 
-constexpr Uint64 UPDATE_DELAY_MS = 20;
-
 constexpr float MOUSE_DELTA_DECAY_RATE_MS = .65f;
 
 constexpr float MOUSE_DELTA_MAX = 64.0f;
 
 void ParameterManager::update() {
 	const Uint64 timeMs = SDL_GetTicks();
-	if (timeMs <= _nextUpdateTimeMs) {
-		return;
-	}
 	if (_mouse.dx == 0.0f && _mouse.dy == 0.0f) {
 		return;
 	}
 	const Uint64 dtMs  = timeMs - _lastUpdateTimeMs;
 	const float  decay = MOUSE_DELTA_DECAY_RATE_MS * dtMs;
-	_mouse.dx          = sign(_mouse.dx)
+
+	_mouse.dx = sign(_mouse.dx)
 	            * std::clamp(std::abs(_mouse.dx) - decay, 0.0f, MOUSE_DELTA_MAX);
 	_mouse.dy = sign(_mouse.dy)
 	            * std::clamp(std::abs(_mouse.dy) - decay, 0.0f, MOUSE_DELTA_MAX);
+
 	for (auto& parameter : values()) {
 		parameter.handleInput(MOUSE_MOVE_ABS_X, _mouse.x);
 		parameter.handleInput(MOUSE_MOVE_ABS_Y, _mouse.y);
@@ -267,7 +263,6 @@ void ParameterManager::update() {
 	_sample.handleInput(MOUSE_MOVE_ABS_Y, _mouse.y);
 	_sample.handleInput(MOUSE_MOVE_REL_X, _mouse.dx);
 	_sample.handleInput(MOUSE_MOVE_REL_Y, _mouse.dy);
-	_nextUpdateTimeMs = timeMs + UPDATE_DELAY_MS;
 	_lastUpdateTimeMs = timeMs;
 }
 

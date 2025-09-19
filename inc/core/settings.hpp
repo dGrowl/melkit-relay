@@ -44,6 +44,9 @@ public:
 	const char* getAuthToken();
 	void        setAuthToken(const char* newAuthToken);
 
+	float getMouseSensitivity();
+	void  setMouseSensitivity(const int newSensitivity);
+
 	const char* getWsUrl();
 	void        setWsUrl(const char* newWsUrl);
 

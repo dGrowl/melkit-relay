@@ -8,6 +8,7 @@
 #include "imgui/backends/imgui_impl_sdlgpu3.h"
 #include "imgui/imgui.h"
 
+#include "gui/config_settings_panel.hpp"
 #include "gui/delete_parameters_modal.hpp"
 #include "gui/edit_parameter_modal.hpp"
 #include "gui/parameter_template_modal.hpp"
@@ -17,10 +18,6 @@
 
 namespace gui {
 
-constexpr Uint8 MAX_URL_LENGTH = 128;
-
-constexpr Uint8 MAX_PARAM_NAME_LENGTH = 128;
-
 class ConfigWindow {
 private:
 	pad::Manager&          _gamepadManager;
@@ -28,12 +25,9 @@ private:
 	vts::ParameterManager& _paramManager;
 	ws::IController&       _wsController;
 
-	char     _newParamNameBuffer[MAX_PARAM_NAME_LENGTH];
-	char     _urlBuffer[MAX_URL_LENGTH];
-	ComboBox _gamepadSelector;
-
 	SDL_Window* _window;
 
+	ConfigSettingsPanel    _settingsPanel;
 	DeleteParametersModal  _deleteParametersModal;
 	EditParameterModal     _editParameterModal;
 	ParameterTemplateModal _parameterTemplateModal;
@@ -43,10 +37,6 @@ private:
 	void showParameterData();
 	void showParameterPanel();
 	void showParameters();
-
-	void showGamepadSettings();
-	void showSettingsPanel();
-	void showVtsSettings();
 
 	void showParameterModals();
 

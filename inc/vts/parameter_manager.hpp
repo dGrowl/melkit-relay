@@ -30,6 +30,8 @@ private:
 	Parameter                                  _sample;
 	std::unordered_map<std::string, Parameter> _params;
 
+	float  _mouseCoefficient;
+	int    _mouseSensitivity;
 	Uint64 _lastUpdateTimeMs;
 
 	void handleGamepadAxisMotion(SDL_GamepadAxisEvent& event);
@@ -39,11 +41,15 @@ private:
 	void handleKeyUp(SDL_UserEvent& event);
 	void handleMouseButton(SDL_UserEvent& event, bool isClicked);
 	void handleMouseMove(SDL_UserEvent& event);
+	void updateMouseMotionCoefficient();
 
 public:
 	ParameterManager();
-	Parameter& operator[](const char* name);
+	ParameterManager(ParameterManager&)            = delete;
+	ParameterManager& operator=(ParameterManager&) = delete;
+	Parameter&        operator[](const char* name);
 
+	int getMouseSensitivity() const;
 	std::unordered_map<std::string, Parameter>::iterator end();
 	std::unordered_map<std::string, Parameter>::iterator find(
 	    const std::string& name);
@@ -54,6 +60,7 @@ public:
 	void          handleGamepadEvent(SDL_Event&           event,
 	                                 const SDL_JoystickID activeGamepadId);
 	void          handleEvent(SDL_UserEvent& event);
+	void          setMouseSensitivity(const int sensitivity);
 	void          update();
 };
 

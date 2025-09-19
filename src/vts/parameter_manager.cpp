@@ -1,11 +1,12 @@
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_timer.h>
+#include <libuiohook/uiohook.h>
 #include <algorithm>
 #include <limits>
 #include <ranges>
 
-#include <SDL3/SDL_events.h>
-#include <SDL3/SDL_timer.h>
-#include <libuiohook/uiohook.h>
-
+#include "core/settings.hpp"
+#include "math/formula.hpp"
 #include "mnk/event.hpp"
 #include "vts/input.hpp"
 #include "vts/parameter.hpp"
@@ -142,20 +143,32 @@ constexpr InputId MOUSE_MOVE_REL_Y = InputEvent::MOUSE_MOVE_REL | Axis::Y;
 void ParameterManager::handleMouseMove(SDL_UserEvent& event) {
 	auto x = pointerToSigned<Sint16>(event.data1);
 	auto y = pointerToSigned<Sint16>(event.data2);
-	_mouse.dx += x - _mouse.x;
-	_mouse.dy += y - _mouse.y;
+	_mouse.dx += (x - _mouse.x) * _mouseCoefficient;
+	_mouse.dy += (y - _mouse.y) * _mouseCoefficient;
 	_mouse.x = x;
 	_mouse.y = y;
+}
+
+float calcMouseCoefficient(const int sensitivity) {
+	return math::remapLinear<float>(sensitivity, 1.0f, 100.0f, 0.01f, 4.0f);
 }
 
 ParameterManager::ParameterManager() :
     _mouse(),
     _sample(),
     _params(),
-    _lastUpdateTimeMs(0) {}
+    _mouseCoefficient(1.0f),
+    _mouseSensitivity(SETTINGS.getMouseSensitivity()),
+    _lastUpdateTimeMs(0) {
+	_mouseCoefficient = calcMouseCoefficient(_mouseSensitivity);
+}
 
 Parameter& ParameterManager::operator[](const char* name) {
 	return _params[name];
+}
+
+int ParameterManager::getMouseSensitivity() const {
+	return _mouseSensitivity;
 }
 
 std::unordered_map<std::string, Parameter>::iterator ParameterManager::end() {
@@ -228,6 +241,15 @@ void ParameterManager::handleEvent(SDL_UserEvent& event) {
 	}
 }
 
+void ParameterManager::setMouseSensitivity(const int sensitivity) {
+	if (sensitivity == _mouseSensitivity) {
+		return;
+	}
+	SETTINGS.setMouseSensitivity(sensitivity);
+	_mouseSensitivity = sensitivity;
+	_mouseCoefficient = calcMouseCoefficient(sensitivity);
+}
+
 constexpr float sign(const float x) {
 	if (x > 0.0f)
 		return 1.0f;
@@ -238,7 +260,7 @@ constexpr float sign(const float x) {
 
 constexpr float MOUSE_DELTA_DECAY_RATE_MS = .65f;
 
-constexpr float MOUSE_DELTA_MAX = 64.0f;
+constexpr float MAX_MOUSE_DELTA = 64.0f;
 
 void ParameterManager::update() {
 	const Uint64 timeMs = SDL_GetTicks();
@@ -249,9 +271,9 @@ void ParameterManager::update() {
 	const float  decay = MOUSE_DELTA_DECAY_RATE_MS * dtMs;
 
 	_mouse.dx = sign(_mouse.dx)
-	            * std::clamp(std::abs(_mouse.dx) - decay, 0.0f, MOUSE_DELTA_MAX);
+	            * std::clamp(std::abs(_mouse.dx) - decay, 0.0f, MAX_MOUSE_DELTA);
 	_mouse.dy = sign(_mouse.dy)
-	            * std::clamp(std::abs(_mouse.dy) - decay, 0.0f, MOUSE_DELTA_MAX);
+	            * std::clamp(std::abs(_mouse.dy) - decay, 0.0f, MAX_MOUSE_DELTA);
 
 	for (auto& parameter : values()) {
 		parameter.handleInput(MOUSE_MOVE_ABS_X, _mouse.x);

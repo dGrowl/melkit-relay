@@ -3,9 +3,6 @@
 #include <functional>
 #include <ranges>
 
-#include <SDL3/SDL_events.h>
-#include <SDL3/SDL_pixels.h>
-
 #include "imgui/imgui.h"
 
 #include "gui/config_window.hpp"
@@ -31,13 +28,6 @@ static const SDL_FColor CLEAR_COLOR{.03f, .02f, .04f, 1.0f};
 static constexpr unsigned N_INPUT_ICONS_PER_ROW = 8;
 
 namespace gui {
-
-static const char* STATUS_TEXT[] = {
-    "DISCONNECTED",
-    "CONNECTING",
-    "FAILED",
-    "CONNECTED",
-};
 
 bool ConfigWindow::showCreateParameter() {
 	if (ImGui::Selectable("Create")) {
@@ -177,81 +167,6 @@ void ConfigWindow::showParameters() {
 	showParameterData();
 }
 
-void ConfigWindow::showGamepadSettings() {
-	{
-		FONT_SCOPE(FontType::BOLD);
-		ImGui::SeparatorText("Controller");
-	}
-
-	if (ImGui::BeginTable("Gamepad Settings", 2, ImGuiTableFlags_SizingFixedFit)) {
-		ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
-
-		ImGui::TableNextRow();
-		ImGui::TableNextColumn();
-		ImGui::Text("Device");
-		ImGui::TableNextColumn();
-		ImGui::SetNextItemWidth(-1.0f);
-		if (_gamepadSelector.show()) {
-			_gamepadManager.setActive(_gamepadSelector.getIndex());
-		}
-
-		ImGui::EndTable();
-	}
-
-	if (ImGui::Button("Refresh", ImVec2(-1.0f, 0.0f))) {
-		_gamepadManager.refreshDevices();
-	}
-}
-
-void ConfigWindow::showSettingsPanel() {
-	showVtsSettings();
-	showGamepadSettings();
-}
-
-void ConfigWindow::showVtsSettings() {
-	{
-		FONT_SCOPE(FontType::BOLD);
-		ImGui::SeparatorText("VTS Connection");
-	}
-
-	if (ImGui::BeginTable("VTS Config", 2, ImGuiTableFlags_SizingFixedFit)) {
-		ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
-
-		ImGui::TableNextRow();
-		ImGui::TableNextColumn();
-		ImGui::Text("API Address");
-		ImGui::TableNextColumn();
-		ImGui::SetNextItemWidth(-1.0f);
-		ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
-		if (ImGui::InputText("##vts-url", _urlBuffer, IM_ARRAYSIZE(_urlBuffer))) {
-			_wsController.setUrl(_urlBuffer);
-		}
-		ImGui::PopItemFlag();
-
-		ImGui::TableNextRow();
-		ImGui::TableNextColumn();
-		ImGui::Text("Status");
-		ImGui::TableNextColumn();
-		ImGui::Text(STATUS_TEXT[_wsController.getStatus()]);
-
-		ImGui::EndTable();
-	}
-
-	if (_wsController.getStatus() == ws::Status::CONNECTED) {
-		if (ImGui::Button("Disconnect", ImVec2(-1.0f, 0.0f))) {
-			_wsController.stop();
-		}
-	}
-	else {
-		if (ImGui::Button("Connect", ImVec2(-1.0f, 0.0f))) {
-			_wsController.setUrl(_urlBuffer);
-			_wsController.start();
-		}
-	}
-}
-
 ConfigWindow::ConfigWindow(pad::Manager&          gamepadManager,
                            ws::IController&       wsController,
                            vts::ParameterManager& paramManager) :
@@ -259,15 +174,11 @@ ConfigWindow::ConfigWindow(pad::Manager&          gamepadManager,
     _editingParameter(paramManager.getSample()),
     _paramManager(paramManager),
     _wsController(wsController),
-    _newParamNameBuffer(),
-    _urlBuffer(),
-    _gamepadSelector("##active-gamepad", _gamepadManager.getNames()),
     _window(nullptr),
+    _settingsPanel(gamepadManager, paramManager, wsController),
     _deleteParametersModal(_paramManager, wsController),
     _editParameterModal(wsController, _editingParameter),
-    _parameterTemplateModal(wsController) {
-	SDL_strlcpy(_urlBuffer, wsController.getUrl(), sizeof(_urlBuffer));
-}
+    _parameterTemplateModal(wsController) {}
 
 bool ConfigWindow::isOpen() const {
 	return _window != nullptr;
@@ -360,7 +271,7 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 		                      ImGuiTableFlags_Resizable,
 		                      contentRegion)) {
 			ImGui::TableNextColumn();
-			showSettingsPanel();
+			_settingsPanel.show();
 
 			ImGui::TableNextColumn();
 			showParameterPanel();
@@ -407,7 +318,7 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 }
 
 void ConfigWindow::setActiveGamepadIndex(const size_t activeIndex) {
-	_gamepadSelector.setIndex(activeIndex);
+	_settingsPanel.setActiveGamepadIndex(activeIndex);
 }
 
 void ConfigWindow::showParameterModals() {

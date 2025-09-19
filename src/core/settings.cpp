@@ -17,6 +17,8 @@ static const char* DEFAULT_WS_URL = "localhost:8001";
 
 static const char* DEFAULT_AUTH_TOKEN = "";
 
+static constexpr int DEFAULT_MOUSE_SENSITIVITY = 50;
+
 static const char* SCHEMA_STRING = R"({
 	"type": "object",
 	"properties": {
@@ -25,6 +27,11 @@ static const char* SCHEMA_STRING = R"({
 		},
 		"vts_token": {
 			"type": "string"
+		},
+		"mouse_sensitivity": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 100
 		},
 		"parameters": {
 			"type": "array",
@@ -68,6 +75,7 @@ static const char* SCHEMA_STRING = R"({
 	"required": [
 		"api_url",
 		"vts_token",
+		"mouse_sensitivity",
 		"parameters"
 	]
 })";
@@ -151,6 +159,10 @@ void Settings::loadDefault() {
 
 	_document.AddMember("vts_token", authToken, allocator);
 
+	_document.AddMember("mouse_sensitivity",
+	                    rj::Value(DEFAULT_MOUSE_SENSITIVITY),
+	                    allocator);
+
 	_document.AddMember("parameters", rj::Value(rj::kArrayType), allocator);
 }
 
@@ -185,6 +197,21 @@ void Settings::setAuthToken(const char* newAuthToken) {
 
 	rj::Value value(newAuthToken, _document.GetAllocator());
 	_document["vts_token"] = value;
+
+	saveUnlocked();
+}
+
+float Settings::getMouseSensitivity() {
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	auto& value = _document["mouse_sensitivity"];
+	return value.GetInt();
+}
+
+void Settings::setMouseSensitivity(const int newSensitivity) {
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	_document["mouse_sensitivity"] = rj::Value(newSensitivity);
 
 	saveUnlocked();
 }

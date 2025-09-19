@@ -3,7 +3,7 @@
 
 namespace vts {
 
-constexpr const char* PLUGIN_NAME = "MelKIT::Relay";
+constexpr const char* PLUGIN_NAME = "MelKIT // Relay";
 
 }  // namespace vts
 

@@ -55,7 +55,7 @@ public:
 	    const std::string& name);
 	Parameter&    getSample();
 	ParameterView values();
-	void          add(const ParameterData& data);
+	void          add(const std::string& name);
 	void          clear();
 	void          handleGamepadEvent(SDL_Event&           event,
 	                                 const SDL_JoystickID activeGamepadId);

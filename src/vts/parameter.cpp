@@ -56,7 +56,7 @@ void Parameter::updateOutput() {
 Parameter::Parameter() :
     Parameter(DEFAULT_PARAMETER_NAME) {}
 
-Parameter::Parameter(const char* name) :
+Parameter::Parameter(const std::string& name) :
     _blendMode(BlendMode::MAX),
     _fresh(false),
     _defaultValue(0.0f),
@@ -65,16 +65,6 @@ Parameter::Parameter(const char* name) :
     _output(0.0f),
     _inputs(),
     _name(name) {}
-
-Parameter::Parameter(const ParameterData& data) :
-    _blendMode(BlendMode::MAX),
-    _fresh(false),
-    _defaultValue(data.defaultValue),
-    _max(data.max),
-    _min(data.min),
-    _output(0.0f),
-    _inputs(),
-    _name(data.name) {}
 
 BlendMode Parameter::getBlendMode() const {
 	return _blendMode;
@@ -127,6 +117,11 @@ void Parameter::addInput(const InputId id, const bool isInverted) {
 	updateBounds();
 }
 
+void Parameter::clearInputs() {
+	_inputs.clear();
+	updateBounds();
+}
+
 void Parameter::handleInput(const InputId id, const float value) {
 	auto input = _inputs.find(id);
 	if (input == _inputs.end()) {
@@ -143,13 +138,6 @@ void Parameter::removeInput(const InputId id) {
 
 void Parameter::setBlendMode(const BlendMode mode) {
 	_blendMode = mode;
-	updateBounds();
-}
-
-void Parameter::setInputs(const std::vector<InputData>& inputs) {
-	for (const auto& input : inputs) {
-		_inputs.insert_or_assign(input.getId(), input);
-	}
 	updateBounds();
 }
 

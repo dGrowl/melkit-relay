@@ -35,7 +35,7 @@ public:
 	// IController
 	const char* getUrl() override;
 	Status      getStatus() override;
-	void        sendMessage(const std::string& message) override;
+	void        sendMessage(std::string&& message) override;
 	void        setUrl(const char* url) override;
 	void        start() override;
 	void        stop() override;

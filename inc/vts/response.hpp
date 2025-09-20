@@ -20,17 +20,7 @@ enum ResponseCode : Sint32 {
 	PARAMETER_DELETION,
 };
 
-struct AuthenticationTokenData {
-	std::string token;
-};
-
-struct InputParameterListData {
-	std::vector<ParameterData> parameters;
-};
-
-void buildResponseEvent(SDL_UserEvent& user,
-                        char*          jsonString,
-                        const int      nChars);
+void buildResponseEvent(SDL_UserEvent& user, char* jsonChars, const int nChars);
 
 }  // namespace vts
 

@@ -11,8 +11,7 @@
 namespace ws {
 void handleMessage(void* event_data) {
 	mg_ws_message* wm = (mg_ws_message*)event_data;
-	SDL_Log("Received message: [%.*s]\n", (int)wm->data.len, wm->data.buf);
-	SDL_Event sdlEvent;
+	SDL_Event      sdlEvent;
 	SDL_zero(sdlEvent);
 	sdlEvent.type = Event::MESSAGE;
 	vts::buildResponseEvent(sdlEvent.user, wm->data.buf, wm->data.len);
@@ -107,7 +106,7 @@ Status Client::getStatus() {
 	return _status;
 }
 
-void Client::sendMessage(const std::string& message) {
+void Client::sendMessage(std::string&& message) {
 	std::lock_guard<std::mutex> lock(_sendMutex);
 
 	_sendQueue.push(std::move(message));

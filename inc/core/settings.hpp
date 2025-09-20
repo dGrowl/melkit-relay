@@ -2,30 +2,78 @@
 #define CORE_SETTINGS_HPP_
 
 #include <mutex>
+#include <string>
 #include <vector>
 
-#include <rapidjson/document.h>
+#include <glaze/core/common.hpp>
+#include <glaze/core/meta.hpp>
 
 #include "vts/input.hpp"
 #include "vts/parameter.hpp"
 
-namespace rj = rapidjson;
+template <>
+struct glz::meta<vts::BlendMode> {
+	using enum vts::BlendMode;
+	static constexpr auto value = glz::enumerate(MAX, BOUNDED_SUM);
+};
 
 namespace core {
 
-struct SettingsParameter {
-	std::string                 name;
-	vts::BlendMode              blendMode;
-	std::vector<vts::InputData> inputs;
+struct SettingsInput {
+	vts::InputId id;
+	bool         isInverted;
+
+	struct glaze {
+		using T = SettingsInput;
+
+		static constexpr auto value =
+		    glz::object("id", &T::id, "is_inverted", &T::isInverted);
+	};
 };
 
-class Settings {
+struct SettingsParameter {
+	std::string                name;
+	vts::BlendMode             blendMode;
+	std::vector<SettingsInput> inputs;
+
+	struct glaze {
+		using T = SettingsParameter;
+
+		static constexpr auto value = glz::object("name",
+		                                          &T::name,
+		                                          "blend_mode",
+		                                          &T::blendMode,
+		                                          "inputs",
+		                                          &T::inputs);
+	};
+};
+
+struct Settings {
+	std::string                    apiUrl           = "localhost:8001";
+	std::string                    vtsToken         = "";
+	int                            mouseSensitivity = 50;
+	std::vector<SettingsParameter> parameters;
+
+	struct glaze {
+		using T = Settings;
+
+		static constexpr auto value = glz::object("api_url",
+		                                          &T::apiUrl,
+		                                          "vts_token",
+		                                          &T::vtsToken,
+		                                          "mouse_sensitivity",
+		                                          &T::mouseSensitivity,
+		                                          "parameters",
+		                                          &T::parameters);
+	};
+};
+
+class SettingsManager {
 private:
 	mutable std::mutex _mutex;
-	rj::Document       _document;
+	Settings           _data;
 
-	Settings();
-	bool validate();
+	SettingsManager();
 	void backup(const std::string& contents);
 	void load();
 	void loadDefault();
@@ -33,30 +81,29 @@ private:
 	void saveUnlocked();
 
 public:
-	static Settings& instance();
+	static SettingsManager& instance();
 
-	~Settings();
-	Settings(const Settings&)            = delete;
-	Settings& operator=(const Settings&) = delete;
-	Settings(Settings&&)                 = delete;
-	Settings& operator=(Settings&&)      = delete;
+	~SettingsManager();
+	SettingsManager(const SettingsManager&)            = delete;
+	SettingsManager& operator=(const SettingsManager&) = delete;
+	SettingsManager(SettingsManager&&)                 = delete;
+	SettingsManager& operator=(SettingsManager&&)      = delete;
 
-	const char* getAuthToken();
-	void        setAuthToken(const char* newAuthToken);
+	const std::string&                    getAuthToken() const;
+	const std::string&                    getWsUrl() const;
+	const std::vector<SettingsParameter>& getParameters() const;
+	int                                   getMouseSensitivity() const;
 
-	float getMouseSensitivity();
-	void  setMouseSensitivity(const int newSensitivity);
+	void setAuthToken(const char* newAuthToken);
+	void setMouseSensitivity(const int newSensitivity);
+	void setParameter(const vts::Parameter& parameter);
+	void setWsUrl(const char* newWsUrl);
 
-	const char* getWsUrl();
-	void        setWsUrl(const char* newWsUrl);
-
-	std::vector<SettingsParameter> getParameters();
-	void                           removeParameter(const std::string& name);
-	void                           setParameter(const vts::Parameter& parameter);
+	void removeParameter(const std::string& name);
 };
 
 };  // namespace core
 
-#define SETTINGS (core::Settings::instance())
+#define SETTINGS (core::SettingsManager::instance())
 
 #endif  // CORE_SETTINGS_HPP_

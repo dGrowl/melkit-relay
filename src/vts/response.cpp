@@ -1,139 +1,260 @@
+#include <iostream>
+#include <optional>
 #include <vector>
 
-#include <SDL3/SDL_log.h>
-#include <rapidjson/document.h>
+#include <glaze/core/context.hpp>
+#include <glaze/core/reflect.hpp>
+#include <glaze/json/read.hpp>
 
 #include "vts/meta.hpp"
-#include "vts/parameter.hpp"
 #include "vts/response.hpp"
 
-namespace rj = rapidjson;
+static void logError(const glz::error_ctx& error, const std::string& buffer) {
+	std::cerr
+	    << "Error reading response: "
+	    << glz::format_error(error, buffer)
+	    << std::endl;
+}
+
+struct Type {
+	static constexpr auto AUTHENTICATION_TOKEN = "AuthenticationTokenResponse";
+
+	static constexpr auto AUTHENTICATION = "AuthenticationResponse";
+
+	static constexpr auto INPUT_PARAMETER_LIST = "InputParameterListResponse";
+
+	static constexpr auto PARAMETER_CREATION = "ParameterCreationResponse";
+
+	static constexpr auto PARAMETER_DELETION = "ParameterDeletionResponse";
+};
 
 namespace vts {
 
-static const auto AUTHENTICATION_TOKEN_TYPESTRING =
-    rj::Value("AuthenticationTokenResponse");
+struct BaseResponse {
+	std::string   apiName;
+	std::string   apiVersion;
+	std::string   requestId;
+	std::string   messageType;
+	std::uint64_t timestamp = 0;
 
-static const auto AUTHENTICATION_TYPESTRING =
-    rj::Value("AuthenticationResponse");
+	struct glaze {
+		using T                     = BaseResponse;
+		static constexpr auto value = glz::object("apiName",
+		                                          &T::apiName,
+		                                          "apiVersion",
+		                                          &T::apiVersion,
+		                                          "requestID",
+		                                          &T::requestId,
+		                                          "messageType",
+		                                          &T::messageType,
+		                                          "timestamp",
+		                                          &T::timestamp);
+	};
+};
 
-static const auto INPUT_PARAMETER_LIST_TYPESTRING =
-    rj::Value("InputParameterListResponse");
+template <typename DataType>
+struct Response : BaseResponse {
+	std::optional<DataType> data;
 
-static const auto PARAMETER_CREATION_TYPESTRING =
-    rj::Value("ParameterCreationResponse");
+	struct glaze {
+		using T                     = Response<DataType>;
+		static constexpr auto value = glz::object("apiName",
+		                                          &T::apiName,
+		                                          "apiVersion",
+		                                          &T::apiVersion,
+		                                          "requestID",
+		                                          &T::requestId,
+		                                          "messageType",
+		                                          &T::messageType,
+		                                          "timestamp",
+		                                          &T::timestamp,
+		                                          "data",
+		                                          &T::data);
+	};
+};
 
-static const auto PARAMETER_DELETION_TYPESTRING =
-    rj::Value("ParameterDeletionResponse");
-
-static const auto PLUGIN_NAME_VALUE = rj::Value(rj::StringRef(PLUGIN_NAME));
-
-void buildAuthenticationTokenEvent(SDL_UserEvent&      event,
-                                   const rj::Document& json) {
-	const auto& data         = json["data"];
-	const auto& token        = data["authenticationToken"];
-	event.code               = ResponseCode::AUTHENTICATION_TOKEN;
-	event.data1              = new AuthenticationTokenData();
-	auto* authTokenResponse  = static_cast<AuthenticationTokenData*>(event.data1);
-	authTokenResponse->token = token.GetString();
-}
-
-void buildAuthenticationEvent(SDL_UserEvent& event, const rj::Document& json) {
-	const auto& data    = json["data"];
-	const auto& success = data["authenticated"];
-	event.code          = success.GetBool() ? ResponseCode::AUTHENTICATION_SUCCESS
-	                                        : ResponseCode::AUTHENTICATION_FAILURE;
-}
-
-std::vector<ParameterData> extractParameters(const rapidjson::Value& array) {
-	std::vector<ParameterData> params;
-
-	if (!array.IsArray()) {
-		return params;
+template <typename ResponseType>
+std::optional<ResponseType> parseResponse(const std::string& jsonString) {
+	auto result = glz::read_json<ResponseType>(jsonString);
+	if (result) {
+		return result.value();
 	}
-
-	for (const auto& item : array.GetArray()) {
-		if (!item.IsObject()) {
-			continue;
-		}
-
-		auto addedByItr = item.FindMember("addedBy");
-
-		if ((addedByItr == item.MemberEnd())
-		    || (addedByItr->value != PLUGIN_NAME_VALUE)) {
-			continue;
-		}
-		ParameterData param;
-		if (item.HasMember("name") && item["name"].IsString()) {
-			param.name = item["name"].GetString();
-		}
-		if (item.HasMember("defaultValue") && item["defaultValue"].IsFloat()) {
-			param.defaultValue = item["defaultValue"].GetFloat();
-		}
-		if (item.HasMember("max") && item["max"].IsFloat()) {
-			param.max = item["max"].GetFloat();
-		}
-		if (item.HasMember("min") && item["min"].IsFloat()) {
-			param.min = item["min"].GetFloat();
-		}
-
-		params.emplace_back(std::move(param));
-	}
-
-	return params;
+	logError(result.error(), jsonString);
+	return std::nullopt;
 }
 
-void buildInputParameterListEvent(SDL_UserEvent&      event,
-                                  const rj::Document& json) {
-	const auto& data             = json["data"];
-	const auto& customParameters = data["customParameters"];
-	event.code                   = ResponseCode::INPUT_PARAMETER_LIST;
-	auto* responseData           = new InputParameterListData();
-	responseData->parameters     = extractParameters(customParameters);
-	event.data1                  = static_cast<void*>(responseData);
+struct AuthenticationResponseData {
+	bool        authenticated = false;
+	std::string reason;
+
+	struct glaze {
+		using T = AuthenticationResponseData;
+		static constexpr auto value =
+		    glz::object("authenticated", &T::authenticated, "reason", &T::reason);
+	};
+};
+
+using AuthenticationResponse = Response<AuthenticationResponseData>;
+
+void buildAuthenticationEvent(SDL_UserEvent&                    event,
+                              const AuthenticationResponseData& data) {
+	event.code = data.authenticated ? ResponseCode::AUTHENTICATION_SUCCESS
+	                                : ResponseCode::AUTHENTICATION_FAILURE;
 }
 
-void buildParameterCreationEvent(SDL_UserEvent&      event,
-                                 const rj::Document& json) {
-	const auto& data = json["data"];
-	if (!data.HasMember("parameterName") || !data["parameterName"].IsString()) {
-		return;
+struct AuthenticationTokenResponseData {
+	std::string authenticationToken;
+
+	struct glaze {
+		using T = AuthenticationTokenResponseData;
+		static constexpr auto value =
+		    glz::object("authenticationToken", &T::authenticationToken);
+	};
+};
+
+using AuthenticationTokenResponse = Response<AuthenticationTokenResponseData>;
+
+void buildAuthenticationTokenEvent(
+    SDL_UserEvent&                         event,
+    const AuthenticationTokenResponseData& data) {
+	event.code  = ResponseCode::AUTHENTICATION_TOKEN;
+	event.data1 = new std::string(data.authenticationToken);
+}
+
+struct IncomingParameter {
+	std::string name;
+	std::string addedBy;
+	float       value        = 0.0;
+	float       min          = 0.0;
+	float       max          = 0.0;
+	float       defaultValue = 0.0;
+
+	struct glaze {
+		using T                     = IncomingParameter;
+		static constexpr auto value = glz::object("name",
+		                                          &T::name,
+		                                          "addedBy",
+		                                          &T::addedBy,
+		                                          "value",
+		                                          &T::value,
+		                                          "min",
+		                                          &T::min,
+		                                          "max",
+		                                          &T::max,
+		                                          "defaultValue",
+		                                          &T::defaultValue);
+	};
+};
+
+struct InputParameterListResponseData {
+	bool                           modelLoaded;
+	std::string                    modelName;
+	std::string                    modelId;
+	std::vector<IncomingParameter> defaultParameters;
+	std::vector<IncomingParameter> customParameters;
+
+	struct glaze {
+		using T                     = InputParameterListResponseData;
+		static constexpr auto value = glz::object("modelLoaded",
+		                                          &T::modelLoaded,
+		                                          "modelName",
+		                                          &T::modelName,
+		                                          "modelID",
+		                                          &T::modelId,
+		                                          "defaultParameters",
+		                                          &T::defaultParameters,
+		                                          "customParameters",
+		                                          &T::customParameters);
+	};
+};
+
+using InputParameterListResponse = Response<InputParameterListResponseData>;
+
+void buildInputParameterListEvent(SDL_UserEvent&                        event,
+                                  const InputParameterListResponseData& data) {
+	auto* parameters = new std::vector<std::string>();
+	for (const auto& parameter : data.customParameters) {
+		if (parameter.addedBy == PLUGIN_NAME) {
+			parameters->emplace_back(std::move(parameter.name));
+		}
 	}
+	event.code  = ResponseCode::INPUT_PARAMETER_LIST;
+	event.data1 = parameters;
+}
+
+struct ParameterCreationResponseData {
+	std::string parameterName;
+
+	struct glaze {
+		using T                     = ParameterCreationResponseData;
+		static constexpr auto value = glz::object("parameterName", &T::parameterName);
+	};
+};
+
+using ParameterCreationResponse = Response<ParameterCreationResponseData>;
+
+void buildParameterCreationEvent(SDL_UserEvent& event,
+                                 const ParameterCreationResponseData&) {
 	event.code = ResponseCode::PARAMETER_CREATION;
 }
 
-void buildParameterDeletionEvent(SDL_UserEvent&      event,
-                                 const rj::Document& json) {
-	const auto& data = json["data"];
-	if (!data.HasMember("parameterName") || !data["parameterName"].IsString()) {
-		return;
-	}
+struct ParameterDeletionResponseData {
+	std::string parameterName;
+
+	struct glaze {
+		using T                     = ParameterDeletionResponseData;
+		static constexpr auto value = glz::object("parameterName", &T::parameterName);
+	};
+};
+
+using ParameterDeletionResponse = Response<ParameterDeletionResponseData>;
+
+void buildParameterDeletionEvent(SDL_UserEvent& event,
+                                 const ParameterDeletionResponseData&) {
 	event.code = ResponseCode::PARAMETER_DELETION;
 }
 
 void buildResponseEvent(SDL_UserEvent& event,
-                        char*          jsonString,
+                        char*          jsonChars,
                         const int      nChars) {
-	rj::Document json;
-	json.Parse(jsonString, nChars);
+	std::string jsonString(jsonChars, nChars);
+
+	BaseResponse base;
+	auto         baseError =
+	    glz::read<glz::opts{.error_on_unknown_keys = false}>(base, jsonString);
+	if (baseError) {
+		logError(baseError, jsonString);
+		return;
+	}
+
+	const std::string& messageType = base.messageType;
 
 	event.code = ResponseCode::UNKNOWN;
 
-	const auto& type = json["messageType"];
-	if (type == AUTHENTICATION_TOKEN_TYPESTRING) {
-		buildAuthenticationTokenEvent(event, json);
+	if (messageType == Type::AUTHENTICATION) {
+		if (auto response = parseResponse<AuthenticationResponse>(jsonString)) {
+			buildAuthenticationEvent(event, *(response->data));
+		}
 	}
-	else if (type == AUTHENTICATION_TYPESTRING) {
-		buildAuthenticationEvent(event, json);
+	else if (messageType == Type::AUTHENTICATION_TOKEN) {
+		if (auto response = parseResponse<AuthenticationTokenResponse>(jsonString)) {
+			buildAuthenticationTokenEvent(event, *(response->data));
+		}
 	}
-	else if (type == INPUT_PARAMETER_LIST_TYPESTRING) {
-		buildInputParameterListEvent(event, json);
+	else if (messageType == Type::INPUT_PARAMETER_LIST) {
+		if (auto response = parseResponse<InputParameterListResponse>(jsonString)) {
+			buildInputParameterListEvent(event, *(response->data));
+		}
 	}
-	else if (type == PARAMETER_CREATION_TYPESTRING) {
-		buildParameterCreationEvent(event, json);
+	else if (messageType == Type::PARAMETER_CREATION) {
+		if (auto response = parseResponse<ParameterCreationResponse>(jsonString)) {
+			buildParameterCreationEvent(event, *(response->data));
+		}
 	}
-	else if (type == PARAMETER_DELETION_TYPESTRING) {
-		buildParameterDeletionEvent(event, json);
+	else if (messageType == Type::PARAMETER_DELETION) {
+		if (auto response = parseResponse<ParameterDeletionResponse>(jsonString)) {
+			buildParameterDeletionEvent(event, *(response->data));
+		}
 	}
 }
 

@@ -188,8 +188,8 @@ auto ParameterManager::values() -> ParameterView {
 	return _params | std::views::values;
 }
 
-void ParameterManager::add(const ParameterData& data) {
-	_params.emplace(data.name, data);
+void ParameterManager::add(const std::string& name) {
+	_params.emplace(name, name);
 }
 
 void ParameterManager::clear() {

@@ -1,127 +1,225 @@
 #include <format>
 #include <fstream>
+#include <iostream>
+#include <optional>
 #include <string>
 #include <string_view>
 
 #include <mongoose.h>
+#include <glaze/core/context.hpp>
+#include <glaze/core/reflect.hpp>
+#include <glaze/json/write.hpp>
 
 #include "core/settings.hpp"
+#include "vts/meta.hpp"
 #include "vts/parameter.hpp"
 #include "vts/request.hpp"
 #include "ws/controller.hpp"
 
+static void logError(const glz::error_ctx& error, const std::string& buffer) {
+	std::cerr
+	    << "Error serializing request: "
+	    << glz::format_error(error, buffer)
+	    << std::endl;
+}
+
+template <typename T>
+static std::optional<std::string> stringify(const T& value) {
+	std::string result;
+	auto        error = glz::write_json(value, result);
+	if (error) {
+		logError(error, result);
+		return std::nullopt;
+	}
+	return result;
+}
+
 namespace vts {
 
-static constexpr auto AUTHENTICATION_REQUEST = R"({{
-	"apiName": "VTubeStudioPublicAPI",
-	"apiVersion": "1.0",
-	"requestID": "SomeID",
-	"messageType": "AuthenticationRequest",
-	"data": {{
-		"pluginName": "MelKIT // Relay",
-		"pluginDeveloper": "github->dGrowl",
-		"authenticationToken": "{}"
-	}}
-}})";
+struct BaseRequest {
+	std::string apiName    = "VTubeStudioPublicAPI";
+	std::string apiVersion = "1.0";
+	std::string requestId  = "SomeID";
+	std::string messageType;
+
+	struct glaze {
+		using T                     = BaseRequest;
+		static constexpr auto value = glz::object("apiName",
+		                                          &T::apiName,
+		                                          "apiVersion",
+		                                          &T::apiVersion,
+		                                          "requestId",
+		                                          &T::requestId,
+		                                          "messageType",
+		                                          &T::messageType);
+	};
+};
+
+template <typename DataType>
+struct Request : BaseRequest {
+	DataType data;
+
+	Request(const std::string& messageTypeRef, DataType&& requestData) :
+	    BaseRequest{.messageType{messageTypeRef}},
+	    data(std::move(requestData)) {}
+
+	struct glaze {
+		using T                     = Request<DataType>;
+		static constexpr auto value = glz::object("apiName",
+		                                          &T::apiName,
+		                                          "apiVersion",
+		                                          &T::apiVersion,
+		                                          "requestId",
+		                                          &T::requestId,
+		                                          "messageType",
+		                                          &T::messageType,
+		                                          "data",
+		                                          &T::data);
+	};
+};
+
+struct AuthenticationData {
+	std::string pluginName      = PLUGIN_NAME;
+	std::string pluginDeveloper = PLUGIN_DEVELOPER;
+	std::string authenticationToken;
+
+	struct glaze {
+		using T                     = AuthenticationData;
+		static constexpr auto value = glz::object("pluginName",
+		                                          &T::pluginName,
+		                                          "pluginDeveloper",
+		                                          &T::pluginDeveloper,
+		                                          "authenticationToken",
+		                                          &T::authenticationToken);
+	};
+};
 
 void authenticate(ws::IController& wsController) {
 	std::string token = SETTINGS.getAuthToken();
-	if (token.size() > 0) {
-		wsController.sendMessage(std::format(AUTHENTICATION_REQUEST, token));
+	if (!token.empty()) {
+		Request<AuthenticationData> request(
+		    "AuthenticationRequest",
+		    AuthenticationData{.authenticationToken = std::move(token)});
+		if (auto message = stringify(request)) {
+			wsController.sendMessage(std::move(*message));
+		}
 	}
 	else {
 		requestToken(wsController);
 	}
 }
 
-static constexpr auto AUTHENTICATION_TOKEN_REQUEST = R"({
-	"apiName": "VTubeStudioPublicAPI",
-	"apiVersion": "1.0",
-	"requestID": "SomeID",
-	"messageType": "AuthenticationTokenRequest",
-	"data": {
-		"pluginName": "MelKIT // Relay",
-		"pluginDeveloper": "github->dGrowl",
-		"pluginIcon": "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"
-	}
-})";
+struct AuthenticationTokenRequestData {
+	std::string pluginName      = PLUGIN_NAME;
+	std::string pluginDeveloper = PLUGIN_DEVELOPER;
+	std::string pluginIcon      = PLUGIN_ICON_BASE64;
+
+	struct glaze {
+		using T                     = AuthenticationTokenRequestData;
+		static constexpr auto value = glz::object("pluginName",
+		                                          &T::pluginName,
+		                                          "pluginDeveloper",
+		                                          &T::pluginDeveloper,
+		                                          "pluginIcon",
+		                                          &T::pluginIcon);
+	};
+};
 
 void requestToken(ws::IController& wsController) {
-	wsController.sendMessage(std::string(AUTHENTICATION_TOKEN_REQUEST));
+	Request<AuthenticationTokenRequestData> request(
+	    "AuthenticationTokenRequest",
+	    AuthenticationTokenRequestData());
+	if (auto message = stringify(request)) {
+		wsController.sendMessage(std::move(*message));
+	}
 }
 
-static constexpr const char* PARAMETER_CREATION_REQUEST = R"({{
-	"apiName": "VTubeStudioPublicAPI",
-	"apiVersion": "1.0",
-	"requestID": "SomeID",
-	"messageType": "ParameterCreationRequest",
-	"data": {{
-		"parameterName": "{}",
-		"explanation": "This is my new parameter.",
-		"min": {},
-		"max": {},
-		"defaultValue": 0.0
-	}}
-}})";
+struct ParameterCreationRequestData {
+	std::string parameterName;
+	std::string explanation = "This is my new parameter.";
+	float       min;
+	float       max;
+	float       defaultValue = 0.0f;
 
-void createParameter(ws::IController&     wsController,
-                     const ParameterData& parameter) {
-	wsController.sendMessage(std::format(PARAMETER_CREATION_REQUEST,
-	                                     parameter.name,
-	                                     parameter.min,
-	                                     parameter.max));
-}
+	struct glaze {
+		using T                     = ParameterCreationRequestData;
+		static constexpr auto value = glz::object("parameterName",
+		                                          &T::parameterName,
+		                                          "explanation",
+		                                          &T::explanation,
+		                                          "min",
+		                                          &T::min,
+		                                          "max",
+		                                          &T::max,
+		                                          "defaultValue",
+		                                          &T::defaultValue);
+	};
+};
 
 void createParameter(ws::IController& wsController,
                      const Parameter& parameter) {
-	wsController.sendMessage(std::format(PARAMETER_CREATION_REQUEST,
-	                                     parameter.getName(),
-	                                     parameter.getMin(),
-	                                     parameter.getMax()));
+	Request<ParameterCreationRequestData> request(
+	    "ParameterCreationRequest",
+	    ParameterCreationRequestData{
+	        .parameterName = parameter.getName(),
+	        .min           = parameter.getMin(),
+	        .max           = parameter.getMax(),
+	    });
+	if (auto message = stringify(request)) {
+		wsController.sendMessage(std::move(*message));
+	}
 }
 
-static constexpr auto PARAMETER_DELETION_REQUEST = R"({{
-	"apiName": "VTubeStudioPublicAPI",
-	"apiVersion": "1.0",
-	"requestID": "SomeID",
-	"messageType": "ParameterDeletionRequest",
-	"data": {{
-		"parameterName": "{}"
-	}}
-}})";
+struct ParameterDeletionData {
+	std::string parameterName;
+
+	struct glaze {
+		using T                     = ParameterDeletionData;
+		static constexpr auto value = glz::object("parameterName", &T::parameterName);
+	};
+};
 
 void deleteParameter(ws::IController&       wsController,
                      const std::string_view name) {
-	wsController.sendMessage(std::format(PARAMETER_DELETION_REQUEST, name));
+	Request<ParameterDeletionData> request(
+	    "ParameterDeletionRequest",
+	    ParameterDeletionData{.parameterName = std::string{name}});
+	if (auto message = stringify(request)) {
+		wsController.sendMessage(std::move(*message));
+	}
 }
-
-static constexpr auto INPUT_PARAMETER_LIST_REQUEST = R"({
-	"apiName": "VTubeStudioPublicAPI",
-	"apiVersion": "1.0",
-	"requestID": "SomeID",
-	"messageType": "InputParameterListRequest"
-})";
 
 void getParameters(ws::IController& wsController) {
-	wsController.sendMessage(std::string(INPUT_PARAMETER_LIST_REQUEST));
+	BaseRequest request{.messageType = "InputParameterListRequest"};
+	if (auto message = stringify(request)) {
+		wsController.sendMessage(std::move(*message));
+	}
 }
 
-static constexpr auto INJECT_PARAMETER_DATA_REQUEST = R"({{
-	"apiName": "VTubeStudioPublicAPI",
-	"apiVersion": "1.0",
-	"requestID": "SomeID",
-	"messageType": "InjectParameterDataRequest",
-	"data": {{
-		"faceFound": false,
-		"mode": "set",
-		"parameterValues": [{}]
-	}}
-}})";
+struct InjectParameterDataRequestData {
+	bool                        faceFound = false;
+	std::string                 mode      = "set";
+	std::vector<ParameterValue> parameterValues;
 
-void setParameters(ws::IController&       wsController,
-                   const std::string_view objectsString) {
-	wsController.sendMessage(
-	    std::format(INJECT_PARAMETER_DATA_REQUEST, objectsString));
+	struct glaze {
+		using T                     = InjectParameterDataRequestData;
+		static constexpr auto value = glz::object("faceFound",
+		                                          &T::faceFound,
+		                                          "mode",
+		                                          &T::mode,
+		                                          "parameterValues",
+		                                          &T::parameterValues);
+	};
+};
+
+void setParameters(ws::IController&             wsController,
+                   std::vector<ParameterValue>& values) {
+	Request<InjectParameterDataRequestData> request(
+	    "InjectParameterDataRequest",
+	    InjectParameterDataRequestData{.parameterValues = std::move(values)});
+	if (auto message = stringify(request)) {
+		wsController.sendMessage(std::move(*message));
+	}
 }
 
 };  // namespace vts

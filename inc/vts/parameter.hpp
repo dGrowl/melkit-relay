@@ -9,13 +9,6 @@
 
 namespace vts {
 
-struct ParameterData {
-	std::string name;
-	float       defaultValue = 0.0f;
-	float       max          = 1.0f;
-	float       min          = 0.0f;
-};
-
 enum class BlendMode : Uint8 {
 	MAX,
 	BOUNDED_SUM,
@@ -40,8 +33,7 @@ private:
 
 public:
 	Parameter();
-	Parameter(const char* name);
-	Parameter(const ParameterData& data);
+	Parameter(const std::string& name);
 
 	BlendMode          getBlendMode() const;
 	bool               hasInputs() const;
@@ -54,10 +46,10 @@ public:
 	float              getOutput() const;
 	InputMap&          getInputs();
 	void               addInput(const InputId id, const bool isInverted = false);
+	void               clearInputs();
 	void               handleInput(const InputId id, const float value);
 	void               removeInput(const InputId id);
 	void               setBlendMode(const BlendMode mode);
-	void               setInputs(const std::vector<InputData>& inputs);
 	void               setName(const std::string& name);
 	void               updateBounds();
 };

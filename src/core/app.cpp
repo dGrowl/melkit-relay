@@ -155,10 +155,10 @@ void App::handleEvent(SDL_Event& event) {
 }
 
 void App::handleVtsAuthenticationToken(SDL_UserEvent& event) {
-	auto* data = static_cast<vts::AuthenticationTokenData*>(event.data1);
-	SETTINGS.setAuthToken(data->token.c_str());
+	auto* token = static_cast<std::string*>(event.data1);
+	SETTINGS.setAuthToken(token->c_str());
 	vts::authenticate(_wsClient);
-	delete data;
+	delete token;
 }
 
 void App::handleVtsAuthenticationSuccess() {
@@ -171,12 +171,12 @@ void App::handleVtsAuthenticationFailure() {
 }
 
 void App::handleVtsInputParameterList(SDL_UserEvent& event) {
-	auto* data = static_cast<vts::InputParameterListData*>(event.data1);
+	auto* names = static_cast<std::vector<std::string>*>(event.data1);
 	_params.clear();
-	for (const auto& p : data->parameters) {
-		_params.add(p);
+	for (const auto& name : *names) {
+		_params.add(name);
 	}
-	delete data;
+	delete names;
 	loadParameterSettings();
 }
 
@@ -189,15 +189,10 @@ void App::handleVtsParameterDeletion() {
 }
 
 void App::checkParameterValues() {
-	std::string payload;
+	std::vector<vts::ParameterValue> payload;
 	for (auto& parameter : _params.values()) {
 		if (parameter.isFresh()) {
-			if (!payload.empty()) {
-				payload += ",";
-			}
-			payload += std::format(R"({{"id":"{}","value":{}}})",
-			                       parameter.getName(),
-			                       parameter.getOutput());
+			payload.emplace_back(parameter.getName(), parameter.getOutput());
 		}
 	}
 	if (!payload.empty()) {
@@ -214,7 +209,9 @@ void App::loadParameterSettings() {
 		}
 		else {
 			it->second.setBlendMode(settingsParameter.blendMode);
-			it->second.setInputs(settingsParameter.inputs);
+			for (const auto& input : settingsParameter.inputs) {
+				it->second.addInput(input.id, input.isInverted);
+			}
 		}
 	}
 }

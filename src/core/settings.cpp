@@ -1,121 +1,42 @@
+#include <format>
 #include <fstream>
-#include <sstream>
+#include <iostream>
 
 #include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_time.h>
 #include <SDL3/SDL_timer.h>
-#include <rapidjson/document.h>
-#include <rapidjson/prettywriter.h>
-#include <rapidjson/schema.h>
-#include <rapidjson/stringbuffer.h>
+#include <glaze/json/read.hpp>
+#include <glaze/json/write.hpp>
 
 #include "core/settings.hpp"
 
+static constexpr auto FILE_PATH = "settings.json";
+
 namespace core {
 
-static const char* DEFAULT_WS_URL = "localhost:8001";
-
-static const char* DEFAULT_AUTH_TOKEN = "";
-
-static constexpr int DEFAULT_MOUSE_SENSITIVITY = 50;
-
-static const char* SCHEMA_STRING = R"({
-	"type": "object",
-	"properties": {
-		"api_url": {
-			"type": "string"
-		},
-		"vts_token": {
-			"type": "string"
-		},
-		"mouse_sensitivity": {
-			"type": "integer",
-			"minimum": 1,
-			"maximum": 100
-		},
-		"parameters": {
-			"type": "array",
-			"items": {
-				"type": "object",
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"blendMode": {
-						"enum": ["max", "bounded_sum"]
-					},
-					"inputs": {
-						"type": "array",
-						"items": {
-							"type": "object",
-							"properties": {
-								"id": {
-									"type": "integer",
-									"minimum": 0
-								},
-								"isInverted": {
-									"type": "boolean"
-								}
-							},
-							"required": [
-								"id",
-								"isInverted"
-							]
-						}
-					}
-				},
-				"required": [
-					"name",
-					"blendMode",
-					"inputs"
-				]
-			}
-		}
-	},
-	"required": [
-		"api_url",
-		"vts_token",
-		"mouse_sensitivity",
-		"parameters"
-	]
-})";
-
-static const char* FILE_PATH = "settings.json";
-
-static auto BLEND_MODE_MAX_VALUE = rj::Value("max");
-
-static auto BLEND_MODE_BOUNDED_SUM_VALUE = rj::Value("bounded_sum");
-
-Settings::Settings() :
-    _document() {
+SettingsManager::SettingsManager() :
+    _mutex(),
+    _data() {
 	load();
 }
 
-Settings& Settings::instance() {
-	static Settings instance;
+SettingsManager& SettingsManager::instance() {
+	static SettingsManager instance;
 	return instance;
 }
 
-Settings::~Settings() {
+SettingsManager::~SettingsManager() {
 	save();
 }
 
-bool Settings::validate() {
-	rj::Document baseDoc;
-	baseDoc.Parse(SCHEMA_STRING);
-	rj::SchemaDocument  schemaDoc(baseDoc);
-	rj::SchemaValidator validator(schemaDoc);
-	return _document.Accept(validator);
-}
-
-void Settings::backup(const std::string& contents) {
+void SettingsManager::backup(const std::string& contents) {
 	SDL_Time timestamp;
 	SDL_GetCurrentTime(&timestamp);
 
-	std::ostringstream path;
-	path << "settings_" << SDL_NS_TO_SECONDS(timestamp) << ".backup.json";
+	std::string path =
+	    std::format("settings_{}.backup.json", SDL_NS_TO_SECONDS(timestamp));
 
-	std::ofstream file(path.str());
+	std::ofstream file(path);
 	if (!file.is_open()) {
 		return;
 	}
@@ -123,7 +44,7 @@ void Settings::backup(const std::string& contents) {
 	file.close();
 }
 
-void Settings::load() {
+void SettingsManager::load() {
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	std::ifstream file(FILE_PATH);
@@ -137,203 +58,123 @@ void Settings::load() {
 	                     std::istreambuf_iterator<char>());
 	file.close();
 
-	_document.Parse(contents.c_str());
-	if (_document.HasParseError() || !validate()) {
+	auto error = glz::read_json(_data, contents);
+
+	if (error) {
 		backup(contents);
 		loadDefault();
 		saveUnlocked();
 	}
 }
 
-void Settings::loadDefault() {
-	_document.SetObject();
-	auto& allocator = _document.GetAllocator();
-
-	rj::Value apiUrl;
-	apiUrl = rj::StringRef(DEFAULT_WS_URL, SDL_strlen(DEFAULT_WS_URL));
-
-	_document.AddMember("api_url", apiUrl, allocator);
-
-	rj::Value authToken;
-	authToken = rj::StringRef(DEFAULT_AUTH_TOKEN, SDL_strlen(DEFAULT_AUTH_TOKEN));
-
-	_document.AddMember("vts_token", authToken, allocator);
-
-	_document.AddMember("mouse_sensitivity",
-	                    rj::Value(DEFAULT_MOUSE_SENSITIVITY),
-	                    allocator);
-
-	_document.AddMember("parameters", rj::Value(rj::kArrayType), allocator);
+void SettingsManager::loadDefault() {
+	_data = Settings();
 }
 
-void Settings::save() {
+void SettingsManager::save() {
 	std::lock_guard<std::mutex> lock(_mutex);
 	saveUnlocked();
 }
 
-void Settings::saveUnlocked() {
-	rj::StringBuffer                   buffer;
-	rj::PrettyWriter<rj::StringBuffer> writer(buffer);
-	_document.Accept(writer);
-
+void SettingsManager::saveUnlocked() {
 	std::ofstream file(FILE_PATH);
 	if (!file.is_open()) {
 		return;
 	}
 
-	file << buffer.GetString();
+	std::string jsonString;
+	auto        error = glz::write<glz::opts{.prettify = true}>(_data, jsonString);
+
+	if (error) {
+		std::cerr
+		    << "Error serializing settings: "
+		    << glz::format_error(error, jsonString)
+		    << std::endl;
+		return;
+	}
+
+	file << jsonString;
 	file.close();
 }
 
-const char* Settings::getAuthToken() {
+const std::string& SettingsManager::getAuthToken() const {
 	std::lock_guard<std::mutex> lock(_mutex);
 
-	auto& value = _document["vts_token"];
-	return value.GetString();
+	return _data.vtsToken;
 }
 
-void Settings::setAuthToken(const char* newAuthToken) {
+const std::string& SettingsManager::getWsUrl() const {
 	std::lock_guard<std::mutex> lock(_mutex);
 
-	rj::Value value(newAuthToken, _document.GetAllocator());
-	_document["vts_token"] = value;
+	return _data.apiUrl;
+}
+
+const std::vector<SettingsParameter>& SettingsManager::getParameters() const {
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	return _data.parameters;
+}
+
+int SettingsManager::getMouseSensitivity() const {
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	return _data.mouseSensitivity;
+}
+
+void SettingsManager::setAuthToken(const char* newAuthToken) {
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	_data.vtsToken = newAuthToken;
 
 	saveUnlocked();
 }
 
-float Settings::getMouseSensitivity() {
+void SettingsManager::setMouseSensitivity(const int newSensitivity) {
 	std::lock_guard<std::mutex> lock(_mutex);
 
-	auto& value = _document["mouse_sensitivity"];
-	return value.GetInt();
-}
-
-void Settings::setMouseSensitivity(const int newSensitivity) {
-	std::lock_guard<std::mutex> lock(_mutex);
-
-	_document["mouse_sensitivity"] = rj::Value(newSensitivity);
+	_data.mouseSensitivity = newSensitivity;
 
 	saveUnlocked();
 }
 
-const char* Settings::getWsUrl() {
+void SettingsManager::setParameter(const vts::Parameter& parameter) {
 	std::lock_guard<std::mutex> lock(_mutex);
 
-	auto& value = _document["api_url"];
-	return value.GetString();
-}
-
-void Settings::setWsUrl(const char* newWsUrl) {
-	std::lock_guard<std::mutex> lock(_mutex);
-
-	rj::Value value(newWsUrl, _document.GetAllocator());
-	_document["api_url"] = value;
-
-	saveUnlocked();
-}
-
-std::vector<SettingsParameter> Settings::getParameters() {
-	std::lock_guard<std::mutex> lock(_mutex);
-
-	std::vector<SettingsParameter> result;
-
-	for (const auto& parameter : _document["parameters"].GetArray()) {
-		SettingsParameter settingsParam;
-		settingsParam.name = parameter["name"].GetString();
-		if (parameter["blendMode"] == BLEND_MODE_MAX_VALUE) {
-			settingsParam.blendMode = vts::BlendMode::MAX;
+	for (auto it = _data.parameters.begin(); it != _data.parameters.end(); ++it) {
+		if (it->name == parameter.getName()) {
+			_data.parameters.erase(it);
+			break;
 		}
-		else if (parameter["blendMode"] == BLEND_MODE_BOUNDED_SUM_VALUE) {
-			settingsParam.blendMode = vts::BlendMode::BOUNDED_SUM;
-		}
-		for (const auto& input : parameter["inputs"].GetArray()) {
-			vts::InputData data(input["id"].GetUint());
-			data.isInvertedRef() = input["isInverted"].GetBool();
-			settingsParam.inputs.emplace_back(std::move(data));
-		}
-
-		result.push_back(std::move(settingsParam));
 	}
 
-	return result;
+	auto& newParameter = _data.parameters.emplace_back(parameter.getName(),
+	                                                   parameter.getBlendMode());
+
+	for (const auto& [inputId, input] : parameter.getInputs()) {
+		newParameter.inputs.emplace_back(inputId, input.getIsInverted());
+	}
+
+	saveUnlocked();
 }
 
-void Settings::removeParameter(const std::string& name) {
+void SettingsManager::setWsUrl(const char* newWsUrl) {
 	std::lock_guard<std::mutex> lock(_mutex);
 
-	auto& parameters = _document["parameters"];
+	_data.apiUrl = newWsUrl;
 
-	for (auto it = parameters.Begin(); it != parameters.End(); ++it) {
-		if (it->HasMember("name") && std::string((*it)["name"].GetString()) == name) {
-			parameters.Erase(it);
+	saveUnlocked();
+}
+
+void SettingsManager::removeParameter(const std::string& name) {
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	for (auto it = _data.parameters.begin(); it != _data.parameters.end(); ++it) {
+		if (it->name == name) {
+			_data.parameters.erase(it);
 			saveUnlocked();
 			return;
 		}
 	}
-}
-
-void Settings::setParameter(const vts::Parameter& newParameter) {
-	std::lock_guard<std::mutex> lock(_mutex);
-
-	auto& parameters = _document["parameters"];
-	auto& allocator  = _document.GetAllocator();
-
-	for (auto& parameter : parameters.GetArray()) {
-		if (parameter["name"].GetString() == newParameter.getName()) {
-			switch (newParameter.getBlendMode()) {
-				case vts::BlendMode::MAX:
-					parameter["blendMode"] = "max";
-					break;
-				case vts::BlendMode::BOUNDED_SUM:
-					parameter["blendMode"] = "bounded_sum";
-					break;
-			}
-
-			auto& inputs = parameter["inputs"];
-			inputs.Clear();
-
-			for (const auto& [inputId, input] : newParameter.getInputs()) {
-				rj::Value inputObject(rj::kObjectType);
-				inputObject.AddMember("id", rj::Value(inputId), allocator);
-				inputObject.AddMember("isInverted",
-				                      rj::Value(input.getIsInverted()),
-				                      allocator);
-				inputs.PushBack(inputObject, allocator);
-			}
-
-			saveUnlocked();
-			return;
-		}
-	}
-
-	rj::Value newParam(rj::kObjectType);
-	newParam.AddMember("name",
-	                   rj::Value(newParameter.getName().c_str(), allocator),
-	                   allocator);
-
-	switch (newParameter.getBlendMode()) {
-		case vts::BlendMode::MAX:
-			newParam.AddMember("blendMode", rj::Value("max"), allocator);
-			break;
-		case vts::BlendMode::BOUNDED_SUM:
-			newParam.AddMember("blendMode", rj::Value("bounded_sum"), allocator);
-			break;
-	}
-
-	rj::Value inputs(rj::kArrayType);
-	for (const auto& [inputId, input] : newParameter.getInputs()) {
-		rj::Value inputObject(rj::kObjectType);
-		inputObject.AddMember("id", rj::Value(inputId), allocator);
-		inputObject.AddMember("isInverted",
-		                      rj::Value(input.getIsInverted()),
-		                      allocator);
-		inputs.PushBack(inputObject, allocator);
-	}
-
-	newParam.AddMember("inputs", inputs, allocator);
-	parameters.PushBack(newParam, allocator);
-
-	saveUnlocked();
 }
 
 }  // namespace core

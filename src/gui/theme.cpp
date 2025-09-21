@@ -11,7 +11,6 @@ void Theme::initColors() {
 
 	auto& colors = style.Colors;
 
-	colors[ImGuiCol_TextDisabled]        = ImVec4(0.0f, 1.0f, 0.0f, 1.0f);
 	colors[ImGuiCol_FrameBg]             = ImVec4(0.294f, 0.125f, 0.122f, 1.0f);
 	colors[ImGuiCol_FrameBgHovered]      = ImVec4(0.439f, 0.149f, 0.157f, 1.0f);
 	colors[ImGuiCol_FrameBgActive]       = ImVec4(0.682f, 0.2f, 0.212f, 1.0f);

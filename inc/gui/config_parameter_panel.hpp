@@ -1,13 +1,18 @@
 #ifndef GUI_CONFIG_PARAMETER_PANEL_HPP_
 #define GUI_CONFIG_PARAMETER_PANEL_HPP_
 
+#include <unordered_set>
+
 #include "gui/delete_parameters_modal.hpp"
 #include "gui/edit_parameter_modal.hpp"
 #include "gui/parameter_template_modal.hpp"
 #include "pad/manager.hpp"
+#include "vts/meta.hpp"
 #include "vts/parameter.hpp"
 #include "vts/parameter_manager.hpp"
 #include "ws/controller.hpp"
+
+constexpr size_t MAX_FILTER_LENGTH = vts::MAX_PARAMETER_LENGTH + sizeof('\0');
 
 namespace gui {
 
@@ -20,6 +25,9 @@ private:
 	DeleteParametersModal  _deleteParametersModal;
 	EditParameterModal     _editParameterModal;
 	ParameterTemplateModal _parameterTemplateModal;
+
+	std::unordered_set<std::string> _filteredParameterNames;
+	char                            _filterBuffer[MAX_FILTER_LENGTH];
 
 	bool showCreateOption();
 	void showControls();

@@ -1,3 +1,7 @@
+#include <algorithm>
+#include <string>
+#include <unordered_set>
+
 #include "imgui/imgui.h"
 
 #include "gui/config_parameter_panel.hpp"
@@ -7,6 +11,31 @@
 #include "ws/controller.hpp"
 
 static constexpr unsigned N_INPUT_ICONS_PER_ROW = 8;
+
+static char charToLower(unsigned char c) {
+	return std::tolower(c);
+}
+
+static std::string toLower(const std::string& s) {
+	std::string copy = s;
+	std::transform(copy.begin(), copy.end(), copy.begin(), charToLower);
+	return copy;
+}
+
+static std::unordered_set<std::string> buildFilterSet(
+    vts::ParameterManager& parameterManager,
+    const std::string&     filter) {
+	std::unordered_set<std::string> result;
+	std::string                     lowerFilter = toLower(filter);
+	for (const auto& parameter : parameterManager.values()) {
+		std::string lowerName = toLower(parameter.getName());
+		if (!lowerName.contains(lowerFilter)) {
+			result.insert(parameter.getName());
+		}
+	}
+
+	return result;
+}
 
 namespace gui {
 
@@ -21,8 +50,8 @@ bool ConfigParameterPanel::showCreateOption() {
 }
 
 void ConfigParameterPanel::showControls() {
-	static char filterBuffer[33]   = "";
-	bool        shouldOpenEditMenu = false;
+	bool shouldOpenEditMenu = false;
+
 	if (ImGui::BeginTable("Parameter Control Row", 2)) {
 		ImGui::TableSetupColumn("Filter", ImGuiTableColumnFlags_WidthStretch);
 		ImGui::TableSetupColumn("Edit", ImGuiTableColumnFlags_WidthFixed);
@@ -30,7 +59,12 @@ void ConfigParameterPanel::showControls() {
 		ImGui::TableNextColumn();
 		ImGui::SetNextItemWidth(-1.0f);
 		ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
-		ImGui::InputText("##filter", filterBuffer, IM_ARRAYSIZE(filterBuffer));
+		if (ImGui::InputTextWithHint("##filter",
+		                             "Filter",
+		                             _filterBuffer,
+		                             IM_ARRAYSIZE(_filterBuffer))) {
+			_filteredParameterNames = buildFilterSet(_parameterManager, _filterBuffer);
+		}
 		ImGui::PopItemFlag();
 
 		ImGui::TableNextColumn();
@@ -85,6 +119,9 @@ void ConfigParameterPanel::showData() {
 		ImGui::TableHeadersRow();
 
 		for (auto& p : _parameterManager.values()) {
+			if (_filteredParameterNames.contains(p.getName())) {
+				continue;
+			}
 			ImGui::PushID(p.getName().c_str());
 
 			ImGui::TableNextRow();
@@ -151,7 +188,11 @@ ConfigParameterPanel::ConfigParameterPanel(
     _wsController(wsController),
     _deleteParametersModal(parameterManager, wsController),
     _editParameterModal(wsController, editingParameter),
-    _parameterTemplateModal(wsController) {}
+    _parameterTemplateModal(wsController),
+    _filteredParameterNames(),
+    _filterBuffer() {
+	SDL_zeroa(_filterBuffer);
+}
 
 void ConfigParameterPanel::show() {
 	{

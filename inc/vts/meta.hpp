@@ -123,6 +123,8 @@ constexpr auto PLUGIN_ICON_BASE64 =
     "Ttj4RJjSp85dDhOoy9ITEo3949zhHPaSmnyBGFqAS4EbgFmVwNVW3eJZfRqeu6nP0BWq4OMvyw"
     "x8uMS2zwDGA01ak37sqzK+/g9X0ayClfMBxgAAAABJRU5ErkJggg==";
 
+constexpr int MAX_PARAMETER_LENGTH = 32;
+
 }  // namespace vts
 
 #endif  // VTS_META_HPP_

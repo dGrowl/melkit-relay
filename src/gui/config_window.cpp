@@ -118,7 +118,7 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 	                               | ImGuiWindowFlags_NoMove
 	                               | ImGuiWindowFlags_NoResize
 	                               | ImGuiWindowFlags_NoBringToFrontOnFocus;
-	if (ImGui::Begin("Settings", nullptr, windowFlags)) {
+	if (ImGui::Begin("Config", nullptr, windowFlags)) {
 		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
 		if (ImGui::BeginTable("Panels",
 		                      2,

@@ -127,9 +127,16 @@ ConfigSettingsPanel::ConfigSettingsPanel(
 }
 
 void ConfigSettingsPanel::show() {
-	showVtsSettings();
-	showGamepadSettings();
-	showMouseSettings();
+	ImVec2 childSize = ImGui::GetContentRegionAvail();
+	if (ImGui::BeginChild("SettingsPanelChild",
+	                      childSize,
+	                      ImGuiChildFlags_None,
+	                      ImGuiWindowFlags_NoSavedSettings)) {
+		showVtsSettings();
+		showGamepadSettings();
+		showMouseSettings();
+	}
+	ImGui::EndChild();
 }
 
 void ConfigSettingsPanel::setActiveGamepadIndex(const size_t activeIndex) {

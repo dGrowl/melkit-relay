@@ -8,6 +8,7 @@
 #include "imgui/backends/imgui_impl_sdlgpu3.h"
 #include "imgui/imgui.h"
 
+#include "gui/config_parameter_panel.hpp"
 #include "gui/config_settings_panel.hpp"
 #include "gui/delete_parameters_modal.hpp"
 #include "gui/edit_parameter_modal.hpp"
@@ -20,25 +21,10 @@ namespace gui {
 
 class ConfigWindow {
 private:
-	pad::Manager&          _gamepadManager;
-	vts::Parameter&        _editingParameter;
-	vts::ParameterManager& _paramManager;
-	ws::IController&       _wsController;
-
 	SDL_Window* _window;
 
-	ConfigSettingsPanel    _settingsPanel;
-	DeleteParametersModal  _deleteParametersModal;
-	EditParameterModal     _editParameterModal;
-	ParameterTemplateModal _parameterTemplateModal;
-
-	bool showCreateParameter();
-	void showParameterControls();
-	void showParameterData();
-	void showParameterPanel();
-	void showParameters();
-
-	void showParameterModals();
+	ConfigSettingsPanel  _settingsPanel;
+	ConfigParameterPanel _parameterPanel;
 
 public:
 	ConfigWindow(pad::Manager&          gamepadManager,

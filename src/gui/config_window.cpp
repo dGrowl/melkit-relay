@@ -25,160 +25,14 @@ static constexpr int WINDOW_HEIGHT_MIN     = 256;
 
 static const SDL_FColor CLEAR_COLOR{.03f, .02f, .04f, 1.0f};
 
-static constexpr unsigned N_INPUT_ICONS_PER_ROW = 8;
-
 namespace gui {
-
-bool ConfigWindow::showCreateParameter() {
-	if (ImGui::Selectable("Create")) {
-		_editingParameter = vts::Parameter();
-		_editParameterModal.refresh();
-		return true;
-	}
-
-	return false;
-}
-
-void ConfigWindow::showParameterControls() {
-	static char filterBuffer[33]   = "";
-	bool        shouldOpenEditMenu = false;
-	if (ImGui::BeginTable("Parameter Top Row", 2)) {
-		ImGui::TableSetupColumn("Filter", ImGuiTableColumnFlags_WidthStretch);
-		ImGui::TableSetupColumn("Edit", ImGuiTableColumnFlags_WidthFixed);
-
-		ImGui::TableNextColumn();
-		ImGui::SetNextItemWidth(-1.0f);
-		ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
-		ImGui::InputText("##filter", filterBuffer, IM_ARRAYSIZE(filterBuffer));
-		ImGui::PopItemFlag();
-
-		ImGui::TableNextColumn();
-		if (ImGui::Button("Edit", ImVec2(128.0f, 0.0f))) {
-			shouldOpenEditMenu = true;
-		}
-		ImGui::EndTable();
-	}
-	if (shouldOpenEditMenu) {
-		ImGui::OpenPopup("Edit Menu");
-	}
-	bool shouldOpenCreate   = false;
-	bool shouldOpenDelete   = false;
-	bool shouldOpenTemplate = false;
-	if (ImGui::BeginPopupContextItem("Edit Menu")) {
-		shouldOpenCreate   = showCreateParameter();
-		shouldOpenTemplate = ImGui::Selectable("Template");
-		shouldOpenDelete =
-		    ImGui::Selectable("Delete",
-		                      false,
-		                      ImGuiSelectableFlags_None,
-		                      ImVec2(128.0f, 0.0f));  // sets the width of the menu
-
-		ImGui::EndPopup();
-	}
-	if (shouldOpenCreate) {
-		ImGui::OpenPopup(EditParameterModal::NAME);
-	}
-	if (shouldOpenTemplate) {
-		ImGui::OpenPopup(ParameterTemplateModal::NAME);
-	}
-	if (shouldOpenDelete) {
-		ImGui::OpenPopup(DeleteParametersModal::NAME);
-	}
-}
-
-void ConfigWindow::showParameterData() {
-	bool shouldOpenModal = false;
-
-	ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(12.0f, 2.0f));
-
-	if (ImGui::BeginTable("Parameter Table",
-	                      3,
-	                      ImGuiTableFlags_PadOuterX
-	                          | ImGuiTableFlags_RowBg
-	                          | ImGuiTableFlags_ScrollY
-	                          | ImGuiTableFlags_SizingFixedFit,
-	                      ImVec2(0.0f, 0.0f))) {
-		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
-		ImGui::TableSetupColumn("Inputs", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableSetupColumn("Output", ImGuiTableColumnFlags_WidthFixed);
-		ImGui::TableHeadersRow();
-
-		for (auto& p : _paramManager.values()) {
-			ImGui::PushID(p.getName().c_str());
-
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-
-			ImVec2 cursorPos = ImGui::GetCursorPos();
-			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + 9.0f));
-			if (ImGui::Button(p.getName().c_str(), ImVec2(-1.0f, 0.0f))) {
-				_editingParameter = p;
-				_editParameterModal.refresh();
-				shouldOpenModal = true;
-			}
-
-			unsigned iIcon = 0;
-			ImGui::TableNextColumn();
-			for (const auto& input : p.getInputs() | std::views::values) {
-				const float alpha =
-				    math::remapLinear(input.getValue(), -1.0f, 1.0f, 0.1f, 1.0f);
-				if (iIcon == N_INPUT_ICONS_PER_ROW) {
-					iIcon = 0;
-					ImGui::NewLine();
-				}
-				drawIcon(input.getId(), alpha);
-				iIcon += 1;
-			}
-
-			ImGui::TableNextColumn();
-			cursorPos = ImGui::GetCursorPos();
-			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + 8.0f));
-			ImGui::Text("%.2f", p.getOutput());
-
-			ImGui::PopID();
-		}
-
-		ImGui::EndTable();
-	}
-
-	ImGui::PopStyleVar();
-
-	if (shouldOpenModal) {
-		ImGui::OpenPopup(EditParameterModal::NAME);
-	}
-}
-
-void ConfigWindow::showParameterPanel() {
-	{
-		FONT_SCOPE(FontType::BOLD);
-		ImGui::SeparatorText("Parameters");
-	}
-	if (_wsController.getStatus() == ws::Status::CONNECTED) {
-		showParameters();
-	}
-	else {
-		ImGui::Text("You'll need to connect to VTS to manage parameters.");
-	}
-}
-
-void ConfigWindow::showParameters() {
-	showParameterControls();
-	ImGui::Separator();
-	showParameterData();
-}
 
 ConfigWindow::ConfigWindow(pad::Manager&          gamepadManager,
                            ws::IController&       wsController,
                            vts::ParameterManager& paramManager) :
-    _gamepadManager(gamepadManager),
-    _editingParameter(paramManager.getSample()),
-    _paramManager(paramManager),
-    _wsController(wsController),
     _window(nullptr),
     _settingsPanel(gamepadManager, paramManager, wsController),
-    _deleteParametersModal(_paramManager, wsController),
-    _editParameterModal(wsController, _editingParameter),
-    _parameterTemplateModal(wsController) {}
+    _parameterPanel(paramManager.getSample(), paramManager, wsController) {}
 
 bool ConfigWindow::isOpen() const {
 	return _window != nullptr;
@@ -274,9 +128,7 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 			_settingsPanel.show();
 
 			ImGui::TableNextColumn();
-			showParameterPanel();
-
-			showParameterModals();
+			_parameterPanel.show();
 
 			ImGui::EndTable();
 		}
@@ -319,12 +171,6 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 
 void ConfigWindow::setActiveGamepadIndex(const size_t activeIndex) {
 	_settingsPanel.setActiveGamepadIndex(activeIndex);
-}
-
-void ConfigWindow::showParameterModals() {
-	_deleteParametersModal.show();
-	_editParameterModal.show();
-	_parameterTemplateModal.show();
 }
 
 }  // namespace gui

@@ -153,7 +153,7 @@ void ParameterManager::handleMouseMove(SDL_UserEvent& event) {
 }
 
 float calcMouseCoefficient(const int sensitivity) {
-	return math::remapLinear<float>(sensitivity, 1.0f, 100.0f, 0.01f, 4.0f);
+	return math::remapLinear<float>(sensitivity, 1.0f, 100.0f, 0.00001f, 2.0f);
 }
 
 ParameterManager::ParameterManager() :

@@ -9,6 +9,9 @@ T remapLinear(const T inValue,
               const T inUpper,
               const T outLower,
               const T outUpper) {
+	if (inUpper == inLower) {
+		return 0;
+	}
 	return outLower
 	       + (inValue - inLower)
 	       * (outUpper - outLower)

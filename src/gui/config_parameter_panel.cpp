@@ -102,6 +102,12 @@ void ConfigParameterPanel::showControls() {
 }
 
 void ConfigParameterPanel::showData() {
+	if (_parameterManager.isEmpty()) {
+		ImGui::TextWrapped(
+		    "You haven't created any parameters yet. :(\n\n"
+		    "To get started, hit the \"Edit\" button in the top right!");
+		return;
+	}
 	bool shouldOpenModal = false;
 
 	ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(12.0f, 2.0f));

@@ -167,6 +167,10 @@ ParameterManager::ParameterManager() :
 	_mouseCoefficient = calcMouseCoefficient(_mouseSensitivity);
 }
 
+bool ParameterManager::isEmpty() const {
+	return _parameters.empty();
+}
+
 const math::Rectangle<int>& ParameterManager::getMouseBounds() const {
 	return _mouseBounds;
 }

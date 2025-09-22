@@ -51,6 +51,7 @@ public:
 	ParameterManager(ParameterManager&)            = delete;
 	ParameterManager& operator=(ParameterManager&) = delete;
 
+	bool                        isEmpty() const;
 	const math::Rectangle<int>& getMouseBounds() const;
 	const MouseState&           getMouseState() const;
 	int                         getMouseSensitivity() const;

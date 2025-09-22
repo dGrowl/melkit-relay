@@ -20,7 +20,7 @@ Streaming should feel immersive and fun, but VTuber models often feel stiff or d
   <img src="./img/ui-preview.png" />
 </p>
 
-> Screenshot after using the default Controller template to generate parameters.
+> Configuration after using the default controller template to generate parameters.
 
 ## 📦 Installation & Setup
 
@@ -30,12 +30,12 @@ Streaming should feel immersive and fun, but VTuber models often feel stiff or d
 
 2. **Install into VTube Studio**
    - Open VTube Studio.
-   - Run `relay.exe` or hit "Connect" if it's already launched.
-      - If VTube Studio is running on a different PC, you should change the IP to match.
+   - Run `relay.exe` or click "Connect" if it's already launched.
+      - If VTube Studio is running on a different PC, you should change the address to match its IP (e.g. `192.168.1.7:8001`).
    - In VTube Studio, grant Relay permission to access the API.
 
 3. **Create Parameters**
-   - In the Relay UI, create new parameters individually (e.g., `MK_LTrigger`, `MK_BrushPositionX`) or using a template.
+   - In Relay, click "Edit" to create new parameters individually (e.g., `MK_LTrigger`, `MK_BrushPositionX`) or using a template.
    - Attach input actions to your parameters.
    - Link your new parameters to your model's parameters in VTube Studio.
 

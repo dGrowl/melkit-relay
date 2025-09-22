@@ -37,10 +37,6 @@ void ConfigSettingsPanel::showGamepadSettings() {
 		ImGui::EndTable();
 	}
 
-	if (ImGui::Button("Refresh", ImVec2(-1.0f, 0.0f))) {
-		_gamepadManager.refreshDevices();
-	}
-
 	ImGui::Spacing();
 }
 

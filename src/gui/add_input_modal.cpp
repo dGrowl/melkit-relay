@@ -18,9 +18,7 @@ static constexpr unsigned MOUSE_EVENT_BUTTON        = 0;
 static constexpr unsigned MOUSE_EVENT_MOVE_ABSOLUTE = 1;
 static constexpr unsigned MOUSE_EVENT_MOVE_RELATIVE = 2;
 
-static std::vector<const char*> MOUSE_EVENTS{"Button",
-                                             "Move (Absolute)",
-                                             "Move (Relative)"};
+static std::vector<const char*> MOUSE_EVENTS{"Button", "Position", "Motion"};
 
 static constexpr unsigned MOUSE_BUTTON_LEFT   = 0;
 static constexpr unsigned MOUSE_BUTTON_RIGHT  = 1;

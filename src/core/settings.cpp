@@ -2,9 +2,9 @@
 #include <fstream>
 #include <iostream>
 
-#include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_time.h>
 #include <SDL3/SDL_timer.h>
+#include <SDL3/SDL_video.h>
 #include <glaze/json/read.hpp>
 #include <glaze/json/write.hpp>
 
@@ -69,6 +69,13 @@ void SettingsManager::load() {
 
 void SettingsManager::loadDefault() {
 	_data = Settings();
+
+	const SDL_DisplayID    primaryDisplay = SDL_GetPrimaryDisplay();
+	const SDL_DisplayMode* desktopMode = SDL_GetDesktopDisplayMode(primaryDisplay);
+	if (desktopMode != nullptr) {
+		_data.mouseBounds.bottom = desktopMode->h - 1;
+		_data.mouseBounds.right  = desktopMode->w - 1;
+	}
 }
 
 void SettingsManager::save() {
@@ -97,19 +104,25 @@ void SettingsManager::saveUnlocked() {
 	file.close();
 }
 
-const std::string& SettingsManager::getAuthToken() const {
+const math::Rectangle<int> SettingsManager::getMouseBounds() const {
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	return _data.mouseBounds;
+}
+
+const std::string SettingsManager::getAuthToken() const {
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	return _data.vtsToken;
 }
 
-const std::string& SettingsManager::getWsUrl() const {
+const std::string SettingsManager::getWsUrl() const {
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	return _data.apiUrl;
 }
 
-const std::vector<SettingsParameter>& SettingsManager::getParameters() const {
+const std::vector<SettingsParameter> SettingsManager::getParameters() const {
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	return _data.parameters;
@@ -125,6 +138,14 @@ void SettingsManager::setAuthToken(const char* newAuthToken) {
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	_data.vtsToken = newAuthToken;
+
+	saveUnlocked();
+}
+
+void SettingsManager::setMouseBounds(const math::Rectangle<int>& bounds) {
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	_data.mouseBounds = bounds;
 
 	saveUnlocked();
 }

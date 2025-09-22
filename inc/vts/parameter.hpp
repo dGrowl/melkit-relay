@@ -38,6 +38,7 @@ public:
 	BlendMode          getBlendMode() const;
 	bool               hasInputs() const;
 	bool               isFresh();
+	const InputData&   getInput(const InputId id) const;
 	const InputMap&    getInputs() const;
 	const std::string& getName() const;
 	float              getMax() const;

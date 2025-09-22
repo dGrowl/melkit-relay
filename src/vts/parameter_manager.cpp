@@ -1,12 +1,15 @@
-#include <SDL3/SDL_events.h>
-#include <SDL3/SDL_timer.h>
-#include <libuiohook/uiohook.h>
 #include <algorithm>
+#include <iostream>
 #include <limits>
 #include <ranges>
 
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_timer.h>
+#include <libuiohook/uiohook.h>
+
 #include "core/settings.hpp"
 #include "math/formula.hpp"
+#include "math/geometry.hpp"
 #include "mnk/event.hpp"
 #include "vts/input.hpp"
 #include "vts/parameter.hpp"
@@ -141,12 +144,12 @@ constexpr InputId MOUSE_MOVE_REL_X = InputEvent::MOUSE_MOVE_REL | Axis::X;
 constexpr InputId MOUSE_MOVE_REL_Y = InputEvent::MOUSE_MOVE_REL | Axis::Y;
 
 void ParameterManager::handleMouseMove(SDL_UserEvent& event) {
-	auto x = pointerToSigned<Sint16>(event.data1);
-	auto y = pointerToSigned<Sint16>(event.data2);
-	_mouse.dx += (x - _mouse.x) * _mouseCoefficient;
-	_mouse.dy += (y - _mouse.y) * _mouseCoefficient;
-	_mouse.x = x;
-	_mouse.y = y;
+	int x = pointerToSigned<Sint16>(event.data1);
+	int y = pointerToSigned<Sint16>(event.data2);
+	_mouseState.dx += (x - _mouseState.x) * _mouseCoefficient;
+	_mouseState.dy += (y - _mouseState.y) * _mouseCoefficient;
+	_mouseState.x = x;
+	_mouseState.y = y;
 }
 
 float calcMouseCoefficient(const int sensitivity) {
@@ -154,30 +157,34 @@ float calcMouseCoefficient(const int sensitivity) {
 }
 
 ParameterManager::ParameterManager() :
-    _mouse(),
-    _sample(),
-    _params(),
     _mouseCoefficient(1.0f),
     _mouseSensitivity(SETTINGS.getMouseSensitivity()),
-    _lastUpdateTimeMs(0) {
+    _mouseBounds(SETTINGS.getMouseBounds()),
+    _mouseState(),
+    _lastUpdateTimeMs(0),
+    _sample(),
+    _parameters() {
 	_mouseCoefficient = calcMouseCoefficient(_mouseSensitivity);
 }
 
-Parameter& ParameterManager::operator[](const char* name) {
-	return _params[name];
+const math::Rectangle<int>& ParameterManager::getMouseBounds() const {
+	return _mouseBounds;
+}
+
+const MouseState& ParameterManager::getMouseState() const {
+	return _mouseState;
 }
 
 int ParameterManager::getMouseSensitivity() const {
 	return _mouseSensitivity;
 }
 
-std::unordered_map<std::string, Parameter>::iterator ParameterManager::end() {
-	return _params.end();
+ParameterStore::iterator ParameterManager::end() {
+	return _parameters.end();
 }
 
-std::unordered_map<std::string, Parameter>::iterator ParameterManager::find(
-    const std::string& name) {
-	return _params.find(name);
+ParameterStore::iterator ParameterManager::find(const std::string& name) {
+	return _parameters.find(name);
 }
 
 Parameter& ParameterManager::getSample() {
@@ -185,15 +192,15 @@ Parameter& ParameterManager::getSample() {
 }
 
 auto ParameterManager::values() -> ParameterView {
-	return _params | std::views::values;
+	return _parameters | std::views::values;
 }
 
 void ParameterManager::add(const std::string& name) {
-	_params.emplace(name, name);
+	_parameters.emplace(name, name);
 }
 
 void ParameterManager::clear() {
-	_params.clear();
+	_parameters.clear();
 }
 
 void ParameterManager::handleGamepadEvent(
@@ -241,6 +248,11 @@ void ParameterManager::handleEvent(SDL_UserEvent& event) {
 	}
 }
 
+void ParameterManager::setMouseBounds(const math::Rectangle<int>& bounds) {
+	SETTINGS.setMouseBounds(bounds);
+	_mouseBounds = bounds;
+}
+
 void ParameterManager::setMouseSensitivity(const int sensitivity) {
 	if (sensitivity == _mouseSensitivity) {
 		return;
@@ -264,27 +276,44 @@ constexpr float MAX_MOUSE_DELTA = 64.0f;
 
 void ParameterManager::update() {
 	const Uint64 timeMs = SDL_GetTicks();
-	if (_mouse.dx == 0.0f && _mouse.dy == 0.0f) {
+	if (_mouseState.dx == 0.0f && _mouseState.dy == 0.0f) {
 		return;
 	}
 	const Uint64 dtMs  = timeMs - _lastUpdateTimeMs;
 	const float  decay = MOUSE_DELTA_DECAY_RATE_MS * dtMs;
 
-	_mouse.dx = sign(_mouse.dx)
-	            * std::clamp(std::abs(_mouse.dx) - decay, 0.0f, MAX_MOUSE_DELTA);
-	_mouse.dy = sign(_mouse.dy)
-	            * std::clamp(std::abs(_mouse.dy) - decay, 0.0f, MAX_MOUSE_DELTA);
+	float mouseX =
+	    std::clamp(_mouseState.x, _mouseBounds.left, _mouseBounds.right);
+	float mouseY =
+	    std::clamp(_mouseState.y, _mouseBounds.top, _mouseBounds.bottom);
+	mouseX = math::remapLinear<float>(mouseX,
+	                                  _mouseBounds.left,
+	                                  _mouseBounds.right,
+	                                  0.0f,
+	                                  1.0f);
+	mouseY = math::remapLinear<float>(mouseY,
+	                                  _mouseBounds.top,
+	                                  _mouseBounds.bottom,
+	                                  1.0f,
+	                                  0.0f);  // invert Y (+up, -down)
+
+	_mouseState.dx =
+	    sign(_mouseState.dx)
+	    * std::clamp(std::abs(_mouseState.dx) - decay, 0.0f, MAX_MOUSE_DELTA);
+	_mouseState.dy =
+	    sign(_mouseState.dy)
+	    * std::clamp(std::abs(_mouseState.dy) - decay, 0.0f, MAX_MOUSE_DELTA);
 
 	for (auto& parameter : values()) {
-		parameter.handleInput(MOUSE_MOVE_ABS_X, _mouse.x);
-		parameter.handleInput(MOUSE_MOVE_ABS_Y, _mouse.y);
-		parameter.handleInput(MOUSE_MOVE_REL_X, _mouse.dx);
-		parameter.handleInput(MOUSE_MOVE_REL_Y, _mouse.dy);
+		parameter.handleInput(MOUSE_MOVE_ABS_X, mouseX);
+		parameter.handleInput(MOUSE_MOVE_ABS_Y, mouseY);
+		parameter.handleInput(MOUSE_MOVE_REL_X, _mouseState.dx);
+		parameter.handleInput(MOUSE_MOVE_REL_Y, _mouseState.dy);
 	}
-	_sample.handleInput(MOUSE_MOVE_ABS_X, _mouse.x);
-	_sample.handleInput(MOUSE_MOVE_ABS_Y, _mouse.y);
-	_sample.handleInput(MOUSE_MOVE_REL_X, _mouse.dx);
-	_sample.handleInput(MOUSE_MOVE_REL_Y, _mouse.dy);
+	_sample.handleInput(MOUSE_MOVE_ABS_X, mouseX);
+	_sample.handleInput(MOUSE_MOVE_ABS_Y, mouseY);
+	_sample.handleInput(MOUSE_MOVE_REL_X, _mouseState.dx);
+	_sample.handleInput(MOUSE_MOVE_REL_Y, _mouseState.dy);
 	_lastUpdateTimeMs = timeMs;
 }
 

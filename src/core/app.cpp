@@ -18,11 +18,11 @@ App::App() :
     _alive(true),
     _pacer(),
     _gpu(nullptr),
-    _params(),
+    _parameters(),
     _wsClient(),
     _mnkMonitor(),
     _gamepadManager(),
-    _config(_gamepadManager, _wsClient, _params),
+    _config(_gamepadManager, _wsClient, _parameters),
     _icon() {
 	ws::allocateEvents();
 	mnk::allocateEvents();
@@ -93,7 +93,7 @@ void App::run() {
 		}
 		_config.render(_gpu);
 
-		_params.update();
+		_parameters.update();
 		checkParameterValues();
 
 		_pacer.endFrame();
@@ -118,7 +118,7 @@ void App::handleEvent(SDL_Event& event) {
 	}
 	switch (event.type) {
 		case mnk::Event::INPUT:
-			_params.handleEvent(event.user);
+			_parameters.handleEvent(event.user);
 			break;
 		case ws::Event::OPEN:
 			vts::authenticate(_wsClient);
@@ -144,7 +144,7 @@ void App::handleEvent(SDL_Event& event) {
 		case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
 		case SDL_EVENT_GAMEPAD_BUTTON_UP:
 		case SDL_EVENT_GAMEPAD_AXIS_MOTION:
-			_params.handleGamepadEvent(event, _gamepadManager.getActiveId());
+			_parameters.handleGamepadEvent(event, _gamepadManager.getActiveId());
 			break;
 	}
 }
@@ -167,9 +167,9 @@ void App::handleVtsAuthenticationFailure() {
 
 void App::handleVtsInputParameterList(SDL_UserEvent& event) {
 	auto* names = static_cast<std::vector<std::string>*>(event.data1);
-	_params.clear();
+	_parameters.clear();
 	for (const auto& name : *names) {
-		_params.add(name);
+		_parameters.add(name);
 	}
 	delete names;
 	loadParameterSettings();
@@ -185,7 +185,7 @@ void App::handleVtsParameterDeletion() {
 
 void App::checkParameterValues() {
 	std::vector<vts::ParameterValue> payload;
-	for (auto& parameter : _params.values()) {
+	for (auto& parameter : _parameters.values()) {
 		if (parameter.isFresh()) {
 			payload.emplace_back(parameter.getName(), parameter.getOutput());
 		}
@@ -198,8 +198,8 @@ void App::checkParameterValues() {
 void App::loadParameterSettings() {
 	auto settingsParameters = SETTINGS.getParameters();
 	for (const auto& settingsParameter : settingsParameters) {
-		auto it = _params.find(settingsParameter.name);
-		if (it == _params.end()) {
+		auto it = _parameters.find(settingsParameter.name);
+		if (it == _parameters.end()) {
 			SETTINGS.removeParameter(settingsParameter.name);
 		}
 		else {

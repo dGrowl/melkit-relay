@@ -8,6 +8,7 @@
 #include <glaze/core/common.hpp>
 #include <glaze/core/meta.hpp>
 
+#include "math/geometry.hpp"
 #include "vts/input.hpp"
 #include "vts/parameter.hpp"
 
@@ -15,6 +16,19 @@ template <>
 struct glz::meta<vts::BlendMode> {
 	using enum vts::BlendMode;
 	static constexpr auto value = glz::enumerate(MAX, BOUNDED_SUM);
+};
+
+template <typename T>
+struct glz::meta<math::Rectangle<T>> {
+	using Type                  = math::Rectangle<T>;
+	static constexpr auto value = object("top",
+	                                     &Type::top,
+	                                     "left",
+	                                     &Type::left,
+	                                     "bottom",
+	                                     &Type::bottom,
+	                                     "right",
+	                                     &Type::right);
 };
 
 namespace core {
@@ -49,9 +63,15 @@ struct SettingsParameter {
 };
 
 struct Settings {
-	std::string                    apiUrl           = "localhost:8001";
-	std::string                    vtsToken         = "";
-	int                            mouseSensitivity = 50;
+	std::string          apiUrl           = "localhost:8001";
+	std::string          vtsToken         = "";
+	int                  mouseSensitivity = 50;
+	math::Rectangle<int> mouseBounds{
+	    .top    = 0,
+	    .left   = 0,
+	    .bottom = 127,
+	    .right  = 127,
+	};
 	std::vector<SettingsParameter> parameters;
 
 	struct glaze {
@@ -63,6 +83,8 @@ struct Settings {
 		                                          &T::vtsToken,
 		                                          "mouse_sensitivity",
 		                                          &T::mouseSensitivity,
+		                                          "mouse_bounds",
+		                                          &T::mouseBounds,
 		                                          "parameters",
 		                                          &T::parameters);
 	};
@@ -89,12 +111,14 @@ public:
 	SettingsManager(SettingsManager&&)                 = delete;
 	SettingsManager& operator=(SettingsManager&&)      = delete;
 
-	const std::string&                    getAuthToken() const;
-	const std::string&                    getWsUrl() const;
-	const std::vector<SettingsParameter>& getParameters() const;
-	int                                   getMouseSensitivity() const;
+	const math::Rectangle<int>           getMouseBounds() const;
+	const std::string                    getAuthToken() const;
+	const std::string                    getWsUrl() const;
+	const std::vector<SettingsParameter> getParameters() const;
+	int                                  getMouseSensitivity() const;
 
 	void setAuthToken(const char* newAuthToken);
+	void setMouseBounds(const math::Rectangle<int>& bounds);
 	void setMouseSensitivity(const int newSensitivity);
 	void setParameter(const vts::Parameter& parameter);
 	void setWsUrl(const char* newWsUrl);

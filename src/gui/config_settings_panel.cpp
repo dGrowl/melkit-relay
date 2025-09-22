@@ -1,4 +1,5 @@
 #include <cmath>
+#include <format>
 
 #include "imgui/imgui.h"
 
@@ -20,7 +21,7 @@ void ConfigSettingsPanel::showGamepadSettings() {
 		ImGui::SeparatorText("Controller");
 	}
 
-	if (ImGui::BeginTable("Gamepad Settings", 2, ImGuiTableFlags_SizingFixedFit)) {
+	if (ImGui::BeginTable("GamepadSettings", 2, ImGuiTableFlags_SizingFixedFit)) {
 		ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
 
@@ -39,15 +40,19 @@ void ConfigSettingsPanel::showGamepadSettings() {
 	if (ImGui::Button("Refresh", ImVec2(-1.0f, 0.0f))) {
 		_gamepadManager.refreshDevices();
 	}
+
+	ImGui::Spacing();
 }
 
-void ConfigSettingsPanel::showMouseSettings() {
+void ConfigSettingsPanel::showMouseMotionSettings() {
 	{
 		FONT_SCOPE(FontType::BOLD);
-		ImGui::SeparatorText("Mouse");
+		ImGui::SeparatorText("Mouse (Motion)");
 	}
 
-	if (ImGui::BeginTable("Mouse Settings", 2, ImGuiTableFlags_SizingFixedFit)) {
+	if (ImGui::BeginTable("MouseMotionSettings",
+	                      2,
+	                      ImGuiTableFlags_SizingFixedFit)) {
 		ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
 
@@ -68,6 +73,60 @@ void ConfigSettingsPanel::showMouseSettings() {
 
 		ImGui::EndTable();
 	}
+
+	ImGui::Spacing();
+}
+
+void ConfigSettingsPanel::showMousePositionSettings() {
+	{
+		FONT_SCOPE(FontType::BOLD);
+		ImGui::SeparatorText("Mouse (Position)");
+	}
+
+	ImGui::Text("Region");
+
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+	ImVec2 cursorPos      = ImGui::GetCursorScreenPos();
+	float  availableWidth = ImGui::GetContentRegionAvail().x;
+	float  desiredHeight  = 64.0f;
+
+	ImVec2 rectMin = cursorPos;
+	ImVec2 rectMax(cursorPos.x + availableWidth - 1.0f,
+	               cursorPos.y + desiredHeight);
+
+	ImU32 fillColor = ImGui::GetColorU32(ImGuiCol_FrameBg);
+	ImU32 textColor = ImGui::GetColorU32(ImGuiCol_Text);
+
+	drawList->AddRectFilled(rectMin, rectMax, fillColor);
+
+	const auto& mouseBounds = _parameterManager.getMouseBounds();
+	auto topLeftString = std::format("({}, {})", mouseBounds.left, mouseBounds.top);
+	auto bottomRightString = std::format("({}, {})", mouseBounds.right, mouseBounds.bottom);
+	const char* topLeftText = topLeftString.c_str();
+	const char* bottomRightText = bottomRightString.c_str();
+
+	ImVec2 topLeftTextPos = rectMin;
+	topLeftTextPos.x += 3.0f;
+	topLeftTextPos.y += 2.0f;
+
+	ImVec2 bottomRightTextSize = ImGui::CalcTextSize(bottomRightText);
+	ImVec2 bottomRightTextPos  = rectMax;
+	bottomRightTextPos.x -= bottomRightTextSize.x + 3.0f;
+	bottomRightTextPos.y -= bottomRightTextSize.y + 2.0f;
+
+	drawList->AddText(topLeftTextPos, textColor, topLeftText);
+	drawList->AddText(bottomRightTextPos, textColor, bottomRightText);
+
+	ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, rectMax.y));
+	ImGui::Spacing();
+
+	if (ImGui::Button("Adjust", ImVec2(-1.0f, 0.0f))) {
+		_setMouseBoundsModal.refresh();
+		ImGui::OpenPopup(SetMouseBoundsModal::NAME);
+	}
+
+	ImGui::Spacing();
 }
 
 void ConfigSettingsPanel::showVtsSettings() {
@@ -76,7 +135,7 @@ void ConfigSettingsPanel::showVtsSettings() {
 		ImGui::SeparatorText("VTS Connection");
 	}
 
-	if (ImGui::BeginTable("VTS Config", 2, ImGuiTableFlags_SizingFixedFit)) {
+	if (ImGui::BeginTable("VTSConfig", 2, ImGuiTableFlags_SizingFixedFit)) {
 		ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
 
@@ -111,6 +170,12 @@ void ConfigSettingsPanel::showVtsSettings() {
 			_wsController.start();
 		}
 	}
+
+	ImGui::Spacing();
+}
+
+void ConfigSettingsPanel::showModals() {
+	_setMouseBoundsModal.show();
 }
 
 ConfigSettingsPanel::ConfigSettingsPanel(
@@ -120,6 +185,7 @@ ConfigSettingsPanel::ConfigSettingsPanel(
     _gamepadManager(gamepadManager),
     _parameterManager(parameterManager),
     _wsController(wsController),
+    _setMouseBoundsModal(parameterManager),
     _urlBuffer(),
     _gamepadSelector("##active-gamepad", _gamepadManager.getNames()),
     _mouseSensitivity(_parameterManager.getMouseSensitivity()) {
@@ -134,8 +200,10 @@ void ConfigSettingsPanel::show() {
 	                      ImGuiWindowFlags_NoSavedSettings)) {
 		showVtsSettings();
 		showGamepadSettings();
-		showMouseSettings();
+		showMouseMotionSettings();
+		showMousePositionSettings();
 	}
+	showModals();
 	ImGui::EndChild();
 }
 

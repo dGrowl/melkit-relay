@@ -19,8 +19,8 @@ static constexpr const char* DEVICE_KEYBOARD = "Keyboard";
 static constexpr const char* DEVICE_GAMEPAD  = "Controller";
 
 static constexpr const char* MOUSE_EVENT_BUTTON        = "Button";
-static constexpr const char* MOUSE_EVENT_MOVE_ABS      = "Move (Abs)";
-static constexpr const char* MOUSE_EVENT_MOVE_REL      = "Move (Rel)";
+static constexpr const char* MOUSE_EVENT_MOVE_ABS      = "Position";
+static constexpr const char* MOUSE_EVENT_MOVE_REL      = "Motion";
 static constexpr const char* KEY_EVENT_PRESS           = "Press";
 static constexpr const char* GAMEPAD_EVENT_BUTTON      = "Button";
 static constexpr const char* GAMEPAD_EVENT_TRIGGER     = "Trigger";

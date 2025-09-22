@@ -20,7 +20,7 @@ private:
 	Pacer          _pacer;
 	SDL_GPUDevice* _gpu;
 
-	vts::ParameterManager _params;
+	vts::ParameterManager _parameters;
 
 	ws::Client   _wsClient;
 	mnk::Monitor _mnkMonitor;

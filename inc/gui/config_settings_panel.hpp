@@ -2,6 +2,7 @@
 #define GUI_CONFIG_SETTINGS_PANEL_HPP_
 
 #include "gui/combo_box.hpp"
+#include "gui/set_mouse_bounds_modal.hpp"
 #include "pad/manager.hpp"
 #include "vts/parameter_manager.hpp"
 #include "ws/controller.hpp"
@@ -16,14 +17,19 @@ private:
 	vts::ParameterManager& _parameterManager;
 	ws::IController&       _wsController;
 
+	SetMouseBoundsModal _setMouseBoundsModal;
+
 	char     _urlBuffer[MAX_URL_LENGTH];
 	ComboBox _gamepadSelector;
 	int      _mouseSensitivity;
 
 	void showGamepadSettings();
-	void showMouseSettings();
+	void showMouseMotionSettings();
+	void showMousePositionSettings();
 	void showSettingsPanel();
 	void showVtsSettings();
+
+	void showModals();
 
 public:
 	ConfigSettingsPanel(pad::Manager&          gamepadManager,

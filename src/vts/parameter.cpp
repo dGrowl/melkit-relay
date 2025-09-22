@@ -82,6 +82,10 @@ bool Parameter::isFresh() {
 	return false;
 }
 
+const InputData& Parameter::getInput(const InputId id) const {
+	return _inputs.at(id);
+}
+
 const std::string& Parameter::getName() const {
 	return _name;
 }

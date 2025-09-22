@@ -39,18 +39,13 @@ App::~App() {
 }
 
 int App::init() {
-	SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
-	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
-		return 1;
-	}
-
 	_gpu = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV
 	                               | SDL_GPU_SHADERFORMAT_DXIL
 	                               | SDL_GPU_SHADERFORMAT_METALLIB,
 	                           true,
 	                           nullptr);
 	if (_gpu == nullptr) {
-		return 2;
+		return 1;
 	}
 
 	IMGUI_CHECKVERSION();

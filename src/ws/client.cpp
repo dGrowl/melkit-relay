@@ -1,4 +1,4 @@
-#include <sstream>
+#include <format>
 
 #include <SDL3/SDL_log.h>
 #include <mongoose.h>
@@ -7,6 +7,12 @@
 #include "vts/response.hpp"
 #include "ws/client.hpp"
 #include "ws/event.hpp"
+
+#ifdef NDEBUG
+#define IS_DEBUG_BUILD false
+#else
+#define IS_DEBUG_BUILD true
+#endif
 
 namespace ws {
 void handleMessage(void* event_data) {
@@ -34,7 +40,9 @@ void Client::handleEvent(mg_connection* connection,
 	Client* client = static_cast<Client*>(connection->fn_data);
 	switch (event) {
 		case MG_EV_OPEN:
-			connection->is_hexdumping = 1;
+			if (IS_DEBUG_BUILD) {
+				connection->is_hexdumping = 1;
+			}
 			break;
 		case MG_EV_ERROR:
 			client->handleError((char*)eventData);
@@ -73,19 +81,17 @@ void Client::threadFn() {
 	setStatus(Status::CONNECTING);
 	mg_mgr manager;
 	mg_mgr_init(&manager);
-	std::ostringstream extraHeaders;
-	extraHeaders << "Host: " << _url << "\r\n";
-	mg_connection* connection = mg_ws_connect(&manager,
-	                                          _url.c_str(),
-	                                          handleEvent,
-	                                          this,
-	                                          extraHeaders.str().c_str());
+	auto           extraHeaders = std::format("Host: {}\r\n", _url);
+	mg_connection* connection   = mg_ws_connect(&manager,
+                                           _url.c_str(),
+                                           handleEvent,
+                                           this,
+                                           extraHeaders.c_str());
 	while (_alive) {
 		mg_mgr_poll(&manager, 64);
 		{
 			std::lock_guard<std::mutex> lock(_sendMutex);
 			while (_alive && !_sendQueue.empty() && connection != nullptr) {
-				SDL_Log("Sending %s", _sendQueue.front().c_str());
 				mg_ws_send(connection,
 				           _sendQueue.front().c_str(),
 				           _sendQueue.front().size(),

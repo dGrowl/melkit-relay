@@ -10,8 +10,6 @@
 #include "math/formula.hpp"
 #include "ws/controller.hpp"
 
-static constexpr unsigned N_INPUT_ICONS_PER_ROW = 8;
-
 static char charToLower(unsigned char c) {
 	return std::tolower(c);
 }
@@ -119,8 +117,8 @@ void ConfigParameterPanel::showData() {
 	                          | ImGuiTableFlags_ScrollY
 	                          | ImGuiTableFlags_SizingFixedFit,
 	                      ImVec2(0.0f, 0.0f))) {
-		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
-		ImGui::TableSetupColumn("Inputs", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Inputs", ImGuiTableColumnFlags_WidthStretch);
 		ImGui::TableSetupColumn("Output", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableHeadersRow();
 
@@ -135,18 +133,20 @@ void ConfigParameterPanel::showData() {
 
 			ImVec2 cursorPos = ImGui::GetCursorPos();
 			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + 9.0f));
-			if (ImGui::Button(p.getName().c_str(), ImVec2(-1.0f, 0.0f))) {
+			if (ImGui::Button(p.getName().c_str(), ImVec2(200.0f, 0.0f))) {
 				_editingParameter = p;
 				_editParameterModal.refresh();
 				shouldOpenModal = true;
 			}
-
 			unsigned iIcon = 0;
 			ImGui::TableNextColumn();
+
+			auto     availableWidth = ImGui::GetContentRegionAvail().x;
+			unsigned nIconsPerRow   = std::max(1.0f, availableWidth / 38.0f);
 			for (const auto& input : p.getInputs() | std::views::values) {
 				const float alpha =
 				    math::remapLinear(input.getValue(), -1.0f, 1.0f, 0.1f, 1.0f);
-				if (iIcon == N_INPUT_ICONS_PER_ROW) {
+				if (iIcon == nIconsPerRow) {
 					iIcon = 0;
 					ImGui::NewLine();
 				}

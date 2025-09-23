@@ -53,6 +53,6 @@ Copyright for the "M" icon belongs to [Melizande](https://www.twitch.tv/melizand
 
 [VTube Studio](https://denchisoft.com/) is Copyright © DenchiSoft. MelKIT // Relay is a third-party plugin and is not affiliated with DenchiSoft.
 
-Gratitude and credit to the third-party libraries that power this software: [Dear ImGui](https://github.com/ocornut/imgui), [libuiohook](https://github.com/kwhat/libuiohook), [Mongoose](https://github.com/cesanta/mongoose), and [SDL](https://github.com/libsdl-org/SDL).
+Gratitude and credit to the third-party libraries that power this software: [Dear ImGui](https://github.com/ocornut/imgui), [glaze](https://github.com/stephenberry/glaze), [libuiohook](https://github.com/kwhat/libuiohook), [Mongoose](https://github.com/cesanta/mongoose), and [SDL](https://github.com/libsdl-org/SDL).
 
 PromptFont by Yukari "Shinmera" Hafner, available at [https://shinmera.com/promptfont](https://shinmera.com/promptfont).

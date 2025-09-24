@@ -20,6 +20,7 @@ private:
 	ComboBox _mouseAxisSelector;
 	ComboBox _mouseButtonSelector;
 	ComboBox _mouseEventSelector;
+	ComboBox _mouseWheelSelector;
 
 	ComboBox _gamepadButtonSelector;
 	ComboBox _gamepadEventSelector;
@@ -28,6 +29,7 @@ private:
 
 	vts::TargetTag getMouseAxisTag() const;
 	vts::TargetTag getMouseButtonTag() const;
+	vts::TargetTag getMouseWheelTag() const;
 
 	vts::TargetTag getGamepadButtonTag() const;
 	vts::TargetTag getGamepadStickActionTag(const bool isLeftStick) const;
@@ -42,6 +44,7 @@ private:
 	void showMouseButtonSelector();
 	void showMouseControls();
 	void showMouseEventSelector();
+	void showMouseWheelSelector();
 
 	void showKeyboardControls();
 

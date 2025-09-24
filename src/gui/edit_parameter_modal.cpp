@@ -19,6 +19,7 @@ static constexpr const char* DEVICE_KEYBOARD = "Keyboard";
 static constexpr const char* DEVICE_GAMEPAD  = "Controller";
 
 static constexpr const char* MOUSE_EVENT_BUTTON        = "Button";
+static constexpr const char* MOUSE_EVENT_WHEEL         = "Wheel";
 static constexpr const char* MOUSE_EVENT_MOVE_ABS      = "Position";
 static constexpr const char* MOUSE_EVENT_MOVE_REL      = "Motion";
 static constexpr const char* KEY_EVENT_PRESS           = "Press";
@@ -27,11 +28,7 @@ static constexpr const char* GAMEPAD_EVENT_TRIGGER     = "Trigger";
 static constexpr const char* GAMEPAD_EVENT_STICK_LEFT  = "Motion (LStick)";
 static constexpr const char* GAMEPAD_EVENT_STICK_RIGHT = "Motion (RStick)";
 
-static const char* MOUSE_BUTTONS[] = {"Left",
-                                      "Right",
-                                      "Middle",
-                                      "Fourth",
-                                      "Fifth"};
+static const char* MOUSE_BUTTONS[] = {"Left", "Right", "Middle"};
 
 static const char* GAMEPAD_BUTTONS[] = {"North",
                                         "South",
@@ -49,6 +46,8 @@ static const char* GAMEPAD_BUTTONS[] = {"North",
 static const char* GAMEPAD_TRIGGERS[] = {"Left", "Right"};
 
 static const char* AXES[] = {"X", "Y"};
+
+static const char* WHEEL_DIRECTIONS[] = {"Up", "Down"};
 
 static constexpr unsigned BLEND_MODE_MAX         = 0;
 static constexpr unsigned BLEND_MODE_BOUNDED_SUM = 1;
@@ -79,6 +78,11 @@ InputStrings getInputStrings(const vts::InputId id) {
 			strings.device = DEVICE_MOUSE;
 			strings.event  = MOUSE_EVENT_BUTTON;
 			strings.target = MOUSE_BUTTONS[target - 1];
+			break;
+		case vts::InputEvent::MOUSE_WHEEL:
+			strings.device = DEVICE_MOUSE;
+			strings.event  = MOUSE_EVENT_WHEEL;
+			strings.target = WHEEL_DIRECTIONS[target - 1];
 			break;
 		case vts::InputEvent::MOUSE_MOVE_ABS:
 			strings.device = DEVICE_MOUSE;

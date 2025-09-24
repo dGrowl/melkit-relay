@@ -21,6 +21,8 @@ private:
 	                            uiohook_event* const hookEvent);
 	static void buildMouseRelease(SDL_UserEvent&       userEvent,
 	                              uiohook_event* const hookEvent);
+	static void buildMouseWheel(SDL_UserEvent&       userEvent,
+	                            uiohook_event* const hookEvent);
 
 public:
 	Monitor();

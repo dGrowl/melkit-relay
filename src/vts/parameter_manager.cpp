@@ -62,18 +62,27 @@ static constexpr float transformMousePosition(float x,
 	return x;
 }
 
-static constexpr float MAX_MOUSE_DELTA = 64.0f;
+static constexpr float MAX_MOUSE_MOTION_DELTA = 64.0f;
 
 static constexpr float transformMouseDelta(float x,
                                            float decay,
                                            float outLower = -1.0f,
                                            float outUpper = 1.0f) {
-	x = math::sign(x) * std::clamp(std::abs(x) - decay, 0.0f, MAX_MOUSE_DELTA);
+	x = math::sign(x)
+	    * std::clamp(std::abs(x) - decay, 0.0f, MAX_MOUSE_MOTION_DELTA);
 	x = math::remapLinear(x,
-	                      -MAX_MOUSE_DELTA,
-	                      MAX_MOUSE_DELTA,
+	                      -MAX_MOUSE_MOTION_DELTA,
+	                      MAX_MOUSE_MOTION_DELTA,
 	                      outLower,
 	                      outUpper);
+	return x;
+}
+
+static constexpr float MAX_MOUSE_WHEEL_DELTA = 64.0f;
+
+static constexpr float transformMouseWheel(float x) {
+	x = std::clamp(x, 0.0f, MAX_MOUSE_WHEEL_DELTA);
+	x = math::remapLinear(x, 0.0f, MAX_MOUSE_WHEEL_DELTA, 0.0f, 1.0f);
 	return x;
 }
 
@@ -196,11 +205,6 @@ void ParameterManager::handleMouseButton(SDL_UserEvent& event, bool isClicked) {
 	_sample.handleInput(id, newValue);
 }
 
-constexpr InputId MOUSE_MOVE_ABS_X = InputEvent::MOUSE_MOVE_ABS | Axis::X;
-constexpr InputId MOUSE_MOVE_ABS_Y = InputEvent::MOUSE_MOVE_ABS | Axis::Y;
-constexpr InputId MOUSE_MOVE_REL_X = InputEvent::MOUSE_MOVE_REL | Axis::X;
-constexpr InputId MOUSE_MOVE_REL_Y = InputEvent::MOUSE_MOVE_REL | Axis::Y;
-
 void ParameterManager::handleMouseMove(SDL_UserEvent& event) {
 	int x = pointerToSigned<Sint16>(event.data1);
 	int y = pointerToSigned<Sint16>(event.data2);
@@ -210,7 +214,84 @@ void ParameterManager::handleMouseMove(SDL_UserEvent& event) {
 	_mouseState.y = y;
 }
 
-float calcMouseCoefficient(const int sensitivity) {
+void ParameterManager::handleMouseWheel(SDL_UserEvent& event) {
+	auto rotation = pointerToSigned<Sint16>(event.data1);
+	if (rotation == -1) {
+		_mouseState.wheelUp += MAX_MOUSE_WHEEL_DELTA * 2.0f;
+	}
+	else {
+		_mouseState.wheelDown += MAX_MOUSE_WHEEL_DELTA * 2.0f;
+	}
+}
+
+static constexpr float   MOUSE_DECAY_RATE_PER_MS = .65f;
+static constexpr InputId MOUSE_MOVE_ABS_X =
+    InputEvent::MOUSE_MOVE_ABS | Axis::X;
+static constexpr InputId MOUSE_MOVE_ABS_Y =
+    InputEvent::MOUSE_MOVE_ABS | Axis::Y;
+static constexpr InputId MOUSE_MOVE_REL_X =
+    InputEvent::MOUSE_MOVE_REL | Axis::X;
+static constexpr InputId MOUSE_MOVE_REL_Y =
+    InputEvent::MOUSE_MOVE_REL | Axis::Y;
+
+void ParameterManager::updateMouseMovement(const Uint64 dtMs) {
+	if (_mouseState.dx == 0.0f && _mouseState.dy == 0.0f) {
+		return;
+	}
+	const float decay = MOUSE_DECAY_RATE_PER_MS * dtMs;
+
+	float mouseX   = transformMousePosition(_mouseState.x,
+                                       _mouseBounds.left,
+                                       _mouseBounds.right);
+	float mouseY   = transformMousePosition(_mouseState.y,
+                                       _mouseBounds.top,
+                                       _mouseBounds.bottom,
+                                       1.0f,
+                                       0.0f);
+	_mouseState.dx = transformMouseDelta(_mouseState.dx, decay);
+	_mouseState.dy = transformMouseDelta(_mouseState.dy, decay, 1.0f, -1.0f);
+
+	for (auto& parameter : values()) {
+		parameter.handleInput(MOUSE_MOVE_ABS_X, mouseX);
+		parameter.handleInput(MOUSE_MOVE_ABS_Y, mouseY);
+		parameter.handleInput(MOUSE_MOVE_REL_X, _mouseState.dx);
+		parameter.handleInput(MOUSE_MOVE_REL_Y, _mouseState.dy);
+	}
+	_sample.handleInput(MOUSE_MOVE_ABS_X, mouseX);
+	_sample.handleInput(MOUSE_MOVE_ABS_Y, mouseY);
+	_sample.handleInput(MOUSE_MOVE_REL_X, _mouseState.dx);
+	_sample.handleInput(MOUSE_MOVE_REL_Y, _mouseState.dy);
+}
+
+static constexpr float   MOUSE_WHEEL_DECAY_RATE_PER_MS = .35f;
+static constexpr InputId MOUSE_WHEEL_UP =
+    InputEvent::MOUSE_WHEEL | MouseWheel::UP;
+static constexpr InputId MOUSE_WHEEL_DOWN =
+    InputEvent::MOUSE_WHEEL | MouseWheel::DOWN;
+
+void ParameterManager::updateMouseWheel(const Uint64 dtMs) {
+	if (_mouseState.wheelUp == 0.0f && _mouseState.wheelDown == 0.0f) {
+		return;
+	}
+	const float decay = MOUSE_WHEEL_DECAY_RATE_PER_MS * dtMs;
+
+	_mouseState.wheelUp =
+	    std::clamp(_mouseState.wheelUp - decay, 0.0f, MAX_MOUSE_WHEEL_DELTA * 2);
+	_mouseState.wheelDown =
+	    std::clamp(_mouseState.wheelDown - decay, 0.0f, MAX_MOUSE_WHEEL_DELTA * 2);
+
+	float wheelUp   = transformMouseWheel(_mouseState.wheelUp);
+	float wheelDown = transformMouseWheel(_mouseState.wheelDown);
+
+	for (auto& parameter : values()) {
+		parameter.handleInput(MOUSE_WHEEL_UP, wheelUp);
+		parameter.handleInput(MOUSE_WHEEL_DOWN, wheelDown);
+	}
+	_sample.handleInput(MOUSE_WHEEL_UP, wheelUp);
+	_sample.handleInput(MOUSE_WHEEL_DOWN, wheelDown);
+}
+
+static constexpr float calcMouseCoefficient(const int sensitivity) {
 	return math::remapLinear<float>(sensitivity, 1.0f, 100.0f, 0.00001f, 2.0f);
 }
 
@@ -307,6 +388,9 @@ void ParameterManager::handleEvent(SDL_UserEvent& event) {
 		case vts::ActionCode::MOUSE_RELEASE:
 			handleMouseButton(event, false);
 			break;
+		case vts::ActionCode::MOUSE_WHEEL:
+			handleMouseWheel(event);
+			break;
 	}
 }
 
@@ -324,37 +408,11 @@ void ParameterManager::setMouseSensitivity(const int sensitivity) {
 	_mouseCoefficient = calcMouseCoefficient(sensitivity);
 }
 
-static constexpr float MOUSE_DELTA_DECAY_RATE_MS = .65f;
-
 void ParameterManager::update() {
 	const Uint64 timeMs = SDL_GetTicks();
-	if (_mouseState.dx == 0.0f && _mouseState.dy == 0.0f) {
-		return;
-	}
-	const Uint64 dtMs  = timeMs - _lastUpdateTimeMs;
-	const float  decay = MOUSE_DELTA_DECAY_RATE_MS * dtMs;
-
-	float mouseX   = transformMousePosition(_mouseState.x,
-                                       _mouseBounds.left,
-                                       _mouseBounds.right);
-	float mouseY   = transformMousePosition(_mouseState.y,
-                                       _mouseBounds.top,
-                                       _mouseBounds.bottom,
-                                       1.0f,
-                                       0.0f);
-	_mouseState.dx = transformMouseDelta(_mouseState.dx, decay);
-	_mouseState.dy = transformMouseDelta(_mouseState.dy, decay, 1.0f, -1.0f);
-
-	for (auto& parameter : values()) {
-		parameter.handleInput(MOUSE_MOVE_ABS_X, mouseX);
-		parameter.handleInput(MOUSE_MOVE_ABS_Y, mouseY);
-		parameter.handleInput(MOUSE_MOVE_REL_X, _mouseState.dx);
-		parameter.handleInput(MOUSE_MOVE_REL_Y, _mouseState.dy);
-	}
-	_sample.handleInput(MOUSE_MOVE_ABS_X, mouseX);
-	_sample.handleInput(MOUSE_MOVE_ABS_Y, mouseY);
-	_sample.handleInput(MOUSE_MOVE_REL_X, _mouseState.dx);
-	_sample.handleInput(MOUSE_MOVE_REL_Y, _mouseState.dy);
+	const Uint64 dtMs   = timeMs - _lastUpdateTimeMs;
+	updateMouseMovement(dtMs);
+	updateMouseWheel(dtMs);
 	_lastUpdateTimeMs = timeMs;
 }
 

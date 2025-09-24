@@ -139,6 +139,11 @@ static IconMap mouseButtonStrings{
     {vts::MouseButton::MIDDLE, "\u278C"},
 };
 
+static IconMap mouseWheelStrings{
+    {vts::MouseWheel::UP,   "\u27F0"},
+    {vts::MouseWheel::DOWN, "\u27F1"},
+};
+
 static IconMap mouseMoveStrings{
     {vts::Axis::X, "\u27FA"},
     {vts::Axis::Y, "\u27FB"},
@@ -207,6 +212,9 @@ void drawIcon(const vts::InputId id, const float alpha) {
 			break;
 		case vts::InputEvent::MOUSE_BUTTON:
 			drawIconOrDefault(target, alpha, mouseButtonStrings, "\u2791");
+			break;
+		case vts::InputEvent::MOUSE_WHEEL:
+			drawIconOrDefault(target, alpha, mouseWheelStrings, "\u27F2");
 			break;
 		case vts::InputEvent::MOUSE_MOVE_ABS:
 		case vts::InputEvent::MOUSE_MOVE_REL:

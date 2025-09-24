@@ -97,9 +97,11 @@ void ConfigSettingsPanel::showMousePositionSettings() {
 	drawList->AddRectFilled(rectMin, rectMax, fillColor);
 
 	const auto& mouseBounds = _parameterManager.getMouseBounds();
-	auto topLeftString = std::format("({}, {})", mouseBounds.left, mouseBounds.top);
-	auto bottomRightString = std::format("({}, {})", mouseBounds.right, mouseBounds.bottom);
-	const char* topLeftText = topLeftString.c_str();
+	auto        topLeftString =
+	    std::format("({}, {})", mouseBounds.left, mouseBounds.top);
+	auto bottomRightString =
+	    std::format("({}, {})", mouseBounds.right, mouseBounds.bottom);
+	const char* topLeftText     = topLeftString.c_str();
 	const char* bottomRightText = bottomRightString.c_str();
 
 	ImVec2 topLeftTextPos = rectMin;

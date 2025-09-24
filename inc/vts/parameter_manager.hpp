@@ -15,10 +15,12 @@
 namespace vts {
 
 struct MouseState {
-	int   x  = 0;
-	int   y  = 0;
-	float dx = 0;
-	float dy = 0;
+	int   x         = 0;
+	int   y         = 0;
+	float dx        = 0.0f;
+	float dy        = 0.0f;
+	float wheelUp   = 0.0f;
+	float wheelDown = 0.0f;
 };
 
 using ParameterStore = std::unordered_map<std::string, Parameter>;
@@ -44,7 +46,10 @@ private:
 	void handleKeyUp(SDL_UserEvent& event);
 	void handleMouseButton(SDL_UserEvent& event, bool isClicked);
 	void handleMouseMove(SDL_UserEvent& event);
-	void updateMouseMotionCoefficient();
+	void handleMouseWheel(SDL_UserEvent& event);
+
+	void updateMouseMovement(Uint64 dtMs);
+	void updateMouseWheel(Uint64 dtMs);
 
 public:
 	ParameterManager();

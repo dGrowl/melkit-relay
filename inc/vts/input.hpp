@@ -14,7 +14,8 @@ enum ActionCode : Sint32 {
 	KEY_UP,
 	MOUSE_MOVE,
 	MOUSE_CLICK,
-	MOUSE_RELEASE
+	MOUSE_RELEASE,
+	MOUSE_WHEEL
 };
 
 struct InputEvent {
@@ -26,6 +27,7 @@ struct InputEvent {
 	static constexpr EventTag GAMEPAD_TRIGGER     = 6;
 	static constexpr EventTag GAMEPAD_STICK_LEFT  = 7;
 	static constexpr EventTag GAMEPAD_STICK_RIGHT = 8;
+	static constexpr EventTag MOUSE_WHEEL         = 9;
 };
 
 struct Axis {
@@ -42,8 +44,11 @@ struct MouseButton {
 	static constexpr TargetTag LEFT   = 1 << 16;
 	static constexpr TargetTag RIGHT  = 2 << 16;
 	static constexpr TargetTag MIDDLE = 3 << 16;
-	static constexpr TargetTag FOURTH = 4 << 16;
-	static constexpr TargetTag FIFTH  = 5 << 16;
+};
+
+struct MouseWheel {
+	static constexpr TargetTag UP   = 1 << 16;
+	static constexpr TargetTag DOWN = 2 << 16;
 };
 
 struct GamepadButton {

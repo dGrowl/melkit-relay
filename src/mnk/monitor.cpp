@@ -56,6 +56,12 @@ void Monitor::buildMouseRelease(SDL_UserEvent&       userEvent,
 	userEvent.data1 = unsignedToPointer(hookEvent->data.mouse.button << 16);
 }
 
+void Monitor::buildMouseWheel(SDL_UserEvent&       userEvent,
+                              uiohook_event* const hookEvent) {
+	userEvent.code  = vts::ActionCode::MOUSE_WHEEL;
+	userEvent.data1 = signedToPointer(hookEvent->data.wheel.rotation);
+}
+
 void Monitor::handleEvent(uiohook_event* const event) {
 	SDL_Event sdlEvent;
 	SDL_zero(sdlEvent);
@@ -76,6 +82,9 @@ void Monitor::handleEvent(uiohook_event* const event) {
 			break;
 		case EVENT_MOUSE_RELEASED:
 			buildMouseRelease(sdlEvent.user, event);
+			break;
+		case EVENT_MOUSE_WHEEL:
+			buildMouseWheel(sdlEvent.user, event);
 			break;
 		default:
 			return;

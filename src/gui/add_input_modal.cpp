@@ -15,22 +15,25 @@ static constexpr unsigned DEVICE_GAMEPAD  = 2;
 static std::vector<const char*> DEVICES{"Mouse", "Keyboard", "Controller"};
 
 static constexpr unsigned MOUSE_EVENT_BUTTON        = 0;
-static constexpr unsigned MOUSE_EVENT_MOVE_ABSOLUTE = 1;
-static constexpr unsigned MOUSE_EVENT_MOVE_RELATIVE = 2;
+static constexpr unsigned MOUSE_EVENT_WHEEL         = 1;
+static constexpr unsigned MOUSE_EVENT_MOVE_ABSOLUTE = 2;
+static constexpr unsigned MOUSE_EVENT_MOVE_RELATIVE = 3;
 
-static std::vector<const char*> MOUSE_EVENTS{"Button", "Position", "Motion"};
+static std::vector<const char*> MOUSE_EVENTS{"Button",
+                                             "Wheel",
+                                             "Position",
+                                             "Motion"};
 
 static constexpr unsigned MOUSE_BUTTON_LEFT   = 0;
 static constexpr unsigned MOUSE_BUTTON_RIGHT  = 1;
 static constexpr unsigned MOUSE_BUTTON_MIDDLE = 2;
-static constexpr unsigned MOUSE_BUTTON_FOURTH = 3;
-static constexpr unsigned MOUSE_BUTTON_FIFTH  = 4;
 
-static std::vector<const char*> MOUSE_BUTTONS{"Left",
-                                              "Right",
-                                              "Middle",
-                                              "Fourth",
-                                              "Fifth"};
+static std::vector<const char*> MOUSE_BUTTONS{"Left", "Right", "Middle"};
+
+static constexpr unsigned MOUSE_WHEEL_UP   = 0;
+static constexpr unsigned MOUSE_WHEEL_DOWN = 1;
+
+static std::vector<const char*> MOUSE_WHEEL_DIRECTIONS{"Up", "Down"};
 
 static constexpr unsigned MOUSE_AXIS_X = 0;
 static constexpr unsigned MOUSE_AXIS_Y = 1;
@@ -100,10 +103,16 @@ vts::TargetTag AddInputModal::getMouseButtonTag() const {
 			return vts::MouseButton::RIGHT;
 		case MOUSE_BUTTON_MIDDLE:
 			return vts::MouseButton::MIDDLE;
-		case MOUSE_BUTTON_FOURTH:
-			return vts::MouseButton::FOURTH;
-		case MOUSE_BUTTON_FIFTH:
-			return vts::MouseButton::FIFTH;
+	}
+	return 0;
+}
+
+vts::TargetTag AddInputModal::getMouseWheelTag() const {
+	switch (_mouseWheelSelector.getIndex()) {
+		case MOUSE_WHEEL_UP:
+			return vts::MouseWheel::UP;
+		case MOUSE_WHEEL_DOWN:
+			return vts::MouseWheel::DOWN;
 	}
 	return 0;
 }
@@ -176,6 +185,10 @@ vts::InputId AddInputModal::buildInputId() const {
 			case MOUSE_EVENT_BUTTON:
 				id |= vts::InputEvent::MOUSE_BUTTON;
 				id |= getMouseButtonTag();
+				break;
+			case MOUSE_EVENT_WHEEL:
+				id |= vts::InputEvent::MOUSE_WHEEL;
+				id |= getMouseWheelTag();
 				break;
 			case MOUSE_EVENT_MOVE_ABSOLUTE:
 				id |= vts::InputEvent::MOUSE_MOVE_ABS;
@@ -262,11 +275,22 @@ void AddInputModal::showMouseAxisSelector() {
 	_mouseAxisSelector.show();
 }
 
+void AddInputModal::showMouseWheelSelector() {
+	ImGui::TableNextRow();
+	ImGui::TableNextColumn();
+	ImGui::Text("Direction");
+	ImGui::TableNextColumn();
+	_mouseWheelSelector.show();
+}
+
 void AddInputModal::showMouseControls() {
 	showMouseEventSelector();
 	switch (_mouseEventSelector.getIndex()) {
 		case MOUSE_EVENT_BUTTON:
 			showMouseButtonSelector();
+			break;
+		case MOUSE_EVENT_WHEEL:
+			showMouseWheelSelector();
 			break;
 		case MOUSE_EVENT_MOVE_ABSOLUTE:
 		case MOUSE_EVENT_MOVE_RELATIVE:
@@ -357,6 +381,7 @@ AddInputModal::AddInputModal(vts::Parameter& editingParameter) :
     _mouseAxisSelector("##mouse-axis-selector", AXES),
     _mouseButtonSelector("##mouse-button-selector", MOUSE_BUTTONS),
     _mouseEventSelector("##mouse-event-selector", MOUSE_EVENTS),
+    _mouseWheelSelector("##mouse-wheel-selector", MOUSE_WHEEL_DIRECTIONS),
     _gamepadButtonSelector("##gamepad-button-selector", GAMEPAD_BUTTONS),
     _gamepadEventSelector("##gamepad-event-selector", GAMEPAD_EVENTS),
     _gamepadStickActionSelector("##gamepad-stick-action-selector",

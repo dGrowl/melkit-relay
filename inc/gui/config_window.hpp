@@ -26,6 +26,8 @@ private:
 	ConfigSettingsPanel  _settingsPanel;
 	ConfigParameterPanel _parameterPanel;
 
+	void showMenuBar();
+
 public:
 	ConfigWindow(pad::Manager&          gamepadManager,
 	             ws::IController&       wsController,

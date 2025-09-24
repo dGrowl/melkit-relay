@@ -27,6 +27,19 @@ static const SDL_FColor CLEAR_COLOR{.03f, .02f, .04f, 1.0f};
 
 namespace gui {
 
+void ConfigWindow::showMenuBar() {
+	if (ImGui::BeginMenuBar()) {
+		if (ImGui::BeginMenu("Menu")) {
+			if (ImGui::MenuItem("Quit")) {
+				SDL_Event quitEvent{.type = SDL_EVENT_QUIT};
+				SDL_PushEvent(&quitEvent);
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
+}
+
 ConfigWindow::ConfigWindow(pad::Manager&          gamepadManager,
                            ws::IController&       wsController,
                            vts::ParameterManager& paramManager) :
@@ -114,11 +127,13 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 	ImGui::SetNextWindowPos(viewport->Pos);
 	ImGui::SetNextWindowSize(viewport->Size);
 
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDecoration
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar
+	                               | ImGuiWindowFlags_NoDecoration
 	                               | ImGuiWindowFlags_NoMove
 	                               | ImGuiWindowFlags_NoResize
 	                               | ImGuiWindowFlags_NoBringToFrontOnFocus;
 	if (ImGui::Begin("Config", nullptr, windowFlags)) {
+		showMenuBar();
 		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
 		if (ImGui::BeginTable("Panels",
 		                      2,

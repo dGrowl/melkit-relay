@@ -65,11 +65,9 @@ static constexpr float transformMousePosition(float x,
 static constexpr float MAX_MOUSE_MOTION_DELTA = 64.0f;
 
 static constexpr float transformMouseDelta(float x,
-                                           float decay,
                                            float outLower = -1.0f,
                                            float outUpper = 1.0f) {
-	x = math::sign(x)
-	    * std::clamp(std::abs(x) - decay, 0.0f, MAX_MOUSE_MOTION_DELTA);
+	x = std::clamp(x, -MAX_MOUSE_MOTION_DELTA, MAX_MOUSE_MOTION_DELTA);
 	x = math::remapLinear(x,
 	                      -MAX_MOUSE_MOTION_DELTA,
 	                      MAX_MOUSE_MOTION_DELTA,
@@ -240,27 +238,36 @@ void ParameterManager::updateMouseMovement(const Uint64 dtMs) {
 	}
 	const float decay = MOUSE_DECAY_RATE_PER_MS * dtMs;
 
-	float mouseX   = transformMousePosition(_mouseState.x,
-                                       _mouseBounds.left,
-                                       _mouseBounds.right);
-	float mouseY   = transformMousePosition(_mouseState.y,
-                                       _mouseBounds.top,
-                                       _mouseBounds.bottom,
-                                       1.0f,
-                                       0.0f);
-	_mouseState.dx = transformMouseDelta(_mouseState.dx, decay);
-	_mouseState.dy = transformMouseDelta(_mouseState.dy, decay, 1.0f, -1.0f);
+	float x        = transformMousePosition(_mouseState.x,
+                                  _mouseBounds.left,
+                                  _mouseBounds.right);
+	float y        = transformMousePosition(_mouseState.y,
+                                  _mouseBounds.top,
+                                  _mouseBounds.bottom,
+                                  1.0f,
+                                  0.0f);
+	_mouseState.dx = math::sign(_mouseState.dx)
+	                 * std::clamp(std::abs(_mouseState.dx) - decay,
+	                              0.0f,
+	                              MAX_MOUSE_MOTION_DELTA);
+	_mouseState.dy = math::sign(_mouseState.dy)
+	                 * std::clamp(std::abs(_mouseState.dy) - decay,
+	                              0.0f,
+	                              MAX_MOUSE_MOTION_DELTA);
+
+	float dx = transformMouseDelta(_mouseState.dx);
+	float dy = transformMouseDelta(_mouseState.dy, 1.0f, -1.0f);
 
 	for (auto& parameter : values()) {
-		parameter.handleInput(MOUSE_MOVE_ABS_X, mouseX);
-		parameter.handleInput(MOUSE_MOVE_ABS_Y, mouseY);
-		parameter.handleInput(MOUSE_MOVE_REL_X, _mouseState.dx);
-		parameter.handleInput(MOUSE_MOVE_REL_Y, _mouseState.dy);
+		parameter.handleInput(MOUSE_MOVE_ABS_X, x);
+		parameter.handleInput(MOUSE_MOVE_ABS_Y, y);
+		parameter.handleInput(MOUSE_MOVE_REL_X, dx);
+		parameter.handleInput(MOUSE_MOVE_REL_Y, dy);
 	}
-	_sample.handleInput(MOUSE_MOVE_ABS_X, mouseX);
-	_sample.handleInput(MOUSE_MOVE_ABS_Y, mouseY);
-	_sample.handleInput(MOUSE_MOVE_REL_X, _mouseState.dx);
-	_sample.handleInput(MOUSE_MOVE_REL_Y, _mouseState.dy);
+	_sample.handleInput(MOUSE_MOVE_ABS_X, x);
+	_sample.handleInput(MOUSE_MOVE_ABS_Y, y);
+	_sample.handleInput(MOUSE_MOVE_REL_X, dx);
+	_sample.handleInput(MOUSE_MOVE_REL_Y, dy);
 }
 
 static constexpr float   MOUSE_WHEEL_DECAY_RATE_PER_MS = .35f;
@@ -291,8 +298,15 @@ void ParameterManager::updateMouseWheel(const Uint64 dtMs) {
 	_sample.handleInput(MOUSE_WHEEL_DOWN, wheelDown);
 }
 
+static constexpr float MIN_MOUSE_COEFFICIENT = 0.0000001f;
+static constexpr float MAX_MOUSE_COEFFICIENT = 4.0f;
+
 static constexpr float calcMouseCoefficient(const int sensitivity) {
-	return math::remapLinear<float>(sensitivity, 1.0f, 100.0f, 0.00001f, 2.0f);
+	return math::remapLinear<float>(sensitivity,
+	                                1.0f,
+	                                100.0f,
+	                                MIN_MOUSE_COEFFICIENT,
+	                                MAX_MOUSE_COEFFICIENT);
 }
 
 ParameterManager::ParameterManager() :

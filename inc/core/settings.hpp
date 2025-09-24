@@ -65,7 +65,7 @@ struct SettingsParameter {
 struct Settings {
 	std::string          apiUrl           = "localhost:8001";
 	std::string          vtsToken         = "";
-	int                  mouseSensitivity = 50;
+	int                  mouseSensitivity = 20;
 	math::Rectangle<int> mouseBounds{
 	    .top    = 0,
 	    .left   = 0,

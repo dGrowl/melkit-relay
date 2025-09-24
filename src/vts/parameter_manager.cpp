@@ -26,40 +26,98 @@ T pointerToSigned(const void* p) {
 	return static_cast<T>(reinterpret_cast<intptr_t>(p));
 }
 
+static constexpr float DEADZONE   = 3000.0f;
+static constexpr float SATURATION = 3000.0f;
+static constexpr float STICK_LOWER =
+    std::numeric_limits<Sint16>::min() + SATURATION;
+static constexpr float STICK_UPPER =
+    std::numeric_limits<Sint16>::max() - SATURATION;
+
+static constexpr float transformStick(float x,
+                                      float outLower = -1.0f,
+                                      float outUpper = 1.0f) {
+	x = std::clamp(x, STICK_LOWER, STICK_UPPER);
+	x = math::remapLinearDeadzone(x,
+	                              STICK_LOWER,
+	                              STICK_UPPER,
+	                              outLower,
+	                              outUpper,
+	                              DEADZONE);
+	return x;
+}
+
+static constexpr float transformTrigger(float x) {
+	x = std::clamp(x, DEADZONE, STICK_UPPER);
+	x = math::remapLinear(x, DEADZONE, STICK_UPPER, 0.0f, 1.0f);
+	return x;
+}
+
+static constexpr float transformMousePosition(float x,
+                                              float inLower,
+                                              float inUpper,
+                                              float outLower = 0.0f,
+                                              float outUpper = 1.0f) {
+	x = std::clamp(x, inLower, inUpper);
+	x = math::remapLinear(x, inLower, inUpper, outLower, outUpper);
+	return x;
+}
+
+static constexpr float MAX_MOUSE_DELTA = 64.0f;
+
+static constexpr float transformMouseDelta(float x,
+                                           float decay,
+                                           float outLower = -1.0f,
+                                           float outUpper = 1.0f) {
+	x = math::sign(x) * std::clamp(std::abs(x) - decay, 0.0f, MAX_MOUSE_DELTA);
+	x = math::remapLinear(x,
+	                      -MAX_MOUSE_DELTA,
+	                      MAX_MOUSE_DELTA,
+	                      outLower,
+	                      outUpper);
+	return x;
+}
+
 namespace vts {
 
 void ParameterManager::handleGamepadAxisMotion(SDL_GamepadAxisEvent& event) {
-	InputId id = 0;
+	InputId id    = 0;
+	float   value = event.value;
 	switch (event.axis) {
 		case SDL_GAMEPAD_AXIS_LEFTX:
 			id |= InputEvent::GAMEPAD_STICK_LEFT;
 			id |= Axis::X;
+			value = transformStick(value);
 			break;
 		case SDL_GAMEPAD_AXIS_LEFTY:
 			id |= InputEvent::GAMEPAD_STICK_LEFT;
 			id |= Axis::Y;
+			value = transformStick(value, 1.0f, -1.0f);
 			break;
 		case SDL_GAMEPAD_AXIS_RIGHTX:
 			id |= InputEvent::GAMEPAD_STICK_RIGHT;
 			id |= Axis::X;
+			value = transformStick(value);
 			break;
 		case SDL_GAMEPAD_AXIS_RIGHTY:
 			id |= InputEvent::GAMEPAD_STICK_RIGHT;
 			id |= Axis::Y;
+			value = transformStick(value, 1.0f, -1.0f);
 			break;
 		case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
 			id |= InputEvent::GAMEPAD_TRIGGER;
 			id |= Side::LEFT;
+			value = transformTrigger(value);
 			break;
 		case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
 			id |= InputEvent::GAMEPAD_TRIGGER;
 			id |= Side::RIGHT;
+			value = transformTrigger(value);
 			break;
 	}
 	for (auto& parameter : values()) {
-		parameter.handleInput(id, event.value);
+		parameter.handleInput(id, value);
 	}
-	_sample.handleInput(id, event.value);
+	_sample.handleInput(id, value);
 }
 
 void ParameterManager::handleGamepadButton(SDL_GamepadButtonEvent& event,
@@ -266,17 +324,7 @@ void ParameterManager::setMouseSensitivity(const int sensitivity) {
 	_mouseCoefficient = calcMouseCoefficient(sensitivity);
 }
 
-constexpr float sign(const float x) {
-	if (x > 0.0f)
-		return 1.0f;
-	if (x < 0.0f)
-		return -1.0f;
-	return 0.0f;
-}
-
-constexpr float MOUSE_DELTA_DECAY_RATE_MS = .65f;
-
-constexpr float MAX_MOUSE_DELTA = 64.0f;
+static constexpr float MOUSE_DELTA_DECAY_RATE_MS = .65f;
 
 void ParameterManager::update() {
 	const Uint64 timeMs = SDL_GetTicks();
@@ -286,27 +334,16 @@ void ParameterManager::update() {
 	const Uint64 dtMs  = timeMs - _lastUpdateTimeMs;
 	const float  decay = MOUSE_DELTA_DECAY_RATE_MS * dtMs;
 
-	float mouseX =
-	    std::clamp(_mouseState.x, _mouseBounds.left, _mouseBounds.right);
-	float mouseY =
-	    std::clamp(_mouseState.y, _mouseBounds.top, _mouseBounds.bottom);
-	mouseX = math::remapLinear<float>(mouseX,
-	                                  _mouseBounds.left,
-	                                  _mouseBounds.right,
-	                                  0.0f,
-	                                  1.0f);
-	mouseY = math::remapLinear<float>(mouseY,
-	                                  _mouseBounds.top,
-	                                  _mouseBounds.bottom,
-	                                  1.0f,
-	                                  0.0f);  // invert Y (+up, -down)
-
-	_mouseState.dx =
-	    sign(_mouseState.dx)
-	    * std::clamp(std::abs(_mouseState.dx) - decay, 0.0f, MAX_MOUSE_DELTA);
-	_mouseState.dy =
-	    sign(_mouseState.dy)
-	    * std::clamp(std::abs(_mouseState.dy) - decay, 0.0f, MAX_MOUSE_DELTA);
+	float mouseX   = transformMousePosition(_mouseState.x,
+                                       _mouseBounds.left,
+                                       _mouseBounds.right);
+	float mouseY   = transformMousePosition(_mouseState.y,
+                                       _mouseBounds.top,
+                                       _mouseBounds.bottom,
+                                       1.0f,
+                                       0.0f);
+	_mouseState.dx = transformMouseDelta(_mouseState.dx, decay);
+	_mouseState.dy = transformMouseDelta(_mouseState.dy, decay, 1.0f, -1.0f);
 
 	for (auto& parameter : values()) {
 		parameter.handleInput(MOUSE_MOVE_ABS_X, mouseX);

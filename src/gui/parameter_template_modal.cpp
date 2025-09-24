@@ -115,12 +115,12 @@ void ParameterTemplateModal::createStickParameters() {
 		leftStickY.addInput(VC_S << 16 | vts::InputEvent::KEY, true);
 
 		rightStickX.addInput(vts::Axis::X | vts::InputEvent::MOUSE_MOVE_REL);
-		rightStickY.addInput(vts::Axis::Y | vts::InputEvent::MOUSE_MOVE_REL, true);
+		rightStickY.addInput(vts::Axis::Y | vts::InputEvent::MOUSE_MOVE_REL);
 	}
 
 	if (_useController) {
 		leftStickX.addInput(vts::Axis::X | vts::InputEvent::GAMEPAD_STICK_LEFT);
-		leftStickY.addInput(vts::Axis::Y | vts::InputEvent::GAMEPAD_STICK_LEFT, true);
+		leftStickY.addInput(vts::Axis::Y | vts::InputEvent::GAMEPAD_STICK_LEFT);
 		leftStickX.addInput(
 		    vts::GamepadButton::DPAD_LEFT | vts::InputEvent::GAMEPAD_BUTTON,
 		    true);
@@ -133,8 +133,7 @@ void ParameterTemplateModal::createStickParameters() {
 		    true);
 
 		rightStickX.addInput(vts::Axis::X | vts::InputEvent::GAMEPAD_STICK_RIGHT);
-		rightStickY.addInput(vts::Axis::Y | vts::InputEvent::GAMEPAD_STICK_RIGHT,
-		                     true);
+		rightStickY.addInput(vts::Axis::Y | vts::InputEvent::GAMEPAD_STICK_RIGHT);
 	}
 
 	SETTINGS.setParameter(leftStickX);

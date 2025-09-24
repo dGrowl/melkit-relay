@@ -15,21 +15,10 @@ InputData::InputData(const InputId id, const bool isInverted) :
     _outMin(0.0f),
     _value(0.0f) {
 	const EventTag event = id & 0xFFFF;
-	switch (event) {
-		case InputEvent::MOUSE_MOVE_REL:
-			_inMin  = -64.0f;
-			_inMax  = 64.0f;
-			_outMin = -1.0f;
-			break;
-		case InputEvent::GAMEPAD_STICK_RIGHT:
-		case InputEvent::GAMEPAD_STICK_LEFT:
-			_inMin  = std::numeric_limits<Sint16>::min();
-			_inMax  = std::numeric_limits<Sint16>::max();
-			_outMin = -1.0f;
-			break;
-		case InputEvent::GAMEPAD_TRIGGER:
-			_inMax = std::numeric_limits<Sint16>::max();
-			break;
+	if ((event == InputEvent::MOUSE_MOVE_REL)
+	    || (event == InputEvent::GAMEPAD_STICK_RIGHT)
+	    || (event == InputEvent::GAMEPAD_STICK_LEFT)) {
+		_outMin = -1.0f;
 	}
 };
 
@@ -58,9 +47,7 @@ InputId InputData::getId() const {
 }
 
 void InputData::update(float inValue) {
-	inValue = std::clamp(inValue, _inMin, _inMax);
-	inValue = math::remapLinear(inValue, _inMin, _inMax, _outMin, _outMax);
-	_value  = inValue;
+	_value = inValue;
 }
 
 }  // namespace vts

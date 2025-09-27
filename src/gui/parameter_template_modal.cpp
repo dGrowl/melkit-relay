@@ -1,10 +1,11 @@
+#include "gui/parameter_template_modal.hpp"
+
 #include <array>
 
 #include "imgui/imgui.h"
 #include "libuiohook/uiohook.h"
 
 #include "core/settings.hpp"
-#include "gui/parameter_template_modal.hpp"
 #include "gui/utility.hpp"
 #include "vts/parameter.hpp"
 #include "vts/request.hpp"

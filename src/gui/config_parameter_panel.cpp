@@ -1,10 +1,11 @@
+#include "gui/config_parameter_panel.hpp"
+
 #include <algorithm>
 #include <string>
 #include <unordered_set>
 
 #include "imgui/imgui.h"
 
-#include "gui/config_parameter_panel.hpp"
 #include "gui/fonts.hpp"
 #include "gui/icon.hpp"
 #include "math/formula.hpp"

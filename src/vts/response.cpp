@@ -1,13 +1,13 @@
-#include <iostream>
-#include <optional>
-#include <vector>
+#include "vts/response.hpp"
 
+#include <iostream>
 #include <glaze/core/context.hpp>
 #include <glaze/core/reflect.hpp>
 #include <glaze/json/read.hpp>
+#include <optional>
+#include <vector>
 
 #include "vts/meta.hpp"
-#include "vts/response.hpp"
 
 static void logError(const glz::error_ctx& error, const std::string& buffer) {
 	std::cerr

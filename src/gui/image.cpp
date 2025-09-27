@@ -1,7 +1,7 @@
+#include "gui/image.hpp"
+
 #include <SDL3/SDL_surface.h>
 #include <SDL3_image/SDL_image.h>
-
-#include "gui/image.hpp"
 
 namespace gui {
 

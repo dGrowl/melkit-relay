@@ -1,9 +1,10 @@
+#include "gui/add_input_modal.hpp"
+
 #include <string>
 #include <vector>
 
 #include "imgui/imgui.h"
 
-#include "gui/add_input_modal.hpp"
 #include "gui/utility.hpp"
 
 namespace gui {

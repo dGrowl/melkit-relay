@@ -1,9 +1,8 @@
 #ifndef PAD_MANAGER_HPP_
 #define PAD_MANAGER_HPP_
 
-#include <vector>
-
 #include <SDL3/SDL_gamepad.h>
+#include <vector>
 
 namespace pad {
 

@@ -1,7 +1,8 @@
+#include "gui/set_mouse_bounds_modal.hpp"
+
 #include "imgui/imgui.h"
 
 #include "gui/fonts.hpp"
-#include "gui/set_mouse_bounds_modal.hpp"
 #include "gui/utility.hpp"
 #include "vts/input.hpp"
 #include "vts/parameter.hpp"

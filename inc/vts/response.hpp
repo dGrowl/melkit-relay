@@ -2,7 +2,6 @@
 #define VTS_RESPONSE_HPP_
 
 #include <SDL3/SDL_events.h>
-
 #include <string>
 #include <vector>
 

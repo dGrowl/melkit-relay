@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "imgui/imgui.h"
+
 #include "gui/combo_box.hpp"
 #include "vts/parameter.hpp"
 

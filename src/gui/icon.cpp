@@ -1,10 +1,11 @@
+#include "gui/icon.hpp"
+
 #include <unordered_map>
 #include <unordered_set>
 
 #include "libuiohook/uiohook.h"
 
 #include "gui/fonts.hpp"
-#include "gui/icon.hpp"
 
 namespace gui {
 

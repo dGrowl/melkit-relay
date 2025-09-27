@@ -1,8 +1,9 @@
+#include "vts/input.hpp"
+
 #include <algorithm>
 #include <limits>
 
 #include "math/formula.hpp"
-#include "vts/input.hpp"
 
 namespace vts {
 

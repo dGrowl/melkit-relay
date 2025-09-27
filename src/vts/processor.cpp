@@ -1,17 +1,17 @@
-#include <algorithm>
-#include <limits>
-#include <ranges>
+#include "vts/processor.hpp"
 
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_timer.h>
+#include <algorithm>
 #include <libuiohook/uiohook.h>
+#include <limits>
+#include <ranges>
 
 #include "core/settings.hpp"
 #include "math/formula.hpp"
 #include "math/geometry.hpp"
 #include "mnk/event.hpp"
 #include "vts/input.hpp"
-#include "vts/processor.hpp"
 
 template <typename T>
 T pointerToUnsigned(const void* p) {

@@ -1,19 +1,19 @@
+#include "vts/request.hpp"
+
+#include <iostream>
 #include <format>
 #include <fstream>
-#include <iostream>
+#include <glaze/core/context.hpp>
+#include <glaze/core/reflect.hpp>
+#include <glaze/json/write.hpp>
+#include <mongoose.h>
 #include <optional>
 #include <string>
 #include <string_view>
 
-#include <mongoose.h>
-#include <glaze/core/context.hpp>
-#include <glaze/core/reflect.hpp>
-#include <glaze/json/write.hpp>
-
 #include "core/settings.hpp"
 #include "vts/meta.hpp"
 #include "vts/parameter.hpp"
-#include "vts/request.hpp"
 #include "ws/controller.hpp"
 
 static void logError(const glz::error_ctx& error, const std::string& buffer) {

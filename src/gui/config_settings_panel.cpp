@@ -1,9 +1,10 @@
+#include "gui/config_settings_panel.hpp"
+
 #include <cmath>
 #include <format>
 
 #include "imgui/imgui.h"
 
-#include "gui/config_settings_panel.hpp"
 #include "gui/fonts.hpp"
 
 namespace gui {

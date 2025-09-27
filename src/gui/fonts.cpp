@@ -1,6 +1,6 @@
-#include "imgui/imgui.h"
-
 #include "gui/fonts.hpp"
+
+#include "imgui/imgui.h"
 
 static constexpr auto DEFAULT_FONT_PATH = "./font/NotoSans-Medium.ttf";
 static constexpr auto BOLD_FONT_PATH    = "./font/NotoSans-Bold.ttf";

@@ -1,6 +1,6 @@
-#include "imgui/imgui.h"
-
 #include "gui/theme.hpp"
+
+#include "imgui/imgui.h"
 
 namespace gui {
 

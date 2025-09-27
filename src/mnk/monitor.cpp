@@ -1,7 +1,8 @@
+#include "mnk/monitor.hpp"
+
 #include <SDL3/SDL_log.h>
 
 #include "mnk/event.hpp"
-#include "mnk/monitor.hpp"
 #include "vts/input.hpp"
 
 template <typename T>

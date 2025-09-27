@@ -1,6 +1,6 @@
-#include <SDL3/SDL_gamepad.h>
-
 #include "pad/manager.hpp"
+
+#include <SDL3/SDL_gamepad.h>
 
 static constexpr auto NONE_INDEX = 0;
 

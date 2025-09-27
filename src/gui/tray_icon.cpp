@@ -1,7 +1,8 @@
+#include "gui/tray_icon.hpp"
+
 #include <SDL3_image/SDL_image.h>
 
 #include "gui/image.hpp"
-#include "gui/tray_icon.hpp"
 
 namespace gui {
 

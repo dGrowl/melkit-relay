@@ -1,9 +1,8 @@
 #ifndef VTS_REQUEST_HPP_
 #define VTS_REQUEST_HPP_
 
-#include <string_view>
-
 #include <glaze/core/common.hpp>
+#include <string_view>
 
 #include "vts/parameter.hpp"
 #include "ws/controller.hpp"

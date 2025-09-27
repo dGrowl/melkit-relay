@@ -1,8 +1,9 @@
+#include "core/app.hpp"
+
 #include <format>
 
 #include "imgui/imgui.h"
 
-#include "core/app.hpp"
 #include "core/settings.hpp"
 #include "gui/fonts.hpp"
 #include "gui/theme.hpp"

@@ -1,8 +1,8 @@
+#include "gui/combo_box.hpp"
+
 #include <SDL3/SDL_assert.h>
 
 #include "imgui/imgui.h"
-
-#include "gui/combo_box.hpp"
 
 namespace gui {
 

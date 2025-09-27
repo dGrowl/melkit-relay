@@ -1,6 +1,6 @@
-#include <unordered_map>
-
 #include "gui/utility.hpp"
+
+#include <unordered_map>
 
 static const std::unordered_map<ImGuiKey, vts::TargetTag> imguiToUioKeyMap = {
     {ImGuiKey_Tab,            VC_TAB          },

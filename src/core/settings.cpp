@@ -1,14 +1,13 @@
-#include <format>
-#include <fstream>
-#include <iostream>
+#include "core/settings.hpp"
 
+#include <iostream>
 #include <SDL3/SDL_time.h>
 #include <SDL3/SDL_timer.h>
 #include <SDL3/SDL_video.h>
+#include <format>
+#include <fstream>
 #include <glaze/json/read.hpp>
 #include <glaze/json/write.hpp>
-
-#include "core/settings.hpp"
 
 static constexpr auto FILE_PATH = "settings.json";
 

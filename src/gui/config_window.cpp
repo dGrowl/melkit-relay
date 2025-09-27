@@ -1,3 +1,5 @@
+#include "gui/config_window.hpp"
+
 #include <algorithm>
 #include <format>
 #include <functional>
@@ -5,7 +7,6 @@
 
 #include "imgui/imgui.h"
 
-#include "gui/config_window.hpp"
 #include "gui/fonts.hpp"
 #include "gui/icon.hpp"
 #include "gui/image.hpp"

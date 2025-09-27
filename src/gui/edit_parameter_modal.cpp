@@ -1,10 +1,11 @@
+#include "gui/edit_parameter_modal.hpp"
+
 #include <format>
 
 #include "imgui/imgui.h"
 
 #include "core/settings.hpp"
 #include "gui/combo_box.hpp"
-#include "gui/edit_parameter_modal.hpp"
 #include "gui/fonts.hpp"
 #include "gui/utility.hpp"
 #include "vts/parameter.hpp"

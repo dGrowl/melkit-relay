@@ -65,7 +65,7 @@ void ConfigSettingsPanel::showMouseMotionSettings() {
 		}
 		ImGui::SetItemTooltip(
 		    "Makes mouse motion inputs more or less intense.\n\nYou can Ctrl + Click "
-		    "to type in a value.");
+		    "on this slider to type in a value.");
 
 		ImGui::EndTable();
 	}
@@ -73,51 +73,73 @@ void ConfigSettingsPanel::showMouseMotionSettings() {
 	ImGui::Spacing();
 }
 
+static constexpr float REGION_DISPLAY_HEIGHT = 64.0f;
+
 void ConfigSettingsPanel::showMousePositionSettings() {
 	{
 		FONT_SCOPE(FontType::BOLD);
 		ImGui::SeparatorText("Mouse (Position)");
 	}
 
-	ImGui::Text("Region");
+	if (ImGui::BeginTable("MousePositionSettings",
+	                      2,
+	                      ImGuiTableFlags_SizingFixedFit)) {
+		ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);
+		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
 
-	ImDrawList* drawList = ImGui::GetWindowDrawList();
+		ImGui::TableNextRow();
+		ImGui::TableNextColumn();
+		ImGui::Text("Region");
+		ImGui::TableNextColumn();
 
-	ImVec2 cursorPos      = ImGui::GetCursorScreenPos();
-	float  availableWidth = ImGui::GetContentRegionAvail().x;
-	float  desiredHeight  = 64.0f;
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
 
-	ImVec2 rectMin = cursorPos;
-	ImVec2 rectMax(cursorPos.x + availableWidth - 1.0f,
-	               cursorPos.y + desiredHeight);
+		ImVec2 cursorPos      = ImGui::GetCursorScreenPos();
+		float  availableWidth = ImGui::GetContentRegionAvail().x;
 
-	ImU32 fillColor = ImGui::GetColorU32(ImGuiCol_FrameBg);
-	ImU32 textColor = ImGui::GetColorU32(ImGuiCol_Text);
+		ImVec2 rectMin = cursorPos;
+		ImVec2 rectMax(cursorPos.x + availableWidth - 1.0f,
+		               cursorPos.y + REGION_DISPLAY_HEIGHT);
 
-	drawList->AddRectFilled(rectMin, rectMax, fillColor);
+		ImU32 fillColor = ImGui::GetColorU32(ImGuiCol_FrameBg);
+		ImU32 textColor = ImGui::GetColorU32(ImGuiCol_Text);
 
-	const auto& mouseBounds = _impulseProcessor.getMouseBounds();
-	auto        topLeftString =
-	    std::format("({}, {})", mouseBounds.left, mouseBounds.top);
-	auto bottomRightString =
-	    std::format("({}, {})", mouseBounds.right, mouseBounds.bottom);
-	const char* topLeftText     = topLeftString.c_str();
-	const char* bottomRightText = bottomRightString.c_str();
+		drawList->AddRectFilled(rectMin, rectMax, fillColor);
 
-	ImVec2 topLeftTextPos = rectMin;
-	topLeftTextPos.x += 3.0f;
-	topLeftTextPos.y += 2.0f;
+		const auto& mouseBounds = _impulseProcessor.getMouseBounds();
+		auto        topLeftString =
+		    std::format("({}, {})", mouseBounds.left, mouseBounds.top);
+		auto bottomRightString =
+		    std::format("({}, {})", mouseBounds.right, mouseBounds.bottom);
+		const char* topLeftText     = topLeftString.c_str();
+		const char* bottomRightText = bottomRightString.c_str();
 
-	ImVec2 bottomRightTextSize = ImGui::CalcTextSize(bottomRightText);
-	ImVec2 bottomRightTextPos  = rectMax;
-	bottomRightTextPos.x -= bottomRightTextSize.x + 3.0f;
-	bottomRightTextPos.y -= bottomRightTextSize.y + 2.0f;
+		ImVec2 topLeftTextPos = rectMin;
+		topLeftTextPos.x += 3.0f;
+		topLeftTextPos.y += 2.0f;
 
-	drawList->AddText(topLeftTextPos, textColor, topLeftText);
-	drawList->AddText(bottomRightTextPos, textColor, bottomRightText);
+		ImVec2 bottomRightTextSize = ImGui::CalcTextSize(bottomRightText);
+		ImVec2 bottomRightTextPos  = rectMax;
+		bottomRightTextPos.x -= bottomRightTextSize.x + 3.0f;
+		bottomRightTextPos.y -= bottomRightTextSize.y + 2.0f;
 
-	ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, rectMax.y));
-	ImGui::Spacing();
+		drawList->AddText(topLeftTextPos, textColor, topLeftText);
+		drawList->AddText(bottomRightTextPos, textColor, bottomRightText);
+		ImGui::SetCursorScreenPos(rectMin);
+		ImGui::InvisibleButton("##rect_hover",
+		                       ImVec2(rectMax.x - rectMin.x, rectMax.y - rectMin.y));
+		ImGui::SetItemTooltip(
+		    "This area shows the mouse tracking bounds.\n\n"
+		    "When your mouse is at the bottom-left corner, its position is 0,0.\n"
+		    "When your mouse is at the top-right corner, its position is 1,1.\n"
+		    "Anywhere in between gives you a smooth range from 0 to 1.\n\n"
+		    "You can use the Adjust button below to change these boundaries.");
+
+		ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, rectMax.y));
+		ImGui::Spacing();
+
+		ImGui::EndTable();
+	}
 
 	if (ImGui::Button("Adjust", ImVec2(-1.0f, 0.0f))) {
 		_setMouseBoundsModal.refresh();

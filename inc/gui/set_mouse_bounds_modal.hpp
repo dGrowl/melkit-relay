@@ -1,14 +1,15 @@
 #ifndef GUI_SET_MOUSE_BOUNDS_MODAL_
 #define GUI_SET_MOUSE_BOUNDS_MODAL_
 
-#include "vts/parameter_manager.hpp"
+#include "vts/parameter.hpp"
+#include "vts/processor.hpp"
 
 namespace gui {
 
 class SetMouseBoundsModal {
 private:
-	vts::ParameterManager& _parameterManager;
-	vts::Parameter&        _editingParameter;
+	vts::Processor& _impulseProcessor;
+	vts::Parameter& _editingParameter;
 
 	math::Rectangle<int> _currentBounds;
 	math::Rectangle<int> _newBounds;
@@ -19,7 +20,8 @@ private:
 	void updateBounds();
 
 public:
-	SetMouseBoundsModal(vts::ParameterManager& parameterManager);
+	SetMouseBoundsModal(vts::Processor& impulseProcessor,
+	                    vts::Parameter& editingParameter);
 
 	void refresh();
 	void show();

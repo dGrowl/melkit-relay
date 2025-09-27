@@ -5,6 +5,7 @@
 #include "gui/utility.hpp"
 #include "vts/input.hpp"
 #include "vts/parameter.hpp"
+#include "vts/processor.hpp"
 
 constexpr vts::InputId MOUSE_POSITION_X_INPUT =
     vts::Axis::X | vts::InputEvent::MOUSE_MOVE_ABS;
@@ -21,20 +22,20 @@ void SetMouseBoundsModal::updateBounds() {
 	_newBounds.left   = std::min(_cornerOne.x, _cornerTwo.x);
 	_newBounds.bottom = std::max(_cornerOne.y, _cornerTwo.y);
 	_newBounds.right  = std::max(_cornerOne.x, _cornerTwo.x);
-	_parameterManager.setMouseBounds(_newBounds);
+	_impulseProcessor.setMouseBounds(_newBounds);
 }
 
-SetMouseBoundsModal::SetMouseBoundsModal(
-    vts::ParameterManager& parameterManager) :
-    _parameterManager(parameterManager),
-    _editingParameter(parameterManager.getSample()),
+SetMouseBoundsModal::SetMouseBoundsModal(vts::Processor& impulseProcessor,
+                                         vts::Parameter& editingParameter) :
+    _impulseProcessor(impulseProcessor),
+    _editingParameter(editingParameter),
     _currentBounds(),
     _newBounds(),
     _cornerOne(),
     _cornerTwo() {}
 
 void SetMouseBoundsModal::refresh() {
-	_currentBounds    = _parameterManager.getMouseBounds();
+	_currentBounds    = _impulseProcessor.getMouseBounds();
 	_newBounds        = _currentBounds;
 	_cornerOne.x      = _currentBounds.left;
 	_cornerOne.y      = _currentBounds.top;
@@ -59,13 +60,13 @@ void SetMouseBoundsModal::show() {
 		}
 
 		if (ImGui::IsKeyPressed(ImGuiKey_A, false)) {
-			_cornerOne.x = _parameterManager.getMouseState().x;
-			_cornerOne.y = _parameterManager.getMouseState().y;
+			_cornerOne.x = _impulseProcessor.getMouseState().x;
+			_cornerOne.y = _impulseProcessor.getMouseState().y;
 			updateBounds();
 		}
 		if (ImGui::IsKeyPressed(ImGuiKey_Z, false)) {
-			_cornerTwo.x = _parameterManager.getMouseState().x;
-			_cornerTwo.y = _parameterManager.getMouseState().y;
+			_cornerTwo.x = _impulseProcessor.getMouseState().x;
+			_cornerTwo.y = _impulseProcessor.getMouseState().y;
 			updateBounds();
 		}
 
@@ -208,7 +209,7 @@ void SetMouseBoundsModal::show() {
 		ImGui::SetItemDefaultFocus();
 		ImGui::SameLine();
 		if (ImGui::Button("Discard", ImVec2(128.0f, 0.0f))) {
-			_parameterManager.setMouseBounds(_currentBounds);
+			_impulseProcessor.setMouseBounds(_currentBounds);
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();

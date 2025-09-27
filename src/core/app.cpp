@@ -19,10 +19,11 @@ App::App() :
     _pacer(),
     _gpu(nullptr),
     _parameters(),
+    _impulseProcessor(),
     _wsClient(),
     _mnkMonitor(),
     _gamepadManager(),
-    _config(_gamepadManager, _wsClient, _parameters),
+    _config(_gamepadManager, _impulseProcessor, _wsClient, _parameters),
     _icon() {
 	ws::allocateEvents();
 	mnk::allocateEvents();
@@ -93,8 +94,12 @@ void App::run() {
 		}
 		_config.render(_gpu);
 
-		_parameters.update();
+		_impulseProcessor.update();
+		for (const auto& [id, value] : _impulseProcessor.impulses()) {
+			_parameters.distributeImpulse(id, value);
+		}
 		checkParameterValues();
+		_impulseProcessor.clear();
 
 		_pacer.endFrame();
 	}
@@ -118,7 +123,7 @@ void App::handleEvent(SDL_Event& event) {
 	}
 	switch (event.type) {
 		case mnk::Event::INPUT:
-			_parameters.handleEvent(event.user);
+			_impulseProcessor.handleEvent(event.user);
 			break;
 		case ws::Event::OPEN:
 			vts::authenticate(_wsClient);
@@ -144,7 +149,7 @@ void App::handleEvent(SDL_Event& event) {
 		case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
 		case SDL_EVENT_GAMEPAD_BUTTON_UP:
 		case SDL_EVENT_GAMEPAD_AXIS_MOTION:
-			_parameters.handleGamepadEvent(event, _gamepadManager.getActiveId());
+			_impulseProcessor.handleGamepadEvent(event, _gamepadManager.getActiveId());
 			break;
 	}
 }

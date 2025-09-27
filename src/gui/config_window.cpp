@@ -41,10 +41,14 @@ void ConfigWindow::showMenuBar() {
 }
 
 ConfigWindow::ConfigWindow(pad::Manager&          gamepadManager,
+                           vts::Processor&        impulseProcessor,
                            ws::IController&       wsController,
                            vts::ParameterManager& paramManager) :
     _window(nullptr),
-    _settingsPanel(gamepadManager, paramManager, wsController),
+    _settingsPanel(gamepadManager,
+                   impulseProcessor,
+                   paramManager.getSample(),
+                   wsController),
     _parameterPanel(paramManager.getSample(), paramManager, wsController) {}
 
 bool ConfigWindow::isOpen() const {

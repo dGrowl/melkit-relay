@@ -61,7 +61,7 @@ void ConfigSettingsPanel::showMouseMotionSettings() {
 		                     &_mouseSensitivity,
 		                     1,
 		                     100)) {
-			_parameterManager.setMouseSensitivity(_mouseSensitivity);
+			_impulseProcessor.setMouseSensitivity(_mouseSensitivity);
 		}
 		ImGui::SetItemTooltip(
 		    "Makes mouse motion inputs more or less intense.\n\nYou can Ctrl + Click "
@@ -96,7 +96,7 @@ void ConfigSettingsPanel::showMousePositionSettings() {
 
 	drawList->AddRectFilled(rectMin, rectMax, fillColor);
 
-	const auto& mouseBounds = _parameterManager.getMouseBounds();
+	const auto& mouseBounds = _impulseProcessor.getMouseBounds();
 	auto        topLeftString =
 	    std::format("({}, {})", mouseBounds.left, mouseBounds.top);
 	auto bottomRightString =
@@ -176,17 +176,17 @@ void ConfigSettingsPanel::showModals() {
 	_setMouseBoundsModal.show();
 }
 
-ConfigSettingsPanel::ConfigSettingsPanel(
-    pad::Manager&          gamepadManager,
-    vts::ParameterManager& parameterManager,
-    ws::IController&       wsController) :
+ConfigSettingsPanel::ConfigSettingsPanel(pad::Manager&    gamepadManager,
+                                         vts::Processor&  impulseProcessor,
+                                         vts::Parameter&  editingParameter,
+                                         ws::IController& wsController) :
     _gamepadManager(gamepadManager),
-    _parameterManager(parameterManager),
+    _impulseProcessor(impulseProcessor),
     _wsController(wsController),
-    _setMouseBoundsModal(parameterManager),
+    _setMouseBoundsModal(impulseProcessor, editingParameter),
     _urlBuffer(),
     _gamepadSelector("##active-gamepad", _gamepadManager.getNames()),
-    _mouseSensitivity(_parameterManager.getMouseSensitivity()) {
+    _mouseSensitivity(_impulseProcessor.getMouseSensitivity()) {
 	SDL_strlcpy(_urlBuffer, wsController.getUrl(), sizeof(_urlBuffer));
 }
 

@@ -260,16 +260,17 @@ void EditParameterModal::showOutput() {
 		ImGui::TableNextColumn();
 		ImGui::Text("Current");
 		ImGui::TableNextColumn();
-		float outputValue = _editingParameter.getOutput();
-		ImGui::SetNextItemWidth(128.0f);
-		ImGui::BeginDisabled();
-		ImGui::SliderFloat("##output-value",
-		                   &outputValue,
-		                   _editingParameter.getMin(),
-		                   _editingParameter.getMax(),
-		                   "%.2f",
-		                   ImGuiSliderFlags_NoInput);
-		ImGui::EndDisabled();
+		_outputHistory[_outputOffset] = _editingParameter.getOutput();
+		_outputOffset                 = (_outputOffset + 1) % _outputHistory.size();
+		auto outputString = std::format("{:.2f}", _editingParameter.getOutput());
+		ImGui::PlotLines("##output-history",
+		                 _outputHistory.data(),
+		                 _outputHistory.size(),
+		                 _outputOffset,
+		                 outputString.c_str(),
+		                 _editingParameter.getMin(),
+		                 _editingParameter.getMax(),
+		                 ImVec2(0.0f, 64.0f));
 
 		ImGui::EndTable();
 	}
@@ -336,11 +337,14 @@ EditParameterModal::EditParameterModal(ws::IController& wsController,
     _editingParameter(editingParameter),
     _addInputModal(editingParameter),
     _blendModeSelector("##blend-mode-selector", BLEND_MODES),
+    _outputHistory{},
+    _outputOffset(0),
     _inputIdToDelete(0) {}
 
 void EditParameterModal::refresh() {
 	_initialName = _editingParameter.getName();
 	SDL_strlcpy(_nameInputBuffer, _initialName.c_str(), MAX_NAME_BUFFER_LENGTH);
+	_outputHistory.fill(0.0f);
 	switch (_editingParameter.getBlendMode()) {
 		case vts::BlendMode::MAX:
 			_blendModeSelector.setIndex(BLEND_MODE_MAX);

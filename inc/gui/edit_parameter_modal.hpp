@@ -1,11 +1,15 @@
 #ifndef GUI_EDIT_PARAMETER_MODAL_
 #define GUI_EDIT_PARAMETER_MODAL_
+#include <array>
 
+#include "core/meta.hpp"
 #include "gui/add_input_modal.hpp"
 #include "vts/parameter.hpp"
 #include "ws/controller.hpp"
 
-constexpr size_t MAX_NAME_BUFFER_LENGTH = 33;
+constexpr size_t MAX_NAME_BUFFER_LENGTH =
+    core::MAX_PARAMETER_LENGTH + sizeof('\0');
+constexpr size_t N_HISTORY_SAMPLES = 128;
 
 namespace gui {
 
@@ -19,6 +23,9 @@ private:
 
 	char        _nameInputBuffer[MAX_NAME_BUFFER_LENGTH];
 	std::string _initialName;
+
+	std::array<float, N_HISTORY_SAMPLES> _outputHistory;
+	int                                  _outputOffset;
 
 	vts::InputId _inputIdToDelete;
 

@@ -7,7 +7,7 @@
 #include <optional>
 #include <vector>
 
-#include "vts/meta.hpp"
+#include "core/meta.hpp"
 
 static void logError(const glz::error_ctx& error, const std::string& buffer) {
 	std::cerr
@@ -174,7 +174,7 @@ void buildInputParameterListEvent(SDL_UserEvent&                        event,
                                   const InputParameterListResponseData& data) {
 	auto* parameters = new std::vector<std::string>();
 	for (const auto& parameter : data.customParameters) {
-		if (parameter.addedBy == PLUGIN_NAME) {
+		if (parameter.addedBy == core::PLUGIN_NAME) {
 			parameters->emplace_back(std::move(parameter.name));
 		}
 	}

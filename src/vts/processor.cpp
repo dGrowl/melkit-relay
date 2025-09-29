@@ -3,9 +3,10 @@
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_timer.h>
 #include <algorithm>
-#include <libuiohook/uiohook.h>
 #include <limits>
 #include <ranges>
+
+#include "libuiohook/uiohook.h"
 
 #include "core/settings.hpp"
 #include "math/formula.hpp"

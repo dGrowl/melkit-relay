@@ -2,9 +2,9 @@
 #include <SDL3/SDL_init.h>
 
 #include "core/app.hpp"
-#include "vts/meta.hpp"
+#include "core/meta.hpp"
 
-static constexpr auto APP_NAME       = vts::PLUGIN_NAME;
+static constexpr auto APP_NAME       = core::PLUGIN_NAME;
 static constexpr auto APP_VERSION    = "0.1.0-alpha";
 static constexpr auto APP_IDENTIFIER = "io.github.dgrowl.relay.melkit";
 

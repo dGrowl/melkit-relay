@@ -1,7 +1,7 @@
-#ifndef VTS_META_HPP_
-#define VTS_META_HPP_
+#ifndef CORE_META_HPP_
+#define CORE_META_HPP_
 
-namespace vts {
+namespace core {
 
 constexpr auto PLUGIN_NAME = "MelKIT // Relay";
 
@@ -125,6 +125,6 @@ constexpr auto PLUGIN_ICON_BASE64 =
 
 constexpr int MAX_PARAMETER_LENGTH = 32;
 
-}  // namespace vts
+}  // namespace core
 
-#endif  // VTS_META_HPP_
+#endif  // CORE_META_HPP_

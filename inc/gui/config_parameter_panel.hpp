@@ -3,16 +3,16 @@
 
 #include <unordered_set>
 
+#include "core/meta.hpp"
 #include "gui/delete_parameters_modal.hpp"
 #include "gui/edit_parameter_modal.hpp"
 #include "gui/parameter_template_modal.hpp"
 #include "pad/manager.hpp"
-#include "vts/meta.hpp"
 #include "vts/parameter.hpp"
 #include "vts/parameter_manager.hpp"
 #include "ws/controller.hpp"
 
-constexpr size_t MAX_FILTER_LENGTH = vts::MAX_PARAMETER_LENGTH + sizeof('\0');
+constexpr size_t MAX_FILTER_LENGTH = core::MAX_PARAMETER_LENGTH + sizeof('\0');
 
 namespace gui {
 

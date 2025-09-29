@@ -11,8 +11,8 @@
 #include <string>
 #include <string_view>
 
+#include "core/meta.hpp"
 #include "core/settings.hpp"
-#include "vts/meta.hpp"
 #include "vts/parameter.hpp"
 #include "ws/controller.hpp"
 
@@ -79,8 +79,8 @@ struct Request : BaseRequest {
 };
 
 struct AuthenticationData {
-	std::string pluginName      = PLUGIN_NAME;
-	std::string pluginDeveloper = PLUGIN_DEVELOPER;
+	std::string pluginName      = core::PLUGIN_NAME;
+	std::string pluginDeveloper = core::PLUGIN_DEVELOPER;
 	std::string authenticationToken;
 
 	struct glaze {
@@ -110,9 +110,9 @@ void authenticate(ws::IController& wsController) {
 }
 
 struct AuthenticationTokenRequestData {
-	std::string pluginName      = PLUGIN_NAME;
-	std::string pluginDeveloper = PLUGIN_DEVELOPER;
-	std::string pluginIcon      = PLUGIN_ICON_BASE64;
+	std::string pluginName      = core::PLUGIN_NAME;
+	std::string pluginDeveloper = core::PLUGIN_DEVELOPER;
+	std::string pluginIcon      = core::PLUGIN_ICON_BASE64;
 
 	struct glaze {
 		using T                     = AuthenticationTokenRequestData;

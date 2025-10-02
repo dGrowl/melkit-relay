@@ -4,15 +4,15 @@
 
 #include "gui/fonts.hpp"
 #include "gui/utility.hpp"
-#include "vts/input.hpp"
+#include "impulse/input.hpp"
+#include "impulse/processor.hpp"
 #include "vts/parameter.hpp"
-#include "vts/processor.hpp"
 
-constexpr vts::InputId MOUSE_POSITION_X_INPUT =
-    vts::Axis::X | vts::InputEvent::MOUSE_MOVE_ABS;
+constexpr imp::InputId MOUSE_POSITION_X_INPUT =
+    imp::Axis::X | imp::InputEvent::MOUSE_MOVE_ABS;
 
-constexpr vts::InputId MOUSE_POSITION_Y_INPUT =
-    vts::Axis::Y | vts::InputEvent::MOUSE_MOVE_ABS;
+constexpr imp::InputId MOUSE_POSITION_Y_INPUT =
+    imp::Axis::Y | imp::InputEvent::MOUSE_MOVE_ABS;
 
 constexpr float COORDINATE_FIELD_WIDTH = 100.0f;
 
@@ -26,7 +26,7 @@ void SetMouseBoundsModal::updateBounds() {
 	_impulseProcessor.setMouseBounds(_newBounds);
 }
 
-SetMouseBoundsModal::SetMouseBoundsModal(vts::Processor& impulseProcessor,
+SetMouseBoundsModal::SetMouseBoundsModal(imp::Processor& impulseProcessor,
                                          vts::Parameter& editingParameter) :
     _impulseProcessor(impulseProcessor),
     _editingParameter(editingParameter),

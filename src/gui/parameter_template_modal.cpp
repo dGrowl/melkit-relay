@@ -14,23 +14,23 @@ static constexpr size_t TEMPLATE_CONTROLLER = 0;
 
 static std::vector<const char*> TEMPLATES{"Controller"};
 
-const std::array<vts::InputId, 2> PRESS_LEFT_KEY_INPUTS = {
-    VC_CONTROL_L << 16 | vts::InputEvent::KEY,
-    VC_SHIFT_L << 16 | vts::InputEvent::KEY};
-const std::array<vts::InputId, 4> PRESS_RIGHT_KEY_INPUTS = {
-    VC_R << 16 | vts::InputEvent::KEY,
-    VC_F << 16 | vts::InputEvent::KEY,
-    VC_G << 16 | vts::InputEvent::KEY,
-    VC_SPACE << 16 | vts::InputEvent::KEY,
+const std::array<imp::InputId, 2> PRESS_LEFT_KEY_INPUTS = {
+    VC_CONTROL_L << 16 | imp::InputEvent::KEY,
+    VC_SHIFT_L << 16 | imp::InputEvent::KEY};
+const std::array<imp::InputId, 4> PRESS_RIGHT_KEY_INPUTS = {
+    VC_R << 16 | imp::InputEvent::KEY,
+    VC_F << 16 | imp::InputEvent::KEY,
+    VC_G << 16 | imp::InputEvent::KEY,
+    VC_SPACE << 16 | imp::InputEvent::KEY,
 };
-const std::array<vts::InputId, 1> PRESS_LEFT_GAMEPAD_INPUTS = {
-    vts::GamepadButton::LEFT_STICK | vts::InputEvent::GAMEPAD_BUTTON};
-const std::array<vts::InputId, 5> PRESS_RIGHT_GAMEPAD_INPUTS = {
-    vts::GamepadButton::NORTH | vts::InputEvent::GAMEPAD_BUTTON,
-    vts::GamepadButton::SOUTH | vts::InputEvent::GAMEPAD_BUTTON,
-    vts::GamepadButton::WEST | vts::InputEvent::GAMEPAD_BUTTON,
-    vts::GamepadButton::EAST | vts::InputEvent::GAMEPAD_BUTTON,
-    vts::GamepadButton::RIGHT_STICK | vts::InputEvent::GAMEPAD_BUTTON};
+const std::array<imp::InputId, 1> PRESS_LEFT_GAMEPAD_INPUTS = {
+    imp::GamepadButton::LEFT_STICK | imp::InputEvent::GAMEPAD_BUTTON};
+const std::array<imp::InputId, 5> PRESS_RIGHT_GAMEPAD_INPUTS = {
+    imp::GamepadButton::NORTH | imp::InputEvent::GAMEPAD_BUTTON,
+    imp::GamepadButton::SOUTH | imp::InputEvent::GAMEPAD_BUTTON,
+    imp::GamepadButton::WEST | imp::InputEvent::GAMEPAD_BUTTON,
+    imp::GamepadButton::EAST | imp::InputEvent::GAMEPAD_BUTTON,
+    imp::GamepadButton::RIGHT_STICK | imp::InputEvent::GAMEPAD_BUTTON};
 
 namespace gui {
 
@@ -83,15 +83,15 @@ void ParameterTemplateModal::createShoulderParameters() {
 	vts::Parameter rightShoulder("MK_RShoulder");
 
 	if (_useMouseKeyboard) {
-		leftShoulder.addInput(VC_Q << 16 | vts::InputEvent::KEY);
-		rightShoulder.addInput(VC_E << 16 | vts::InputEvent::KEY);
+		leftShoulder.addInput(VC_Q << 16 | imp::InputEvent::KEY);
+		rightShoulder.addInput(VC_E << 16 | imp::InputEvent::KEY);
 	}
 
 	if (_useController) {
-		leftShoulder.addInput(vts::GamepadButton::LEFT_SHOULDER
-		                      | vts::InputEvent::GAMEPAD_BUTTON);
-		rightShoulder.addInput(vts::GamepadButton::RIGHT_SHOULDER
-		                       | vts::InputEvent::GAMEPAD_BUTTON);
+		leftShoulder.addInput(imp::GamepadButton::LEFT_SHOULDER
+		                      | imp::InputEvent::GAMEPAD_BUTTON);
+		rightShoulder.addInput(imp::GamepadButton::RIGHT_SHOULDER
+		                       | imp::InputEvent::GAMEPAD_BUTTON);
 	}
 
 	SETTINGS.setParameter(leftShoulder);
@@ -110,31 +110,31 @@ void ParameterTemplateModal::createStickParameters() {
 	vts::Parameter rightStickY("MK_RStickY");
 
 	if (_useMouseKeyboard) {
-		leftStickX.addInput(VC_A << 16 | vts::InputEvent::KEY, true);
-		leftStickX.addInput(VC_D << 16 | vts::InputEvent::KEY);
-		leftStickY.addInput(VC_W << 16 | vts::InputEvent::KEY);
-		leftStickY.addInput(VC_S << 16 | vts::InputEvent::KEY, true);
+		leftStickX.addInput(VC_A << 16 | imp::InputEvent::KEY, true);
+		leftStickX.addInput(VC_D << 16 | imp::InputEvent::KEY);
+		leftStickY.addInput(VC_W << 16 | imp::InputEvent::KEY);
+		leftStickY.addInput(VC_S << 16 | imp::InputEvent::KEY, true);
 
-		rightStickX.addInput(vts::Axis::X | vts::InputEvent::MOUSE_MOVE_REL);
-		rightStickY.addInput(vts::Axis::Y | vts::InputEvent::MOUSE_MOVE_REL);
+		rightStickX.addInput(imp::Axis::X | imp::InputEvent::MOUSE_MOVE_REL);
+		rightStickY.addInput(imp::Axis::Y | imp::InputEvent::MOUSE_MOVE_REL);
 	}
 
 	if (_useController) {
-		leftStickX.addInput(vts::Axis::X | vts::InputEvent::GAMEPAD_STICK_LEFT);
-		leftStickY.addInput(vts::Axis::Y | vts::InputEvent::GAMEPAD_STICK_LEFT);
+		leftStickX.addInput(imp::Axis::X | imp::InputEvent::GAMEPAD_STICK_LEFT);
+		leftStickY.addInput(imp::Axis::Y | imp::InputEvent::GAMEPAD_STICK_LEFT);
 		leftStickX.addInput(
-		    vts::GamepadButton::DPAD_LEFT | vts::InputEvent::GAMEPAD_BUTTON,
+		    imp::GamepadButton::DPAD_LEFT | imp::InputEvent::GAMEPAD_BUTTON,
 		    true);
-		leftStickX.addInput(vts::GamepadButton::DPAD_RIGHT
-		                    | vts::InputEvent::GAMEPAD_BUTTON);
-		leftStickY.addInput(vts::GamepadButton::DPAD_UP
-		                    | vts::InputEvent::GAMEPAD_BUTTON);
+		leftStickX.addInput(imp::GamepadButton::DPAD_RIGHT
+		                    | imp::InputEvent::GAMEPAD_BUTTON);
+		leftStickY.addInput(imp::GamepadButton::DPAD_UP
+		                    | imp::InputEvent::GAMEPAD_BUTTON);
 		leftStickY.addInput(
-		    vts::GamepadButton::DPAD_DOWN | vts::InputEvent::GAMEPAD_BUTTON,
+		    imp::GamepadButton::DPAD_DOWN | imp::InputEvent::GAMEPAD_BUTTON,
 		    true);
 
-		rightStickX.addInput(vts::Axis::X | vts::InputEvent::GAMEPAD_STICK_RIGHT);
-		rightStickY.addInput(vts::Axis::Y | vts::InputEvent::GAMEPAD_STICK_RIGHT);
+		rightStickX.addInput(imp::Axis::X | imp::InputEvent::GAMEPAD_STICK_RIGHT);
+		rightStickY.addInput(imp::Axis::Y | imp::InputEvent::GAMEPAD_STICK_RIGHT);
 	}
 
 	SETTINGS.setParameter(leftStickX);
@@ -152,13 +152,13 @@ void ParameterTemplateModal::createTriggerParameters() {
 	vts::Parameter rightTrigger("MK_RTrigger");
 
 	if (_useMouseKeyboard) {
-		leftTrigger.addInput(vts::MouseButton::RIGHT | vts::InputEvent::MOUSE_BUTTON);
-		rightTrigger.addInput(vts::MouseButton::LEFT | vts::InputEvent::MOUSE_BUTTON);
+		leftTrigger.addInput(imp::MouseButton::RIGHT | imp::InputEvent::MOUSE_BUTTON);
+		rightTrigger.addInput(imp::MouseButton::LEFT | imp::InputEvent::MOUSE_BUTTON);
 	}
 
 	if (_useController) {
-		leftTrigger.addInput(vts::Side::LEFT | vts::InputEvent::GAMEPAD_TRIGGER);
-		rightTrigger.addInput(vts::Side::RIGHT | vts::InputEvent::GAMEPAD_TRIGGER);
+		leftTrigger.addInput(imp::Side::LEFT | imp::InputEvent::GAMEPAD_TRIGGER);
+		rightTrigger.addInput(imp::Side::RIGHT | imp::InputEvent::GAMEPAD_TRIGGER);
 	}
 
 	SETTINGS.setParameter(leftTrigger);

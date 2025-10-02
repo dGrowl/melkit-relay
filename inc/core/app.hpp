@@ -7,10 +7,10 @@
 #include "core/pacer.hpp"
 #include "gui/config_window.hpp"
 #include "gui/tray_icon.hpp"
+#include "impulse/processor.hpp"
 #include "mnk/monitor.hpp"
 #include "pad/manager.hpp"
 #include "vts/parameter_manager.hpp"
-#include "vts/processor.hpp"
 #include "ws/client.hpp"
 
 namespace core {
@@ -22,7 +22,7 @@ private:
 	SDL_GPUDevice* _gpu;
 
 	vts::ParameterManager _parameters;
-	vts::Processor        _impulseProcessor;
+	imp::Processor        _impulseProcessor;
 
 	ws::Client   _wsClient;
 	mnk::Monitor _mnkMonitor;

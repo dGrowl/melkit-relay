@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 
+#include "impulse/input.hpp"
 #include "math/geometry.hpp"
-#include "vts/input.hpp"
 #include "vts/parameter.hpp"
 
 template <>
@@ -33,7 +33,7 @@ struct glz::meta<math::Rectangle<T>> {
 namespace core {
 
 struct SettingsInput {
-	vts::InputId id;
+	imp::InputId id;
 	bool         isInverted;
 
 	struct glaze {

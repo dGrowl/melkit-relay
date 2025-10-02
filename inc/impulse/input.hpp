@@ -1,9 +1,9 @@
-#ifndef VTS_INPUT_HPP_
-#define VTS_INPUT_HPP_
+#ifndef IMPULSE_INPUT_HPP_
+#define IMPULSE_INPUT_HPP_
 
 #include <SDL3/SDL_stdinc.h>
 
-namespace vts {
+namespace imp {
 
 using InputId   = Uint32;
 using EventTag  = Uint32;
@@ -89,6 +89,6 @@ public:
 	void    update(float inValue);
 };
 
-}  // namespace vts
+}  // namespace imp
 
-#endif  // VTS_INPUT_HPP_
+#endif  // IMPULSE_INPUT_HPP_

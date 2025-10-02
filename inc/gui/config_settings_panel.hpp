@@ -14,7 +14,7 @@ constexpr Uint8 MAX_URL_LENGTH = 128;
 class ConfigSettingsPanel {
 private:
 	pad::Manager&    _gamepadManager;
-	vts::Processor&  _impulseProcessor;
+	imp::Processor&  _impulseProcessor;
 	ws::IController& _wsController;
 
 	SetMouseBoundsModal _setMouseBoundsModal;
@@ -33,7 +33,7 @@ private:
 
 public:
 	ConfigSettingsPanel(pad::Manager&    gamepadManager,
-	                    vts::Processor&  impulseProcessor,
+	                    imp::Processor&  impulseProcessor,
 	                    vts::Parameter&  editingParameter,
 	                    ws::IController& wsController);
 

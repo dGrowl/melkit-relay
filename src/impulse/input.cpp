@@ -1,11 +1,11 @@
-#include "vts/input.hpp"
+#include "impulse/input.hpp"
 
 #include <algorithm>
 #include <limits>
 
 #include "math/formula.hpp"
 
-namespace vts {
+namespace imp {
 
 InputData::InputData(const InputId id, const bool isInverted) :
     _id(id),
@@ -51,4 +51,4 @@ void InputData::update(float inValue) {
 	_value = inValue;
 }
 
-}  // namespace vts
+}  // namespace imp

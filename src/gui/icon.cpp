@@ -9,7 +9,7 @@
 
 namespace gui {
 
-using IconMap = std::unordered_map<vts::TargetTag, const char*>;
+using IconMap = std::unordered_map<imp::TargetTag, const char*>;
 
 static IconMap keyStrings{
     {VC_TAB,           "\u242B"},
@@ -135,49 +135,49 @@ static IconMap keyStrings{
 };
 
 static IconMap mouseButtonStrings{
-    {vts::MouseButton::LEFT,   "\u278A"},
-    {vts::MouseButton::RIGHT,  "\u278B"},
-    {vts::MouseButton::MIDDLE, "\u278C"},
+    {imp::MouseButton::LEFT,   "\u278A"},
+    {imp::MouseButton::RIGHT,  "\u278B"},
+    {imp::MouseButton::MIDDLE, "\u278C"},
 };
 
 static IconMap mouseWheelStrings{
-    {vts::MouseWheel::UP,   "\u27F0"},
-    {vts::MouseWheel::DOWN, "\u27F1"},
+    {imp::MouseWheel::UP,   "\u27F0"},
+    {imp::MouseWheel::DOWN, "\u27F1"},
 };
 
 static IconMap mouseMoveStrings{
-    {vts::Axis::X, "\u27FA"},
-    {vts::Axis::Y, "\u27FB"},
+    {imp::Axis::X, "\u27FA"},
+    {imp::Axis::Y, "\u27FB"},
 };
 
 static IconMap gamepadButtonStrings{
-    {vts::GamepadButton::NORTH,          "\u21A5"},
-    {vts::GamepadButton::SOUTH,          "\u21A7"},
-    {vts::GamepadButton::WEST,           "\u21A4"},
-    {vts::GamepadButton::EAST,           "\u21A6"},
-    {vts::GamepadButton::LEFT_SHOULDER,  "\u2198"},
-    {vts::GamepadButton::RIGHT_SHOULDER, "\u2199"},
-    {vts::GamepadButton::DPAD_UP,        "\u219F"},
-    {vts::GamepadButton::DPAD_DOWN,      "\u21A1"},
-    {vts::GamepadButton::DPAD_LEFT,      "\u219E"},
-    {vts::GamepadButton::DPAD_RIGHT,     "\u21A0"},
-    {vts::GamepadButton::LEFT_STICK,     "\u21BA"},
-    {vts::GamepadButton::RIGHT_STICK,    "\u21BB"},
+    {imp::GamepadButton::NORTH,          "\u21A5"},
+    {imp::GamepadButton::SOUTH,          "\u21A7"},
+    {imp::GamepadButton::WEST,           "\u21A4"},
+    {imp::GamepadButton::EAST,           "\u21A6"},
+    {imp::GamepadButton::LEFT_SHOULDER,  "\u2198"},
+    {imp::GamepadButton::RIGHT_SHOULDER, "\u2199"},
+    {imp::GamepadButton::DPAD_UP,        "\u219F"},
+    {imp::GamepadButton::DPAD_DOWN,      "\u21A1"},
+    {imp::GamepadButton::DPAD_LEFT,      "\u219E"},
+    {imp::GamepadButton::DPAD_RIGHT,     "\u21A0"},
+    {imp::GamepadButton::LEFT_STICK,     "\u21BA"},
+    {imp::GamepadButton::RIGHT_STICK,    "\u21BB"},
 };
 
 static IconMap gamepadTriggerStrings{
-    {vts::Side::LEFT,  "\u2196"},
-    {vts::Side::RIGHT, "\u2197"},
+    {imp::Side::LEFT,  "\u2196"},
+    {imp::Side::RIGHT, "\u2197"},
 };
 
 static IconMap gamepadStickLeftStrings{
-    {vts::Axis::X, "\u21C4"},
-    {vts::Axis::Y, "\u21C5"},
+    {imp::Axis::X, "\u21C4"},
+    {imp::Axis::Y, "\u21C5"},
 };
 
 static IconMap gamepadStickRightStrings{
-    {vts::Axis::X, "\u21C6"},
-    {vts::Axis::Y, "\u21F5"},
+    {imp::Axis::X, "\u21C6"},
+    {imp::Axis::Y, "\u21F5"},
 };
 
 static const std::unordered_map<const char*, float> Y_OFFSETS{
@@ -185,7 +185,7 @@ static const std::unordered_map<const char*, float> Y_OFFSETS{
     {"\uE0F2", 3.0f },
 };
 
-void drawIconOrDefault(const vts::TargetTag target,
+void drawIconOrDefault(const imp::TargetTag target,
                        const float          alpha,
                        const IconMap&       lookup,
                        const char*          defaultString) {
@@ -203,34 +203,34 @@ void drawIconOrDefault(const vts::TargetTag target,
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, alpha), iconString);
 }
 
-void drawIcon(const vts::InputId id, const float alpha) {
-	const vts::InputId event  = id & 0xFFFF;
-	const vts::InputId target = id & 0xFFFF0000;
+void drawIcon(const imp::InputId id, const float alpha) {
+	const imp::InputId event  = id & 0xFFFF;
+	const imp::InputId target = id & 0xFFFF0000;
 	Fonts::push(FontType::INPUT);
 	switch (event) {
-		case vts::InputEvent::KEY:
+		case imp::InputEvent::KEY:
 			drawIconOrDefault(target >> 16, alpha, keyStrings, "\u248F");
 			break;
-		case vts::InputEvent::MOUSE_BUTTON:
+		case imp::InputEvent::MOUSE_BUTTON:
 			drawIconOrDefault(target, alpha, mouseButtonStrings, "\u2791");
 			break;
-		case vts::InputEvent::MOUSE_WHEEL:
+		case imp::InputEvent::MOUSE_WHEEL:
 			drawIconOrDefault(target, alpha, mouseWheelStrings, "\u27F2");
 			break;
-		case vts::InputEvent::MOUSE_MOVE_ABS:
-		case vts::InputEvent::MOUSE_MOVE_REL:
+		case imp::InputEvent::MOUSE_MOVE_ABS:
+		case imp::InputEvent::MOUSE_MOVE_REL:
 			drawIconOrDefault(target, alpha, mouseMoveStrings, "\u27FC");
 			break;
-		case vts::InputEvent::GAMEPAD_BUTTON:
+		case imp::InputEvent::GAMEPAD_BUTTON:
 			drawIconOrDefault(target, alpha, gamepadButtonStrings, "\u21A8");
 			break;
-		case vts::InputEvent::GAMEPAD_TRIGGER:
+		case imp::InputEvent::GAMEPAD_TRIGGER:
 			drawIconOrDefault(target, alpha, gamepadTriggerStrings, "\u21EA");
 			break;
-		case vts::InputEvent::GAMEPAD_STICK_LEFT:
+		case imp::InputEvent::GAMEPAD_STICK_LEFT:
 			drawIconOrDefault(target, alpha, gamepadStickLeftStrings, "\u21CB");
 			break;
-		case vts::InputEvent::GAMEPAD_STICK_RIGHT:
+		case imp::InputEvent::GAMEPAD_STICK_RIGHT:
 			drawIconOrDefault(target, alpha, gamepadStickRightStrings, "\u21CC");
 			break;
 	}

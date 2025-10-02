@@ -1,4 +1,4 @@
-#include "vts/processor.hpp"
+#include "impulse/processor.hpp"
 
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_timer.h>
@@ -9,10 +9,10 @@
 #include "libuiohook/uiohook.h"
 
 #include "core/settings.hpp"
+#include "impulse/input.hpp"
 #include "math/formula.hpp"
 #include "math/geometry.hpp"
 #include "mnk/event.hpp"
-#include "vts/input.hpp"
 
 template <typename T>
 T pointerToUnsigned(const void* p) {
@@ -82,7 +82,7 @@ static constexpr float transformMouseWheel(float x) {
 	return x;
 }
 
-namespace vts {
+namespace imp {
 
 void Processor::handleGamepadAxisMotion(SDL_GamepadAxisEvent& event) {
 	InputId id    = 0;
@@ -339,22 +339,22 @@ void Processor::handleGamepadEvent(SDL_Event&           event,
 
 void Processor::handleEvent(SDL_UserEvent& event) {
 	switch (event.code) {
-		case vts::ActionCode::KEY_DOWN:
+		case imp::ActionCode::KEY_DOWN:
 			handleKeyDown(event);
 			break;
-		case vts::ActionCode::KEY_UP:
+		case imp::ActionCode::KEY_UP:
 			handleKeyUp(event);
 			break;
-		case vts::ActionCode::MOUSE_MOVE:
+		case imp::ActionCode::MOUSE_MOVE:
 			handleMouseMove(event);
 			break;
-		case vts::ActionCode::MOUSE_CLICK:
+		case imp::ActionCode::MOUSE_CLICK:
 			handleMouseButton(event, true);
 			break;
-		case vts::ActionCode::MOUSE_RELEASE:
+		case imp::ActionCode::MOUSE_RELEASE:
 			handleMouseButton(event, false);
 			break;
-		case vts::ActionCode::MOUSE_WHEEL:
+		case imp::ActionCode::MOUSE_WHEEL:
 			handleMouseWheel(event);
 			break;
 	}
@@ -392,4 +392,4 @@ void Processor::update() {
 	_lastUpdateTimeMs = timeMs;
 }
 
-}  // namespace vts
+}  // namespace imp

@@ -65,52 +65,52 @@ struct InputStrings {
 	const char* target = UNKNOWN;
 };
 
-InputStrings getInputStrings(const vts::InputId id) {
+InputStrings getInputStrings(const imp::InputId id) {
 	InputStrings         strings;
-	const vts::EventTag  event  = id & 0xFFFF;
-	const vts::TargetTag target = id >> 16;
+	const imp::EventTag  event  = id & 0xFFFF;
+	const imp::TargetTag target = id >> 16;
 	switch (event) {
-		case vts::InputEvent::KEY:
+		case imp::InputEvent::KEY:
 			strings.device = DEVICE_KEYBOARD;
 			strings.event  = KEY_EVENT_PRESS;
 			strings.target = getUioKeyName(target);
 			break;
-		case vts::InputEvent::MOUSE_BUTTON:
+		case imp::InputEvent::MOUSE_BUTTON:
 			strings.device = DEVICE_MOUSE;
 			strings.event  = MOUSE_EVENT_BUTTON;
 			strings.target = MOUSE_BUTTONS[target - 1];
 			break;
-		case vts::InputEvent::MOUSE_WHEEL:
+		case imp::InputEvent::MOUSE_WHEEL:
 			strings.device = DEVICE_MOUSE;
 			strings.event  = MOUSE_EVENT_WHEEL;
 			strings.target = WHEEL_DIRECTIONS[target - 1];
 			break;
-		case vts::InputEvent::MOUSE_MOVE_ABS:
+		case imp::InputEvent::MOUSE_MOVE_ABS:
 			strings.device = DEVICE_MOUSE;
 			strings.event  = MOUSE_EVENT_MOVE_ABS;
 			strings.target = AXES[target - 1];
 			break;
-		case vts::InputEvent::MOUSE_MOVE_REL:
+		case imp::InputEvent::MOUSE_MOVE_REL:
 			strings.device = DEVICE_MOUSE;
 			strings.event  = MOUSE_EVENT_MOVE_REL;
 			strings.target = AXES[target - 1];
 			break;
-		case vts::InputEvent::GAMEPAD_BUTTON:
+		case imp::InputEvent::GAMEPAD_BUTTON:
 			strings.device = DEVICE_GAMEPAD;
 			strings.event  = GAMEPAD_EVENT_BUTTON;
 			strings.target = GAMEPAD_BUTTONS[target - 1];
 			break;
-		case vts::InputEvent::GAMEPAD_TRIGGER:
+		case imp::InputEvent::GAMEPAD_TRIGGER:
 			strings.device = DEVICE_GAMEPAD;
 			strings.event  = GAMEPAD_EVENT_TRIGGER;
 			strings.target = GAMEPAD_TRIGGERS[target - 1];
 			break;
-		case vts::InputEvent::GAMEPAD_STICK_LEFT:
+		case imp::InputEvent::GAMEPAD_STICK_LEFT:
 			strings.device = DEVICE_GAMEPAD;
 			strings.event  = GAMEPAD_EVENT_STICK_LEFT;
 			strings.target = AXES[target - 1];
 			break;
-		case vts::InputEvent::GAMEPAD_STICK_RIGHT:
+		case imp::InputEvent::GAMEPAD_STICK_RIGHT:
 			strings.device = DEVICE_GAMEPAD;
 			strings.event  = GAMEPAD_EVENT_STICK_RIGHT;
 			strings.target = AXES[target - 1];

@@ -30,7 +30,7 @@ private:
 
 public:
 	ConfigWindow(pad::Manager&          gamepadManager,
-	             vts::Processor&        impulseProcessor,
+	             imp::Processor&        impulseProcessor,
 	             ws::IController&       wsController,
 	             vts::ParameterManager& paramManager);
 

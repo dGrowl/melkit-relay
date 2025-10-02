@@ -86,123 +86,123 @@ static constexpr unsigned GAMEPAD_SIDE_RIGHT = 1;
 
 static std::vector<const char*> GAMEPAD_SIDES{"Left", "Right"};
 
-vts::TargetTag AddInputModal::getMouseAxisTag() const {
+imp::TargetTag AddInputModal::getMouseAxisTag() const {
 	switch (_mouseAxisSelector.getIndex()) {
 		case MOUSE_AXIS_X:
-			return vts::Axis::X;
+			return imp::Axis::X;
 		case MOUSE_AXIS_Y:
-			return vts::Axis::Y;
+			return imp::Axis::Y;
 	}
 	return 0;
 }
 
-vts::TargetTag AddInputModal::getMouseButtonTag() const {
+imp::TargetTag AddInputModal::getMouseButtonTag() const {
 	switch (_mouseButtonSelector.getIndex()) {
 		case MOUSE_BUTTON_LEFT:
-			return vts::MouseButton::LEFT;
+			return imp::MouseButton::LEFT;
 		case MOUSE_BUTTON_RIGHT:
-			return vts::MouseButton::RIGHT;
+			return imp::MouseButton::RIGHT;
 		case MOUSE_BUTTON_MIDDLE:
-			return vts::MouseButton::MIDDLE;
+			return imp::MouseButton::MIDDLE;
 	}
 	return 0;
 }
 
-vts::TargetTag AddInputModal::getMouseWheelTag() const {
+imp::TargetTag AddInputModal::getMouseWheelTag() const {
 	switch (_mouseWheelSelector.getIndex()) {
 		case MOUSE_WHEEL_UP:
-			return vts::MouseWheel::UP;
+			return imp::MouseWheel::UP;
 		case MOUSE_WHEEL_DOWN:
-			return vts::MouseWheel::DOWN;
+			return imp::MouseWheel::DOWN;
 	}
 	return 0;
 }
 
-vts::TargetTag AddInputModal::getGamepadButtonTag() const {
+imp::TargetTag AddInputModal::getGamepadButtonTag() const {
 	switch (_gamepadButtonSelector.getIndex()) {
 		case GAMEPAD_BUTTON_NORTH:
-			return vts::GamepadButton::NORTH;
+			return imp::GamepadButton::NORTH;
 		case GAMEPAD_BUTTON_SOUTH:
-			return vts::GamepadButton::SOUTH;
+			return imp::GamepadButton::SOUTH;
 		case GAMEPAD_BUTTON_WEST:
-			return vts::GamepadButton::WEST;
+			return imp::GamepadButton::WEST;
 		case GAMEPAD_BUTTON_EAST:
-			return vts::GamepadButton::EAST;
+			return imp::GamepadButton::EAST;
 		case GAMEPAD_BUTTON_LEFT_SHOULDER:
-			return vts::GamepadButton::LEFT_SHOULDER;
+			return imp::GamepadButton::LEFT_SHOULDER;
 		case GAMEPAD_BUTTON_RIGHT_SHOULDER:
-			return vts::GamepadButton::RIGHT_SHOULDER;
+			return imp::GamepadButton::RIGHT_SHOULDER;
 		case GAMEPAD_BUTTON_DPAD_UP:
-			return vts::GamepadButton::DPAD_UP;
+			return imp::GamepadButton::DPAD_UP;
 		case GAMEPAD_BUTTON_DPAD_DOWN:
-			return vts::GamepadButton::DPAD_DOWN;
+			return imp::GamepadButton::DPAD_DOWN;
 		case GAMEPAD_BUTTON_DPAD_LEFT:
-			return vts::GamepadButton::DPAD_LEFT;
+			return imp::GamepadButton::DPAD_LEFT;
 		case GAMEPAD_BUTTON_DPAD_RIGHT:
-			return vts::GamepadButton::DPAD_RIGHT;
+			return imp::GamepadButton::DPAD_RIGHT;
 	}
 	return 0;
 }
 
-vts::TargetTag AddInputModal::getGamepadStickActionTag(
+imp::TargetTag AddInputModal::getGamepadStickActionTag(
     const bool isLeftStick) const {
-	vts::TargetTag id = 0;
+	imp::TargetTag id = 0;
 	switch (_gamepadStickActionSelector.getIndex()) {
 		case GAMEPAD_STICK_ACTION_X:
-			id |= isLeftStick ? vts::InputEvent::GAMEPAD_STICK_LEFT
-			                  : vts::InputEvent::GAMEPAD_STICK_RIGHT;
-			id |= vts::Axis::X;
+			id |= isLeftStick ? imp::InputEvent::GAMEPAD_STICK_LEFT
+			                  : imp::InputEvent::GAMEPAD_STICK_RIGHT;
+			id |= imp::Axis::X;
 			break;
 		case GAMEPAD_STICK_ACTION_Y:
-			id |= isLeftStick ? vts::InputEvent::GAMEPAD_STICK_LEFT
-			                  : vts::InputEvent::GAMEPAD_STICK_RIGHT;
-			id |= vts::Axis::Y;
+			id |= isLeftStick ? imp::InputEvent::GAMEPAD_STICK_LEFT
+			                  : imp::InputEvent::GAMEPAD_STICK_RIGHT;
+			id |= imp::Axis::Y;
 			break;
 		case GAMEPAD_STICK_ACTION_PRESS:
-			id |= vts::InputEvent::GAMEPAD_BUTTON;
-			id |= isLeftStick ? vts::GamepadButton::LEFT_STICK
-			                  : vts::GamepadButton::RIGHT_STICK;
+			id |= imp::InputEvent::GAMEPAD_BUTTON;
+			id |= isLeftStick ? imp::GamepadButton::LEFT_STICK
+			                  : imp::GamepadButton::RIGHT_STICK;
 			break;
 	}
 	return id;
 }
 
-vts::TargetTag AddInputModal::getGamepadTriggerTag() const {
+imp::TargetTag AddInputModal::getGamepadTriggerTag() const {
 	switch (_gamepadTriggerSelector.getIndex()) {
 		case GAMEPAD_SIDE_LEFT:
-			return vts::Side::LEFT;
+			return imp::Side::LEFT;
 		case GAMEPAD_SIDE_RIGHT:
-			return vts::Side::RIGHT;
+			return imp::Side::RIGHT;
 	}
 	return 0;
 }
 
-vts::InputId AddInputModal::buildInputId() const {
-	vts::InputId id     = 0;
+imp::InputId AddInputModal::buildInputId() const {
+	imp::InputId id     = 0;
 	const auto   device = _deviceSelector.getIndex();
 	if (device == DEVICE_MOUSE) {
 		const auto event = _mouseEventSelector.getIndex();
 		switch (event) {
 			case MOUSE_EVENT_BUTTON:
-				id |= vts::InputEvent::MOUSE_BUTTON;
+				id |= imp::InputEvent::MOUSE_BUTTON;
 				id |= getMouseButtonTag();
 				break;
 			case MOUSE_EVENT_WHEEL:
-				id |= vts::InputEvent::MOUSE_WHEEL;
+				id |= imp::InputEvent::MOUSE_WHEEL;
 				id |= getMouseWheelTag();
 				break;
 			case MOUSE_EVENT_MOVE_ABSOLUTE:
-				id |= vts::InputEvent::MOUSE_MOVE_ABS;
+				id |= imp::InputEvent::MOUSE_MOVE_ABS;
 				id |= getMouseAxisTag();
 				break;
 			case MOUSE_EVENT_MOVE_RELATIVE:
-				id |= vts::InputEvent::MOUSE_MOVE_REL;
+				id |= imp::InputEvent::MOUSE_MOVE_REL;
 				id |= getMouseAxisTag();
 				break;
 		}
 	}
 	else if (device == DEVICE_KEYBOARD) {
-		id |= vts::InputEvent::KEY;
+		id |= imp::InputEvent::KEY;
 		if (_selectedKey != ImGuiKey_None) {
 			id |= gui::convertImGuiToUioKey(_selectedKey) << 16;
 		}
@@ -211,7 +211,7 @@ vts::InputId AddInputModal::buildInputId() const {
 		const auto event = _gamepadEventSelector.getIndex();
 		switch (event) {
 			case GAMEPAD_EVENT_BUTTON:
-				id |= vts::InputEvent::GAMEPAD_BUTTON;
+				id |= imp::InputEvent::GAMEPAD_BUTTON;
 				id |= getGamepadButtonTag();
 				break;
 			case GAMEPAD_EVENT_LEFT_STICK:
@@ -221,7 +221,7 @@ vts::InputId AddInputModal::buildInputId() const {
 				id |= getGamepadStickActionTag(false);
 				break;
 			case GAMEPAD_EVENT_TRIGGER:
-				id |= vts::InputEvent::GAMEPAD_TRIGGER;
+				id |= imp::InputEvent::GAMEPAD_TRIGGER;
 				id |= getGamepadTriggerTag();
 				break;
 		}
@@ -231,8 +231,8 @@ vts::InputId AddInputModal::buildInputId() const {
 
 void AddInputModal::showCloseButtons() {
 	if (ImGui::Button("Add", ImVec2(128.0f, 0.0f))) {
-		vts::InputId id = buildInputId();
-		if (id != vts::InputEvent::KEY) {
+		imp::InputId id = buildInputId();
+		if (id != imp::InputEvent::KEY) {
 			_editingParameter.addInput(id);
 			ImGui::CloseCurrentPopup();
 		}

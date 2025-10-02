@@ -200,7 +200,7 @@ void ConfigSettingsPanel::showModals() {
 }
 
 ConfigSettingsPanel::ConfigSettingsPanel(pad::Manager&    gamepadManager,
-                                         vts::Processor&  impulseProcessor,
+                                         imp::Processor&  impulseProcessor,
                                          vts::Parameter&  editingParameter,
                                          ws::IController& wsController) :
     _gamepadManager(gamepadManager),

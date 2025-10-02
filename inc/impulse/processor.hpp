@@ -1,18 +1,18 @@
-#ifndef VTS_PROCESSOR_HPP_
-#define VTS_PROCESSOR_HPP_
+#ifndef IMPULSE_PROCESSOR_HPP_
+#define IMPULSE_PROCESSOR_HPP_
 
 #include <SDL3/SDL_events.h>
 #include <ranges>
 #include <vector>
 
+#include "impulse/input.hpp"
 #include "math/geometry.hpp"
-#include "vts/input.hpp"
 #include "vts/parameter_manager.hpp"
 #include "ws/controller.hpp"
 
-namespace vts {
+namespace imp {
 
-using ImpulseQueue = std::vector<std::pair<vts::InputId, float>>;
+using ImpulseQueue = std::vector<std::pair<imp::InputId, float>>;
 
 struct MouseState {
 	int   x         = 0;
@@ -63,6 +63,6 @@ public:
 	void                        update();
 };
 
-}  // namespace vts
+}  // namespace imp
 
-#endif  // VTS_PROCESSOR_HPP_
+#endif  // IMPULSE_PROCESSOR_HPP_

@@ -7,17 +7,17 @@
 #include "imgui/imgui.h"
 #include "libuiohook/uiohook.h"
 
-#include "vts/input.hpp"
+#include "impulse/input.hpp"
 
 namespace gui {
 
 using KeycodeView =
-    decltype(std::declval<const std::unordered_map<ImGuiKey, vts::TargetTag>&>()
+    decltype(std::declval<const std::unordered_map<ImGuiKey, imp::TargetTag>&>()
              | std::views::keys);
 
 KeycodeView validImGuiKeys();
 
-vts::TargetTag convertImGuiToUioKey(const ImGuiKey keycode);
+imp::TargetTag convertImGuiToUioKey(const ImGuiKey keycode);
 
 const char* getUioKeyName(const Uint32 keycode);
 

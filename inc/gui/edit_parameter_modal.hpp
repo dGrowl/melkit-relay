@@ -27,7 +27,7 @@ private:
 	std::array<float, N_HISTORY_SAMPLES> _outputHistory;
 	int                                  _outputOffset;
 
-	vts::InputId _inputIdToDelete;
+	imp::InputId _inputIdToDelete;
 
 	void showAddInput();
 	void showInputs();

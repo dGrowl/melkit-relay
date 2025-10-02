@@ -42,7 +42,7 @@ void ConfigWindow::showMenuBar() {
 }
 
 ConfigWindow::ConfigWindow(pad::Manager&          gamepadManager,
-                           vts::Processor&        impulseProcessor,
+                           imp::Processor&        impulseProcessor,
                            ws::IController&       wsController,
                            vts::ParameterManager& paramManager) :
     _window(nullptr),

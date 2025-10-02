@@ -34,7 +34,7 @@ void ParameterManager::clear() {
 	_parameters.clear();
 }
 
-void ParameterManager::distributeImpulse(InputId id, float value) {
+void ParameterManager::distributeImpulse(imp::InputId id, float value) {
 	for (auto& parameter : values()) {
 		parameter.handleInput(id, value);
 	}

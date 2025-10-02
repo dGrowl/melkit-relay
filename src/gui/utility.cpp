@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 
-static const std::unordered_map<ImGuiKey, vts::TargetTag> imguiToUioKeyMap = {
+static const std::unordered_map<ImGuiKey, imp::TargetTag> imguiToUioKeyMap = {
     {ImGuiKey_Tab,            VC_TAB          },
     {ImGuiKey_LeftArrow,      VC_LEFT         },
     {ImGuiKey_RightArrow,     VC_RIGHT        },
@@ -126,8 +126,8 @@ static const std::unordered_map<ImGuiKey, vts::TargetTag> imguiToUioKeyMap = {
     {ImGuiKey_RightShift,     VC_SHIFT_R      },
 };
 
-std::unordered_map<vts::TargetTag, const char*> uioToStringMap = []() {
-	std::unordered_map<vts::TargetTag, const char*> map;
+std::unordered_map<imp::TargetTag, const char*> uioToStringMap = []() {
+	std::unordered_map<imp::TargetTag, const char*> map;
 	for (const auto& pair : imguiToUioKeyMap) {
 		map[pair.second] = ImGui::GetKeyName(pair.first);
 	}
@@ -140,7 +140,7 @@ KeycodeView validImGuiKeys() {
 	return imguiToUioKeyMap | std::views::keys;
 }
 
-vts::TargetTag convertImGuiToUioKey(const ImGuiKey keycode) {
+imp::TargetTag convertImGuiToUioKey(const ImGuiKey keycode) {
 	return imguiToUioKeyMap.at(keycode);
 }
 

@@ -15,7 +15,7 @@ static constexpr const char* DEFAULT_PARAMETER_NAME = "MK_NewParameter";
 
 float Parameter::calcInputSum() {
 	float total = 0;
-	for (InputData& data : _inputs | std::views::values) {
+	for (imp::InputData& data : _inputs | std::views::values) {
 		total += data.getValue();
 	}
 	return total;
@@ -24,7 +24,7 @@ float Parameter::calcInputSum() {
 float Parameter::calcMajorInput() {
 	float majorValue = 0;
 	float majorDelta = 0;
-	for (InputData& data : _inputs | std::views::values) {
+	for (imp::InputData& data : _inputs | std::views::values) {
 		const float delta = std::abs(data.getValue() - _defaultValue);
 		if ((delta > majorDelta)
 		    || (delta == majorDelta && data.getValue() > majorValue)) {
@@ -82,7 +82,7 @@ bool Parameter::isFresh() {
 	return false;
 }
 
-const InputData& Parameter::getInput(const InputId id) const {
+const imp::InputData& Parameter::getInput(const imp::InputId id) const {
 	return _inputs.at(id);
 }
 
@@ -114,7 +114,7 @@ float Parameter::getOutput() const {
 	return _output;
 }
 
-void Parameter::addInput(const InputId id, const bool isInverted) {
+void Parameter::addInput(const imp::InputId id, const bool isInverted) {
 	_inputs.emplace(std::piecewise_construct,
 	                std::forward_as_tuple(id),
 	                std::forward_as_tuple(id, isInverted));
@@ -126,7 +126,7 @@ void Parameter::clearInputs() {
 	updateBounds();
 }
 
-void Parameter::handleInput(const InputId id, const float value) {
+void Parameter::handleInput(const imp::InputId id, const float value) {
 	auto input = _inputs.find(id);
 	if (input == _inputs.end()) {
 		return;
@@ -135,7 +135,7 @@ void Parameter::handleInput(const InputId id, const float value) {
 	updateOutput();
 }
 
-void Parameter::removeInput(const InputId id) {
+void Parameter::removeInput(const imp::InputId id) {
 	_inputs.erase(id);
 	updateBounds();
 }

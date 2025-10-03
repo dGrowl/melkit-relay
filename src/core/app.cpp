@@ -96,8 +96,8 @@ void App::run() {
 		_config.render(_gpu);
 
 		_impulseProcessor.update();
-		for (const auto& [id, value] : _impulseProcessor.impulses()) {
-			_parameters.distributeImpulse(id, value);
+		for (const auto& [code, value] : _impulseProcessor.impulses()) {
+			_parameters.distributeImpulse(code, value);
 		}
 		checkParameterValues();
 		_impulseProcessor.clear();
@@ -123,7 +123,7 @@ void App::handleEvent(SDL_Event& event) {
 		ImGui_ImplSDL3_ProcessEvent(&event);
 	}
 	switch (event.type) {
-		case mnk::Event::INPUT:
+		case mnk::Event::ACTION:
 			_impulseProcessor.handleEvent(event.user);
 			break;
 		case ws::Event::OPEN:
@@ -210,8 +210,8 @@ void App::loadParameterSettings() {
 		}
 		else {
 			it->second.setBlendMode(settingsParameter.blendMode);
-			for (const auto& input : settingsParameter.inputs) {
-				it->second.addInput(input.id, input.isInverted);
+			for (const auto& receiver : settingsParameter.receivers) {
+				it->second.addImpulse(receiver.code, receiver.isInverted);
 			}
 		}
 	}

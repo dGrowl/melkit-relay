@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "impulse/input.hpp"
+#include "impulse/code.hpp"
 #include "math/geometry.hpp"
 #include "vts/parameter.hpp"
 
@@ -32,22 +32,22 @@ struct glz::meta<math::Rectangle<T>> {
 
 namespace core {
 
-struct SettingsInput {
-	imp::InputId id;
-	bool         isInverted;
+struct SettingsReceiver {
+	imp::Code code;
+	bool      isInverted;
 
 	struct glaze {
-		using T = SettingsInput;
+		using T = SettingsReceiver;
 
 		static constexpr auto value =
-		    glz::object("id", &T::id, "is_inverted", &T::isInverted);
+		    glz::object("code", &T::code, "is_inverted", &T::isInverted);
 	};
 };
 
 struct SettingsParameter {
-	std::string                name;
-	vts::BlendMode             blendMode;
-	std::vector<SettingsInput> inputs;
+	std::string                   name;
+	vts::BlendMode                blendMode;
+	std::vector<SettingsReceiver> receivers;
 
 	struct glaze {
 		using T = SettingsParameter;
@@ -57,7 +57,7 @@ struct SettingsParameter {
 		                                          "blend_mode",
 		                                          &T::blendMode,
 		                                          "inputs",
-		                                          &T::inputs);
+		                                          &T::receivers);
 	};
 };
 

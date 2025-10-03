@@ -203,34 +203,34 @@ void drawIconOrDefault(const imp::TargetTag target,
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, alpha), iconString);
 }
 
-void drawIcon(const imp::InputId id, const float alpha) {
-	const imp::InputId event  = id & 0xFFFF;
-	const imp::InputId target = id & 0xFFFF0000;
-	Fonts::push(FontType::INPUT);
+void drawIcon(const imp::Code code, const float alpha) {
+	const imp::EventTag::T event  = code & 0xFFFF;
+	const imp::TargetTag   target = code & 0xFFFF0000;
+	Fonts::push(FontType::IMPULSE);
 	switch (event) {
-		case imp::InputEvent::KEY:
+		case imp::EventTag::KEY:
 			drawIconOrDefault(target >> 16, alpha, keyStrings, "\u248F");
 			break;
-		case imp::InputEvent::MOUSE_BUTTON:
+		case imp::EventTag::MOUSE_BUTTON:
 			drawIconOrDefault(target, alpha, mouseButtonStrings, "\u2791");
 			break;
-		case imp::InputEvent::MOUSE_WHEEL:
+		case imp::EventTag::MOUSE_WHEEL:
 			drawIconOrDefault(target, alpha, mouseWheelStrings, "\u27F2");
 			break;
-		case imp::InputEvent::MOUSE_MOVE_ABS:
-		case imp::InputEvent::MOUSE_MOVE_REL:
+		case imp::EventTag::MOUSE_MOVE_ABS:
+		case imp::EventTag::MOUSE_MOVE_REL:
 			drawIconOrDefault(target, alpha, mouseMoveStrings, "\u27FC");
 			break;
-		case imp::InputEvent::GAMEPAD_BUTTON:
+		case imp::EventTag::GAMEPAD_BUTTON:
 			drawIconOrDefault(target, alpha, gamepadButtonStrings, "\u21A8");
 			break;
-		case imp::InputEvent::GAMEPAD_TRIGGER:
+		case imp::EventTag::GAMEPAD_TRIGGER:
 			drawIconOrDefault(target, alpha, gamepadTriggerStrings, "\u21EA");
 			break;
-		case imp::InputEvent::GAMEPAD_STICK_LEFT:
+		case imp::EventTag::GAMEPAD_STICK_LEFT:
 			drawIconOrDefault(target, alpha, gamepadStickLeftStrings, "\u21CB");
 			break;
-		case imp::InputEvent::GAMEPAD_STICK_RIGHT:
+		case imp::EventTag::GAMEPAD_STICK_RIGHT:
 			drawIconOrDefault(target, alpha, gamepadStickRightStrings, "\u21CC");
 			break;
 	}

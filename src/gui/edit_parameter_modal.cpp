@@ -59,58 +59,58 @@ static constexpr auto NAME_PREFIX = "MK_";
 static constexpr int  NAME_PREFIX_LENGTH =
     std::char_traits<char>::length(NAME_PREFIX);
 
-struct InputStrings {
+struct ImpulseStrings {
 	const char* device = UNKNOWN;
 	const char* event  = UNKNOWN;
 	const char* target = UNKNOWN;
 };
 
-InputStrings getInputStrings(const imp::InputId id) {
-	InputStrings         strings;
-	const imp::EventTag  event  = id & 0xFFFF;
-	const imp::TargetTag target = id >> 16;
+ImpulseStrings getImpulseStrings(const imp::Code code) {
+	ImpulseStrings         strings;
+	const imp::EventTag::T event  = code & 0xFFFF;
+	const imp::TargetTag   target = code >> 16;
 	switch (event) {
-		case imp::InputEvent::KEY:
+		case imp::EventTag::KEY:
 			strings.device = DEVICE_KEYBOARD;
 			strings.event  = KEY_EVENT_PRESS;
 			strings.target = getUioKeyName(target);
 			break;
-		case imp::InputEvent::MOUSE_BUTTON:
+		case imp::EventTag::MOUSE_BUTTON:
 			strings.device = DEVICE_MOUSE;
 			strings.event  = MOUSE_EVENT_BUTTON;
 			strings.target = MOUSE_BUTTONS[target - 1];
 			break;
-		case imp::InputEvent::MOUSE_WHEEL:
+		case imp::EventTag::MOUSE_WHEEL:
 			strings.device = DEVICE_MOUSE;
 			strings.event  = MOUSE_EVENT_WHEEL;
 			strings.target = WHEEL_DIRECTIONS[target - 1];
 			break;
-		case imp::InputEvent::MOUSE_MOVE_ABS:
+		case imp::EventTag::MOUSE_MOVE_ABS:
 			strings.device = DEVICE_MOUSE;
 			strings.event  = MOUSE_EVENT_MOVE_ABS;
 			strings.target = AXES[target - 1];
 			break;
-		case imp::InputEvent::MOUSE_MOVE_REL:
+		case imp::EventTag::MOUSE_MOVE_REL:
 			strings.device = DEVICE_MOUSE;
 			strings.event  = MOUSE_EVENT_MOVE_REL;
 			strings.target = AXES[target - 1];
 			break;
-		case imp::InputEvent::GAMEPAD_BUTTON:
+		case imp::EventTag::GAMEPAD_BUTTON:
 			strings.device = DEVICE_GAMEPAD;
 			strings.event  = GAMEPAD_EVENT_BUTTON;
 			strings.target = GAMEPAD_BUTTONS[target - 1];
 			break;
-		case imp::InputEvent::GAMEPAD_TRIGGER:
+		case imp::EventTag::GAMEPAD_TRIGGER:
 			strings.device = DEVICE_GAMEPAD;
 			strings.event  = GAMEPAD_EVENT_TRIGGER;
 			strings.target = GAMEPAD_TRIGGERS[target - 1];
 			break;
-		case imp::InputEvent::GAMEPAD_STICK_LEFT:
+		case imp::EventTag::GAMEPAD_STICK_LEFT:
 			strings.device = DEVICE_GAMEPAD;
 			strings.event  = GAMEPAD_EVENT_STICK_LEFT;
 			strings.target = AXES[target - 1];
 			break;
-		case imp::InputEvent::GAMEPAD_STICK_RIGHT:
+		case imp::EventTag::GAMEPAD_STICK_RIGHT:
 			strings.device = DEVICE_GAMEPAD;
 			strings.event  = GAMEPAD_EVENT_STICK_RIGHT;
 			strings.target = AXES[target - 1];
@@ -119,15 +119,15 @@ InputStrings getInputStrings(const imp::InputId id) {
 	return strings;
 }
 
-void EditParameterModal::showAddInput() {
+void EditParameterModal::showAddImpulse() {
 	if (ImGui::Button("Add", ImVec2(128.0f, 0.0f))) {
-		ImGui::OpenPopup(AddInputModal::NAME);
+		ImGui::OpenPopup(AddImpulseModal::NAME);
 	}
 
-	_addInputModal.show();
+	_addImpulseModal.show();
 }
 
-void EditParameterModal::showInputs() {
+void EditParameterModal::showImpulses() {
 	{
 		FONT_SCOPE(FontType::BOLD);
 		ImGui::SeparatorText("Input");
@@ -146,14 +146,14 @@ void EditParameterModal::showInputs() {
 		ImGui::TableSetupColumn("Invert", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
 		ImGui::TableSetupColumn("Remove", ImGuiTableColumnFlags_WidthFixed);
-		if (_editingParameter.hasInputs()) {
+		if (_editingParameter.hasImpulses()) {
 			ImGui::TableHeadersRow();
 		}
 
-		for (auto& [id, data] : _editingParameter.getInputs()) {
-			ImGui::PushID(id);
+		for (auto& [code, data] : _editingParameter.getReceivers()) {
+			ImGui::PushID(code);
 
-			auto fields = getInputStrings(id);
+			auto fields = getImpulseStrings(code);
 
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
@@ -166,7 +166,7 @@ void EditParameterModal::showInputs() {
 			ImGui::Text(fields.target);
 
 			ImGui::TableNextColumn();
-			if (ImGui::Checkbox("##invert-value", &data.isInvertedRef())) {
+			if (ImGui::Checkbox("##invert-impulse", &data.isInvertedRef())) {
 				_editingParameter.updateBounds();
 			}
 
@@ -174,7 +174,7 @@ void EditParameterModal::showInputs() {
 			ImGui::SetNextItemWidth(128.0f);
 			ImGui::BeginDisabled();
 			float value = data.getValue();
-			ImGui::SliderFloat("##input-value",
+			ImGui::SliderFloat("##impulse-value",
 			                   &value,
 			                   data.getMin(),
 			                   data.getMax(),
@@ -185,7 +185,7 @@ void EditParameterModal::showInputs() {
 			ImGui::TableNextColumn();
 			const float rowHeight = ImGui::GetTextLineHeightWithSpacing();
 			if (ImGui::Button("X", ImVec2(rowHeight, rowHeight))) {
-				_inputIdToDelete = id;
+				_impulseCodeToDelete = code;
 			}
 
 			ImGui::PopID();
@@ -211,13 +211,13 @@ void EditParameterModal::showMeta() {
 		ImGui::TableNextColumn();
 		ImGui::Text("Name");
 		ImGui::TableNextColumn();
-		if (ImGui::InputText("##name-input",
-		                     _nameInputBuffer,
-		                     IM_ARRAYSIZE(_nameInputBuffer),
+		if (ImGui::InputText("##name-field",
+		                     _nameFieldBuffer,
+		                     IM_ARRAYSIZE(_nameFieldBuffer),
 		                     ImGuiInputTextFlags_CallbackAlways,
 		                     inputNameCallback,
 		                     this)) {
-			_editingParameter.setName(_nameInputBuffer);
+			_editingParameter.setName(_nameFieldBuffer);
 		};
 
 		ImGui::EndTable();
@@ -303,12 +303,12 @@ int EditParameterModal::inputNameCallback(ImGuiInputTextCallbackData* data) {
 	return instance->restrictInputName(data);
 }
 
-void EditParameterModal::checkDeleteInput() {
-	if (_inputIdToDelete == 0) {
+void EditParameterModal::checkDeleteImpulse() {
+	if (_impulseCodeToDelete == 0) {
 		return;
 	}
-	_editingParameter.removeInput(_inputIdToDelete);
-	_inputIdToDelete = 0;
+	_editingParameter.removeImpulse(_impulseCodeToDelete);
+	_impulseCodeToDelete = 0;
 }
 
 void EditParameterModal::save() {
@@ -335,15 +335,15 @@ EditParameterModal::EditParameterModal(ws::IController& wsController,
                                        vts::Parameter&  editingParameter) :
     _wsController(wsController),
     _editingParameter(editingParameter),
-    _addInputModal(editingParameter),
+    _addImpulseModal(editingParameter),
     _blendModeSelector("##blend-mode-selector", BLEND_MODES),
     _outputHistory{},
     _outputOffset(0),
-    _inputIdToDelete(0) {}
+    _impulseCodeToDelete(0) {}
 
 void EditParameterModal::refresh() {
 	_initialName = _editingParameter.getName();
-	SDL_strlcpy(_nameInputBuffer, _initialName.c_str(), MAX_NAME_BUFFER_LENGTH);
+	SDL_strlcpy(_nameFieldBuffer, _initialName.c_str(), MAX_NAME_BUFFER_LENGTH);
 	_outputHistory.fill(0.0f);
 	switch (_editingParameter.getBlendMode()) {
 		case vts::BlendMode::MAX:
@@ -364,10 +364,10 @@ void EditParameterModal::show() {
 	                               | ImGuiWindowFlags_NoNav
 	                               | ImGuiWindowFlags_NoSavedSettings)) {
 		showMeta();
-		showInputs();
-		showAddInput();
+		showImpulses();
+		showAddImpulse();
 		showOutput();
-		checkDeleteInput();
+		checkDeleteImpulse();
 
 		if (ImGui::Button("Save", ImVec2(128.0f, 0.0f))) {
 			save();

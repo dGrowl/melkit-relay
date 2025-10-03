@@ -170,8 +170,8 @@ void SettingsManager::setParameter(const vts::Parameter& parameter) {
 	auto& newParameter = _data.parameters.emplace_back(parameter.getName(),
 	                                                   parameter.getBlendMode());
 
-	for (const auto& [inputId, input] : parameter.getInputs()) {
-		newParameter.inputs.emplace_back(inputId, input.getIsInverted());
+	for (const auto& [code, receiver] : parameter.getReceivers()) {
+		newParameter.receivers.emplace_back(code, receiver.getIsInverted());
 	}
 
 	saveUnlocked();

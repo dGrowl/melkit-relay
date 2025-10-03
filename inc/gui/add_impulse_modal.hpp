@@ -1,5 +1,5 @@
-#ifndef GUI_ADD_INPUT_MODAL_HPP_
-#define GUI_ADD_INPUT_MODAL_HPP_
+#ifndef GUI_ADD_IMPULSE_MODAL_HPP_
+#define GUI_ADD_IMPULSE_MODAL_HPP_
 
 #include <string>
 
@@ -10,7 +10,7 @@
 
 namespace gui {
 
-class AddInputModal {
+class AddImpulseModal {
 private:
 	std::string _selectedKeyName;
 	ImGuiKey    _selectedKey;
@@ -33,11 +33,11 @@ private:
 	imp::TargetTag getMouseButtonTag() const;
 	imp::TargetTag getMouseWheelTag() const;
 
+	imp::Code      getGamepadStickActionCode(const bool isLeftStick) const;
 	imp::TargetTag getGamepadButtonTag() const;
-	imp::TargetTag getGamepadStickActionTag(const bool isLeftStick) const;
 	imp::TargetTag getGamepadTriggerTag() const;
 
-	imp::InputId buildInputId() const;
+	imp::Code buildImpulseCode() const;
 
 	void showCloseButtons();
 	void showDeviceSelector();
@@ -57,7 +57,7 @@ private:
 	void showGamepadTriggerSelector();
 
 public:
-	AddInputModal(vts::Parameter& editingParameter);
+	AddImpulseModal(vts::Parameter& editingParameter);
 	void show();
 
 	constexpr static const char* NAME = "Add Input";
@@ -65,4 +65,4 @@ public:
 
 }  // namespace gui
 
-#endif  // GUI_ADD_INPUT_MODAL_HPP_
+#endif  // GUI_ADD_IMPULSE_MODAL_HPP_

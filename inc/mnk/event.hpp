@@ -8,8 +8,8 @@ namespace mnk {
 constexpr int N_EVENTS = 2;
 
 enum Event : Uint32 {
-	START = SDL_EVENT_USER,
-	INPUT = START + 1
+	START  = SDL_EVENT_USER,
+	ACTION = START + 1
 };
 
 void allocateEvents();

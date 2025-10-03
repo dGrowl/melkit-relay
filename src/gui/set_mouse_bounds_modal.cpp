@@ -4,15 +4,15 @@
 
 #include "gui/fonts.hpp"
 #include "gui/utility.hpp"
-#include "impulse/input.hpp"
+#include "impulse/code.hpp"
 #include "impulse/processor.hpp"
 #include "vts/parameter.hpp"
 
-constexpr imp::InputId MOUSE_POSITION_X_INPUT =
-    imp::Axis::X | imp::InputEvent::MOUSE_MOVE_ABS;
+constexpr imp::Code MOUSE_POSITION_X_IMPULSE =
+    imp::Axis::X | imp::EventTag::MOUSE_MOVE_ABS;
 
-constexpr imp::InputId MOUSE_POSITION_Y_INPUT =
-    imp::Axis::Y | imp::InputEvent::MOUSE_MOVE_ABS;
+constexpr imp::Code MOUSE_POSITION_Y_IMPULSE =
+    imp::Axis::Y | imp::EventTag::MOUSE_MOVE_ABS;
 
 constexpr float COORDINATE_FIELD_WIDTH = 100.0f;
 
@@ -43,8 +43,8 @@ void SetMouseBoundsModal::refresh() {
 	_cornerTwo.x      = _currentBounds.right;
 	_cornerTwo.y      = _currentBounds.bottom;
 	_editingParameter = vts::Parameter();
-	_editingParameter.addInput(MOUSE_POSITION_X_INPUT);
-	_editingParameter.addInput(MOUSE_POSITION_Y_INPUT);
+	_editingParameter.addImpulse(MOUSE_POSITION_X_IMPULSE);
+	_editingParameter.addImpulse(MOUSE_POSITION_Y_IMPULSE);
 }
 
 void SetMouseBoundsModal::show() {
@@ -137,8 +137,8 @@ void SetMouseBoundsModal::show() {
 			ImGui::EndTable();
 		}
 
-		const auto& mouseXInput = _editingParameter.getInput(MOUSE_POSITION_X_INPUT);
-		const auto& mouseYInput = _editingParameter.getInput(MOUSE_POSITION_Y_INPUT);
+		const auto& mouseX = _editingParameter.getReceiver(MOUSE_POSITION_X_IMPULSE);
+		const auto& mouseY = _editingParameter.getReceiver(MOUSE_POSITION_Y_IMPULSE);
 		{
 			FONT_SCOPE(FontType::BOLD);
 			ImGui::SeparatorText("Live Values");
@@ -168,11 +168,11 @@ void SetMouseBoundsModal::show() {
 			ImGui::TableNextColumn();
 			ImGui::SetNextItemWidth(128.0f);
 			ImGui::BeginDisabled();
-			float xValue = mouseXInput.getValue();
-			ImGui::SliderFloat("##x-input-value",
+			float xValue = mouseX.getValue();
+			ImGui::SliderFloat("##x-value",
 			                   &xValue,
-			                   mouseXInput.getMin(),
-			                   mouseXInput.getMax(),
+			                   mouseX.getMin(),
+			                   mouseX.getMax(),
 			                   "%.3f",
 			                   ImGuiSliderFlags_NoInput);
 			ImGui::EndDisabled();
@@ -190,11 +190,11 @@ void SetMouseBoundsModal::show() {
 			ImGui::TableNextColumn();
 			ImGui::SetNextItemWidth(128.0f);
 			ImGui::BeginDisabled();
-			float yValue = mouseYInput.getValue();
-			ImGui::SliderFloat("##y-input-value",
+			float yValue = mouseY.getValue();
+			ImGui::SliderFloat("##y-value",
 			                   &yValue,
-			                   mouseYInput.getMin(),
-			                   mouseYInput.getMax(),
+			                   mouseY.getMin(),
+			                   mouseY.getMax(),
 			                   "%.3f",
 			                   ImGuiSliderFlags_NoInput);
 			ImGui::EndDisabled();

@@ -1,4 +1,4 @@
-#include "gui/add_input_modal.hpp"
+#include "gui/add_impulse_modal.hpp"
 
 #include <string>
 #include <vector>
@@ -86,7 +86,7 @@ static constexpr unsigned GAMEPAD_SIDE_RIGHT = 1;
 
 static std::vector<const char*> GAMEPAD_SIDES{"Left", "Right"};
 
-imp::TargetTag AddInputModal::getMouseAxisTag() const {
+imp::Axis::T AddImpulseModal::getMouseAxisTag() const {
 	switch (_mouseAxisSelector.getIndex()) {
 		case MOUSE_AXIS_X:
 			return imp::Axis::X;
@@ -96,7 +96,7 @@ imp::TargetTag AddInputModal::getMouseAxisTag() const {
 	return 0;
 }
 
-imp::TargetTag AddInputModal::getMouseButtonTag() const {
+imp::MouseButton::T AddImpulseModal::getMouseButtonTag() const {
 	switch (_mouseButtonSelector.getIndex()) {
 		case MOUSE_BUTTON_LEFT:
 			return imp::MouseButton::LEFT;
@@ -108,7 +108,7 @@ imp::TargetTag AddInputModal::getMouseButtonTag() const {
 	return 0;
 }
 
-imp::TargetTag AddInputModal::getMouseWheelTag() const {
+imp::MouseWheel::T AddImpulseModal::getMouseWheelTag() const {
 	switch (_mouseWheelSelector.getIndex()) {
 		case MOUSE_WHEEL_UP:
 			return imp::MouseWheel::UP;
@@ -118,7 +118,30 @@ imp::TargetTag AddInputModal::getMouseWheelTag() const {
 	return 0;
 }
 
-imp::TargetTag AddInputModal::getGamepadButtonTag() const {
+imp::Code AddImpulseModal::getGamepadStickActionCode(
+    const bool isLeftStick) const {
+	imp::Code code = 0;
+	switch (_gamepadStickActionSelector.getIndex()) {
+		case GAMEPAD_STICK_ACTION_X:
+			code |= isLeftStick ? imp::EventTag::GAMEPAD_STICK_LEFT
+			                    : imp::EventTag::GAMEPAD_STICK_RIGHT;
+			code |= imp::Axis::X;
+			break;
+		case GAMEPAD_STICK_ACTION_Y:
+			code |= isLeftStick ? imp::EventTag::GAMEPAD_STICK_LEFT
+			                    : imp::EventTag::GAMEPAD_STICK_RIGHT;
+			code |= imp::Axis::Y;
+			break;
+		case GAMEPAD_STICK_ACTION_PRESS:
+			code |= imp::EventTag::GAMEPAD_BUTTON;
+			code |= isLeftStick ? imp::GamepadButton::LEFT_STICK
+			                    : imp::GamepadButton::RIGHT_STICK;
+			break;
+	}
+	return code;
+}
+
+imp::GamepadButton::T AddImpulseModal::getGamepadButtonTag() const {
 	switch (_gamepadButtonSelector.getIndex()) {
 		case GAMEPAD_BUTTON_NORTH:
 			return imp::GamepadButton::NORTH;
@@ -144,30 +167,7 @@ imp::TargetTag AddInputModal::getGamepadButtonTag() const {
 	return 0;
 }
 
-imp::TargetTag AddInputModal::getGamepadStickActionTag(
-    const bool isLeftStick) const {
-	imp::TargetTag id = 0;
-	switch (_gamepadStickActionSelector.getIndex()) {
-		case GAMEPAD_STICK_ACTION_X:
-			id |= isLeftStick ? imp::InputEvent::GAMEPAD_STICK_LEFT
-			                  : imp::InputEvent::GAMEPAD_STICK_RIGHT;
-			id |= imp::Axis::X;
-			break;
-		case GAMEPAD_STICK_ACTION_Y:
-			id |= isLeftStick ? imp::InputEvent::GAMEPAD_STICK_LEFT
-			                  : imp::InputEvent::GAMEPAD_STICK_RIGHT;
-			id |= imp::Axis::Y;
-			break;
-		case GAMEPAD_STICK_ACTION_PRESS:
-			id |= imp::InputEvent::GAMEPAD_BUTTON;
-			id |= isLeftStick ? imp::GamepadButton::LEFT_STICK
-			                  : imp::GamepadButton::RIGHT_STICK;
-			break;
-	}
-	return id;
-}
-
-imp::TargetTag AddInputModal::getGamepadTriggerTag() const {
+imp::TargetTag AddImpulseModal::getGamepadTriggerTag() const {
 	switch (_gamepadTriggerSelector.getIndex()) {
 		case GAMEPAD_SIDE_LEFT:
 			return imp::Side::LEFT;
@@ -177,63 +177,63 @@ imp::TargetTag AddInputModal::getGamepadTriggerTag() const {
 	return 0;
 }
 
-imp::InputId AddInputModal::buildInputId() const {
-	imp::InputId id     = 0;
-	const auto   device = _deviceSelector.getIndex();
+imp::Code AddImpulseModal::buildImpulseCode() const {
+	imp::Code  code   = 0;
+	const auto device = _deviceSelector.getIndex();
 	if (device == DEVICE_MOUSE) {
 		const auto event = _mouseEventSelector.getIndex();
 		switch (event) {
 			case MOUSE_EVENT_BUTTON:
-				id |= imp::InputEvent::MOUSE_BUTTON;
-				id |= getMouseButtonTag();
+				code |= imp::EventTag::MOUSE_BUTTON;
+				code |= getMouseButtonTag();
 				break;
 			case MOUSE_EVENT_WHEEL:
-				id |= imp::InputEvent::MOUSE_WHEEL;
-				id |= getMouseWheelTag();
+				code |= imp::EventTag::MOUSE_WHEEL;
+				code |= getMouseWheelTag();
 				break;
 			case MOUSE_EVENT_MOVE_ABSOLUTE:
-				id |= imp::InputEvent::MOUSE_MOVE_ABS;
-				id |= getMouseAxisTag();
+				code |= imp::EventTag::MOUSE_MOVE_ABS;
+				code |= getMouseAxisTag();
 				break;
 			case MOUSE_EVENT_MOVE_RELATIVE:
-				id |= imp::InputEvent::MOUSE_MOVE_REL;
-				id |= getMouseAxisTag();
+				code |= imp::EventTag::MOUSE_MOVE_REL;
+				code |= getMouseAxisTag();
 				break;
 		}
 	}
 	else if (device == DEVICE_KEYBOARD) {
-		id |= imp::InputEvent::KEY;
+		code |= imp::EventTag::KEY;
 		if (_selectedKey != ImGuiKey_None) {
-			id |= gui::convertImGuiToUioKey(_selectedKey) << 16;
+			code |= gui::convertImGuiToUioKey(_selectedKey) << 16;
 		}
 	}
 	else if (device == DEVICE_GAMEPAD) {
 		const auto event = _gamepadEventSelector.getIndex();
 		switch (event) {
 			case GAMEPAD_EVENT_BUTTON:
-				id |= imp::InputEvent::GAMEPAD_BUTTON;
-				id |= getGamepadButtonTag();
+				code |= imp::EventTag::GAMEPAD_BUTTON;
+				code |= getGamepadButtonTag();
 				break;
 			case GAMEPAD_EVENT_LEFT_STICK:
-				id |= getGamepadStickActionTag(true);
+				code = getGamepadStickActionCode(true);
 				break;
 			case GAMEPAD_EVENT_RIGHT_STICK:
-				id |= getGamepadStickActionTag(false);
+				code = getGamepadStickActionCode(false);
 				break;
 			case GAMEPAD_EVENT_TRIGGER:
-				id |= imp::InputEvent::GAMEPAD_TRIGGER;
-				id |= getGamepadTriggerTag();
+				code |= imp::EventTag::GAMEPAD_TRIGGER;
+				code |= getGamepadTriggerTag();
 				break;
 		}
 	};
-	return id;
+	return code;
 }
 
-void AddInputModal::showCloseButtons() {
+void AddImpulseModal::showCloseButtons() {
 	if (ImGui::Button("Add", ImVec2(128.0f, 0.0f))) {
-		imp::InputId id = buildInputId();
-		if (id != imp::InputEvent::KEY) {
-			_editingParameter.addInput(id);
+		imp::Code code = buildImpulseCode();
+		if (code != imp::EventTag::KEY) {
+			_editingParameter.addImpulse(code);
 			ImGui::CloseCurrentPopup();
 		}
 	}
@@ -244,7 +244,7 @@ void AddInputModal::showCloseButtons() {
 	}
 }
 
-void AddInputModal::showDeviceSelector() {
+void AddImpulseModal::showDeviceSelector() {
 	ImGui::TableNextRow();
 	ImGui::TableNextColumn();
 	ImGui::Text("Device");
@@ -252,7 +252,7 @@ void AddInputModal::showDeviceSelector() {
 	_deviceSelector.show();
 }
 
-void AddInputModal::showMouseEventSelector() {
+void AddImpulseModal::showMouseEventSelector() {
 	ImGui::TableNextRow();
 	ImGui::TableNextColumn();
 	ImGui::Text("Event");
@@ -260,7 +260,7 @@ void AddInputModal::showMouseEventSelector() {
 	_mouseEventSelector.show();
 }
 
-void AddInputModal::showMouseButtonSelector() {
+void AddImpulseModal::showMouseButtonSelector() {
 	ImGui::TableNextRow();
 	ImGui::TableNextColumn();
 	ImGui::Text("Button");
@@ -268,7 +268,7 @@ void AddInputModal::showMouseButtonSelector() {
 	_mouseButtonSelector.show();
 }
 
-void AddInputModal::showMouseAxisSelector() {
+void AddImpulseModal::showMouseAxisSelector() {
 	ImGui::TableNextRow();
 	ImGui::TableNextColumn();
 	ImGui::Text("Axis");
@@ -276,7 +276,7 @@ void AddInputModal::showMouseAxisSelector() {
 	_mouseAxisSelector.show();
 }
 
-void AddInputModal::showMouseWheelSelector() {
+void AddImpulseModal::showMouseWheelSelector() {
 	ImGui::TableNextRow();
 	ImGui::TableNextColumn();
 	ImGui::Text("Direction");
@@ -284,7 +284,7 @@ void AddInputModal::showMouseWheelSelector() {
 	_mouseWheelSelector.show();
 }
 
-void AddInputModal::showMouseControls() {
+void AddImpulseModal::showMouseControls() {
 	showMouseEventSelector();
 	switch (_mouseEventSelector.getIndex()) {
 		case MOUSE_EVENT_BUTTON:
@@ -300,7 +300,7 @@ void AddInputModal::showMouseControls() {
 	}
 }
 
-void AddInputModal::showKeyboardControls() {
+void AddImpulseModal::showKeyboardControls() {
 	ImGui::TableNextRow();
 	ImGui::TableNextColumn();
 	ImGui::Text("Event");
@@ -326,7 +326,7 @@ void AddInputModal::showKeyboardControls() {
 	                 ImGuiInputTextFlags_ReadOnly);
 }
 
-void AddInputModal::showGamepadButtonSelector() {
+void AddImpulseModal::showGamepadButtonSelector() {
 	ImGui::TableNextRow();
 	ImGui::TableNextColumn();
 	ImGui::Text("Button");
@@ -334,7 +334,7 @@ void AddInputModal::showGamepadButtonSelector() {
 	_gamepadButtonSelector.show();
 }
 
-void AddInputModal::showGamepadControls() {
+void AddImpulseModal::showGamepadControls() {
 	showGamepadEventSelector();
 	switch (_gamepadEventSelector.getIndex()) {
 		case GAMEPAD_EVENT_BUTTON:
@@ -350,7 +350,7 @@ void AddInputModal::showGamepadControls() {
 	}
 }
 
-void AddInputModal::showGamepadEventSelector() {
+void AddImpulseModal::showGamepadEventSelector() {
 	ImGui::TableNextRow();
 	ImGui::TableNextColumn();
 	ImGui::Text("Event");
@@ -358,7 +358,7 @@ void AddInputModal::showGamepadEventSelector() {
 	_gamepadEventSelector.show();
 }
 
-void AddInputModal::showGamepadStickActionSelector() {
+void AddImpulseModal::showGamepadStickActionSelector() {
 	ImGui::TableNextRow();
 	ImGui::TableNextColumn();
 	ImGui::Text("Action");
@@ -366,7 +366,7 @@ void AddInputModal::showGamepadStickActionSelector() {
 	_gamepadStickActionSelector.show();
 }
 
-void AddInputModal::showGamepadTriggerSelector() {
+void AddImpulseModal::showGamepadTriggerSelector() {
 	ImGui::TableNextRow();
 	ImGui::TableNextColumn();
 	ImGui::Text("Side");
@@ -374,7 +374,7 @@ void AddInputModal::showGamepadTriggerSelector() {
 	_gamepadTriggerSelector.show();
 }
 
-AddInputModal::AddInputModal(vts::Parameter& editingParameter) :
+AddImpulseModal::AddImpulseModal(vts::Parameter& editingParameter) :
     _selectedKeyName(),
     _selectedKey(ImGuiKey_None),
     _editingParameter(editingParameter),
@@ -389,7 +389,7 @@ AddInputModal::AddInputModal(vts::Parameter& editingParameter) :
                                 GAMEPAD_STICK_ACTIONS),
     _gamepadTriggerSelector("##gamepad-trigger-selector", GAMEPAD_SIDES) {}
 
-void AddInputModal::show() {
+void AddImpulseModal::show() {
 	centerNextWindow();
 	if (ImGui::BeginPopupModal(NAME,
 	                           nullptr,

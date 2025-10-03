@@ -4,14 +4,14 @@
 
 static constexpr auto DEFAULT_FONT_PATH = "./font/NotoSans-Medium.ttf";
 static constexpr auto BOLD_FONT_PATH    = "./font/NotoSans-Bold.ttf";
-static constexpr auto INPUT_FONT_PATH   = "./font/promptfont.ttf";
+static constexpr auto IMPULSE_FONT_PATH = "./font/promptfont.ttf";
 
 static constexpr float DEFAULT_SIZE = 20.0f;
 static constexpr float ICON_SIZE    = 32.0f;
 
 static ImFont* DEFAULT_FONT = nullptr;
 static ImFont* BOLD_FONT    = nullptr;
-static ImFont* INPUT_FONT   = nullptr;
+static ImFont* IMPULSE_FONT = nullptr;
 
 namespace gui {
 
@@ -35,8 +35,8 @@ FontScope Fonts::scope(const FontType type) {
 			return FontScope(DEFAULT_FONT, DEFAULT_SIZE);
 		case FontType::BOLD:
 			return FontScope(BOLD_FONT, DEFAULT_SIZE);
-		case FontType::INPUT:
-			return FontScope(INPUT_FONT, ICON_SIZE);
+		case FontType::IMPULSE:
+			return FontScope(IMPULSE_FONT, ICON_SIZE);
 	}
 	return FontScope(DEFAULT_FONT, DEFAULT_SIZE);
 }
@@ -52,7 +52,7 @@ void Fonts::init() {
 	ImFontConfig iconConfig;
 	iconConfig.GlyphOffset.y = -4.0f;
 
-	INPUT_FONT = loadTtf(INPUT_FONT_PATH, &iconConfig);
+	IMPULSE_FONT = loadTtf(IMPULSE_FONT_PATH, &iconConfig);
 }
 
 void Fonts::push(const FontType type) {
@@ -64,8 +64,8 @@ void Fonts::push(const FontType type) {
 			ImGui::PushFont(BOLD_FONT, DEFAULT_SIZE);
 			return;
 			return;
-		case FontType::INPUT:
-			ImGui::PushFont(INPUT_FONT, ICON_SIZE);
+		case FontType::IMPULSE:
+			ImGui::PushFont(IMPULSE_FONT, ICON_SIZE);
 			return;
 	}
 	ImGuiIO& io = ImGui::GetIO();

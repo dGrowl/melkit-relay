@@ -9,7 +9,7 @@
 #include "libuiohook/uiohook.h"
 
 #include "core/settings.hpp"
-#include "impulse/input.hpp"
+#include "impulse/code.hpp"
 #include "math/formula.hpp"
 #include "math/geometry.hpp"
 #include "mnk/event.hpp"
@@ -85,103 +85,103 @@ static constexpr float transformMouseWheel(float x) {
 namespace imp {
 
 void Processor::handleGamepadAxisMotion(SDL_GamepadAxisEvent& event) {
-	InputId id    = 0;
-	float   value = event.value;
+	Code  code  = 0;
+	float value = event.value;
 	switch (event.axis) {
 		case SDL_GAMEPAD_AXIS_LEFTX:
-			id |= InputEvent::GAMEPAD_STICK_LEFT;
-			id |= Axis::X;
+			code |= EventTag::GAMEPAD_STICK_LEFT;
+			code |= Axis::X;
 			value = transformStick(value);
 			break;
 		case SDL_GAMEPAD_AXIS_LEFTY:
-			id |= InputEvent::GAMEPAD_STICK_LEFT;
-			id |= Axis::Y;
+			code |= EventTag::GAMEPAD_STICK_LEFT;
+			code |= Axis::Y;
 			value = transformStick(value, 1.0f, -1.0f);
 			break;
 		case SDL_GAMEPAD_AXIS_RIGHTX:
-			id |= InputEvent::GAMEPAD_STICK_RIGHT;
-			id |= Axis::X;
+			code |= EventTag::GAMEPAD_STICK_RIGHT;
+			code |= Axis::X;
 			value = transformStick(value);
 			break;
 		case SDL_GAMEPAD_AXIS_RIGHTY:
-			id |= InputEvent::GAMEPAD_STICK_RIGHT;
-			id |= Axis::Y;
+			code |= EventTag::GAMEPAD_STICK_RIGHT;
+			code |= Axis::Y;
 			value = transformStick(value, 1.0f, -1.0f);
 			break;
 		case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
-			id |= InputEvent::GAMEPAD_TRIGGER;
-			id |= Side::LEFT;
+			code |= EventTag::GAMEPAD_TRIGGER;
+			code |= Side::LEFT;
 			value = transformTrigger(value);
 			break;
 		case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
-			id |= InputEvent::GAMEPAD_TRIGGER;
-			id |= Side::RIGHT;
+			code |= EventTag::GAMEPAD_TRIGGER;
+			code |= Side::RIGHT;
 			value = transformTrigger(value);
 			break;
 	}
-	_queue.emplace_back(id, value);
+	_queue.emplace_back(code, value);
 }
 
 void Processor::handleGamepadButton(SDL_GamepadButtonEvent& event,
                                     const bool              isClicked) {
-	InputId id = InputEvent::GAMEPAD_BUTTON;
+	Code code = EventTag::GAMEPAD_BUTTON;
 	switch (event.button) {
 		case SDL_GAMEPAD_BUTTON_NORTH:
-			id |= GamepadButton::NORTH;
+			code |= GamepadButton::NORTH;
 			break;
 		case SDL_GAMEPAD_BUTTON_SOUTH:
-			id |= GamepadButton::SOUTH;
+			code |= GamepadButton::SOUTH;
 			break;
 		case SDL_GAMEPAD_BUTTON_WEST:
-			id |= GamepadButton::WEST;
+			code |= GamepadButton::WEST;
 			break;
 		case SDL_GAMEPAD_BUTTON_EAST:
-			id |= GamepadButton::EAST;
+			code |= GamepadButton::EAST;
 			break;
 		case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER:
-			id |= GamepadButton::LEFT_SHOULDER;
+			code |= GamepadButton::LEFT_SHOULDER;
 			break;
 		case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER:
-			id |= GamepadButton::RIGHT_SHOULDER;
+			code |= GamepadButton::RIGHT_SHOULDER;
 			break;
 		case SDL_GAMEPAD_BUTTON_DPAD_UP:
-			id |= GamepadButton::DPAD_UP;
+			code |= GamepadButton::DPAD_UP;
 			break;
 		case SDL_GAMEPAD_BUTTON_DPAD_DOWN:
-			id |= GamepadButton::DPAD_DOWN;
+			code |= GamepadButton::DPAD_DOWN;
 			break;
 		case SDL_GAMEPAD_BUTTON_DPAD_LEFT:
-			id |= GamepadButton::DPAD_LEFT;
+			code |= GamepadButton::DPAD_LEFT;
 			break;
 		case SDL_GAMEPAD_BUTTON_DPAD_RIGHT:
-			id |= GamepadButton::DPAD_RIGHT;
+			code |= GamepadButton::DPAD_RIGHT;
 			break;
 		case SDL_GAMEPAD_BUTTON_LEFT_STICK:
-			id |= GamepadButton::LEFT_STICK;
+			code |= GamepadButton::LEFT_STICK;
 			break;
 		case SDL_GAMEPAD_BUTTON_RIGHT_STICK:
-			id |= GamepadButton::RIGHT_STICK;
+			code |= GamepadButton::RIGHT_STICK;
 			break;
 	}
-	_queue.emplace_back(id, isClicked ? 1.0f : 0.0f);
+	_queue.emplace_back(code, isClicked ? 1.0f : 0.0f);
 }
 
 void Processor::handleKeyDown(SDL_UserEvent& event) {
 	auto         keycode = pointerToUnsigned<Uint32>(event.data1);
-	const Uint32 id      = InputEvent::KEY | (keycode << 16);
-	_queue.emplace_back(id, 1.0f);
+	const Uint32 code    = EventTag::KEY | (keycode << 16);
+	_queue.emplace_back(code, 1.0f);
 }
 
 void Processor::handleKeyUp(SDL_UserEvent& event) {
 	auto         keycode = pointerToUnsigned<Uint32>(event.data1);
-	const Uint32 id      = InputEvent::KEY | (keycode << 16);
-	_queue.emplace_back(id, 0.0f);
+	const Uint32 code    = EventTag::KEY | (keycode << 16);
+	_queue.emplace_back(code, 0.0f);
 }
 
 void Processor::handleMouseButton(SDL_UserEvent& event, bool isClicked) {
 	auto         button = pointerToUnsigned<Uint32>(event.data1);
-	const Uint32 id     = InputEvent::MOUSE_BUTTON | button;
-	_queue.emplace_back(id, isClicked ? 1.0f : 0.0f);
+	const Uint32 code   = EventTag::MOUSE_BUTTON | button;
+	_queue.emplace_back(code, isClicked ? 1.0f : 0.0f);
 }
 
 void Processor::handleMouseMove(SDL_UserEvent& event) {
@@ -203,15 +203,11 @@ void Processor::handleMouseWheel(SDL_UserEvent& event) {
 	}
 }
 
-static constexpr float   MOUSE_DECAY_RATE_PER_MS = .65f;
-static constexpr InputId MOUSE_MOVE_ABS_X =
-    InputEvent::MOUSE_MOVE_ABS | Axis::X;
-static constexpr InputId MOUSE_MOVE_ABS_Y =
-    InputEvent::MOUSE_MOVE_ABS | Axis::Y;
-static constexpr InputId MOUSE_MOVE_REL_X =
-    InputEvent::MOUSE_MOVE_REL | Axis::X;
-static constexpr InputId MOUSE_MOVE_REL_Y =
-    InputEvent::MOUSE_MOVE_REL | Axis::Y;
+static constexpr float MOUSE_DECAY_RATE_PER_MS = .65f;
+static constexpr Code  MOUSE_MOVE_ABS_X = EventTag::MOUSE_MOVE_ABS | Axis::X;
+static constexpr Code  MOUSE_MOVE_ABS_Y = EventTag::MOUSE_MOVE_ABS | Axis::Y;
+static constexpr Code  MOUSE_MOVE_REL_X = EventTag::MOUSE_MOVE_REL | Axis::X;
+static constexpr Code  MOUSE_MOVE_REL_Y = EventTag::MOUSE_MOVE_REL | Axis::Y;
 
 void Processor::updateMouseMovement(const Uint64 dtMs) {
 	if (_mouseState.dx == 0.0f && _mouseState.dy == 0.0f) {
@@ -245,11 +241,10 @@ void Processor::updateMouseMovement(const Uint64 dtMs) {
 	_queue.emplace_back(MOUSE_MOVE_REL_Y, dy);
 }
 
-static constexpr float   MOUSE_WHEEL_DECAY_RATE_PER_MS = .35f;
-static constexpr InputId MOUSE_WHEEL_UP =
-    InputEvent::MOUSE_WHEEL | MouseWheel::UP;
-static constexpr InputId MOUSE_WHEEL_DOWN =
-    InputEvent::MOUSE_WHEEL | MouseWheel::DOWN;
+static constexpr float MOUSE_WHEEL_DECAY_RATE_PER_MS = .35f;
+static constexpr Code  MOUSE_WHEEL_UP = EventTag::MOUSE_WHEEL | MouseWheel::UP;
+static constexpr Code  MOUSE_WHEEL_DOWN =
+    EventTag::MOUSE_WHEEL | MouseWheel::DOWN;
 
 void Processor::updateMouseWheel(const Uint64 dtMs) {
 	if (_mouseState.wheelUp == 0.0f && _mouseState.wheelDown == 0.0f) {
@@ -339,22 +334,22 @@ void Processor::handleGamepadEvent(SDL_Event&           event,
 
 void Processor::handleEvent(SDL_UserEvent& event) {
 	switch (event.code) {
-		case imp::ActionCode::KEY_DOWN:
+		case imp::DeviceAction::KEY_DOWN:
 			handleKeyDown(event);
 			break;
-		case imp::ActionCode::KEY_UP:
+		case imp::DeviceAction::KEY_UP:
 			handleKeyUp(event);
 			break;
-		case imp::ActionCode::MOUSE_MOVE:
+		case imp::DeviceAction::MOUSE_MOVE:
 			handleMouseMove(event);
 			break;
-		case imp::ActionCode::MOUSE_CLICK:
+		case imp::DeviceAction::MOUSE_CLICK:
 			handleMouseButton(event, true);
 			break;
-		case imp::ActionCode::MOUSE_RELEASE:
+		case imp::DeviceAction::MOUSE_RELEASE:
 			handleMouseButton(event, false);
 			break;
-		case imp::ActionCode::MOUSE_WHEEL:
+		case imp::DeviceAction::MOUSE_WHEEL:
 			handleMouseWheel(event);
 			break;
 	}

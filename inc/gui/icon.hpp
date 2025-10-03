@@ -1,11 +1,11 @@
 #ifndef GUI_ICON_HPP_
 #define GUI_ICON_HPP_
 
-#include "impulse/input.hpp"
+#include "impulse/code.hpp"
 
 namespace gui {
 
-void drawIcon(const imp::InputId id, const float alpha);
+void drawIcon(const imp::Code code, const float alpha);
 
 }
 

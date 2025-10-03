@@ -34,11 +34,11 @@ void ParameterManager::clear() {
 	_parameters.clear();
 }
 
-void ParameterManager::distributeImpulse(imp::InputId id, float value) {
+void ParameterManager::distributeImpulse(imp::Code code, float value) {
 	for (auto& parameter : values()) {
-		parameter.handleInput(id, value);
+		parameter.handleImpulse(code, value);
 	}
-	_sample.handleInput(id, value);
+	_sample.handleImpulse(code, value);
 }
 
 }  // namespace vts

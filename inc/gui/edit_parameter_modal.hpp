@@ -3,7 +3,7 @@
 #include <array>
 
 #include "core/meta.hpp"
-#include "gui/add_input_modal.hpp"
+#include "gui/add_impulse_modal.hpp"
 #include "vts/parameter.hpp"
 #include "ws/controller.hpp"
 
@@ -18,25 +18,25 @@ private:
 	ws::IController& _wsController;
 	vts::Parameter&  _editingParameter;
 
-	AddInputModal _addInputModal;
-	ComboBox      _blendModeSelector;
+	AddImpulseModal _addImpulseModal;
+	ComboBox        _blendModeSelector;
 
-	char        _nameInputBuffer[MAX_NAME_BUFFER_LENGTH];
+	char        _nameFieldBuffer[MAX_NAME_BUFFER_LENGTH];
 	std::string _initialName;
 
 	std::array<float, N_HISTORY_SAMPLES> _outputHistory;
 	int                                  _outputOffset;
 
-	imp::InputId _inputIdToDelete;
+	imp::Code _impulseCodeToDelete;
 
-	void showAddInput();
-	void showInputs();
+	void showAddImpulse();
+	void showImpulses();
 	void showMeta();
 	void showOutput();
 
 	int        restrictInputName(ImGuiInputTextCallbackData* data);
 	static int inputNameCallback(ImGuiInputTextCallbackData* data);
-	void       checkDeleteInput();
+	void       checkDeleteImpulse();
 	void       save();
 	void       updateBlendMode();
 

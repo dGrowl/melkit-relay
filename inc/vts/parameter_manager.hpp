@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "impulse/input.hpp"
+#include "impulse/code.hpp"
 #include "math/geometry.hpp"
 #include "vts/parameter.hpp"
 #include "ws/controller.hpp"
@@ -35,7 +35,7 @@ public:
 	ParameterView            values();
 	void                     add(const std::string& name);
 	void                     clear();
-	void                     distributeImpulse(imp::InputId id, float value);
+	void                     distributeImpulse(imp::Code code, float value);
 };
 
 }  // namespace vts

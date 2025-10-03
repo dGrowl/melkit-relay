@@ -5,14 +5,15 @@
 #include <ranges>
 #include <vector>
 
-#include "impulse/input.hpp"
+#include "impulse/code.hpp"
 #include "math/geometry.hpp"
 #include "vts/parameter_manager.hpp"
 #include "ws/controller.hpp"
 
 namespace imp {
 
-using ImpulseQueue = std::vector<std::pair<imp::InputId, float>>;
+using Impulse      = std::pair<imp::Code, float>;
+using ImpulseQueue = std::vector<Impulse>;
 
 struct MouseState {
 	int   x         = 0;

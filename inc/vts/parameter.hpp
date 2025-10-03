@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "impulse/input.hpp"
+#include "impulse/receiver.hpp"
 
 namespace vts {
 
@@ -14,42 +14,42 @@ enum class BlendMode : Uint8 {
 	BOUNDED_SUM,
 };
 
-using InputMap = std::unordered_map<imp::InputId, imp::InputData>;
+using ImpulseReceiverMap = std::unordered_map<imp::Code, imp::Receiver>;
 
 class Parameter {
 private:
-	BlendMode   _blendMode;
-	bool        _fresh;
-	float       _defaultValue;
-	float       _max;
-	float       _min;
-	float       _output;
-	InputMap    _inputs;
-	std::string _name;
+	BlendMode          _blendMode;
+	bool               _fresh;
+	float              _defaultValue;
+	float              _max;
+	float              _min;
+	float              _output;
+	ImpulseReceiverMap _impulseReceivers;
+	std::string        _name;
 
-	float calcInputSum();
-	float calcMajorInput();
+	float calcImpulseSum();
+	float calcMajorImpulse();
 	void  updateOutput();
 
 public:
 	Parameter();
 	Parameter(const std::string& name);
 
-	BlendMode             getBlendMode() const;
-	bool                  hasInputs() const;
-	bool                  isFresh();
-	const imp::InputData& getInput(const imp::InputId id) const;
-	const InputMap&       getInputs() const;
-	const std::string&    getName() const;
-	float                 getMax() const;
-	float                 getMin() const;
-	float                 getNormalized() const;
-	float                 getOutput() const;
-	InputMap&             getInputs();
-	void addInput(const imp::InputId id, const bool isInverted = false);
-	void clearInputs();
-	void handleInput(const imp::InputId id, const float value);
-	void removeInput(const imp::InputId id);
+	BlendMode                 getBlendMode() const;
+	bool                      hasImpulses() const;
+	bool                      isFresh();
+	const imp::Receiver&      getReceiver(const imp::Code code) const;
+	const ImpulseReceiverMap& getReceivers() const;
+	const std::string&        getName() const;
+	float                     getMax() const;
+	float                     getMin() const;
+	float                     getNormalized() const;
+	float                     getOutput() const;
+	ImpulseReceiverMap&       getReceivers();
+	void addImpulse(const imp::Code code, const bool isInverted = false);
+	void clearImpulses();
+	void handleImpulse(const imp::Code code, const float value);
+	void removeImpulse(const imp::Code code);
 	void setBlendMode(const BlendMode mode);
 	void setName(const std::string& name);
 	void updateBounds();

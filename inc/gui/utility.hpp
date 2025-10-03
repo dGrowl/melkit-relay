@@ -7,7 +7,7 @@
 #include "imgui/imgui.h"
 #include "libuiohook/uiohook.h"
 
-#include "impulse/input.hpp"
+#include "impulse/code.hpp"
 
 namespace gui {
 

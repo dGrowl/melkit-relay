@@ -144,14 +144,14 @@ void ConfigParameterPanel::showData() {
 
 			auto     availableWidth = ImGui::GetContentRegionAvail().x;
 			unsigned nIconsPerRow   = std::max(1.0f, availableWidth / 38.0f);
-			for (const auto& input : p.getInputs() | std::views::values) {
+			for (const auto& receiver : p.getReceivers() | std::views::values) {
 				const float alpha =
-				    math::remapLinear(input.getValue(), -1.0f, 1.0f, 0.1f, 1.0f);
+				    math::remapLinear(receiver.getValue(), -1.0f, 1.0f, 0.1f, 1.0f);
 				if (iIcon == nIconsPerRow) {
 					iIcon = 0;
 					ImGui::NewLine();
 				}
-				drawIcon(input.getId(), alpha);
+				drawIcon(receiver.getCode(), alpha);
 				iIcon += 1;
 			}
 

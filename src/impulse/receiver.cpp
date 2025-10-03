@@ -47,8 +47,8 @@ Code Receiver::getCode() const {
 	return _code;
 }
 
-void Receiver::update(float inValue) {
-	_value = inValue;
+void Receiver::update(float value) {
+	_value = value;
 }
 
 }  // namespace imp

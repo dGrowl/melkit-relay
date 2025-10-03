@@ -25,7 +25,7 @@ public:
 	float getMin() const;
 	float getValue() const;
 	Code  getCode() const;
-	void  update(float inValue);
+	void  update(float value);
 };
 
 }  // namespace imp

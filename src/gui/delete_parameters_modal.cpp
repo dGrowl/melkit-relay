@@ -29,7 +29,7 @@ void DeleteParametersModal::show() {
 		ImGui::Text("Select which parameters to delete.");
 
 		if (ImGui::BeginChild("##delete-selection",
-		                      ImVec2(-1.0f, ImGui::GetFontSize() * 12),
+		                      ImVec2(-1.0F, ImGui::GetFontSize() * 12),
 		                      ImGuiChildFlags_Borders)) {
 			for (auto& p : _parameterManager.values()) {
 				if (ImGui::Checkbox(p.getName().c_str(), &_selectedState[p.getName()])) {
@@ -46,7 +46,7 @@ void DeleteParametersModal::show() {
 			}
 		}
 
-		if (ImGui::Button("Delete", ImVec2(128.0f, 0.0f))) {
+		if (ImGui::Button("Delete", ImVec2(128.0F, 0.0F))) {
 			for (auto& p : _parameterManager.values()) {
 				if (_selectedState[p.getName()]) {
 					vts::deleteParameter(_wsController, p.getName());
@@ -57,7 +57,7 @@ void DeleteParametersModal::show() {
 		ImGui::SetItemDefaultFocus();
 
 		ImGui::SameLine();
-		if (ImGui::Button("Cancel", ImVec2(120.0f, 0.0f))) {
+		if (ImGui::Button("Cancel", ImVec2(120.0F, 0.0F))) {
 			ImGui::CloseCurrentPopup();
 		}
 

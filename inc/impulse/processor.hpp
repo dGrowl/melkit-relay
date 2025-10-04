@@ -19,10 +19,10 @@ using ImpulseQueue = std::vector<Impulse>;
 struct MouseState {
 	int   x         = 0;
 	int   y         = 0;
-	float dx        = 0.0f;
-	float dy        = 0.0f;
-	float wheelUp   = 0.0f;
-	float wheelDown = 0.0f;
+	float dx        = 0.0F;
+	float dy        = 0.0F;
+	float wheelUp   = 0.0F;
+	float wheelDown = 0.0F;
 };
 
 class Processor {

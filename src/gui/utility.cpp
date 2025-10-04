@@ -156,11 +156,11 @@ const char* getUioKeyName(const Uint32 keycode) {
 	return uioToStringMap.at(keycode);
 }
 
-const ImVec2 PIVOT_CENTER(0.5f, 0.5f);
+const ImVec2 PIVOT_CENTER(0.5F, 0.5F);
 
 void centerNextWindow() {
 	ImVec2 viewportSize   = ImGui::GetMainViewport()->Size;
-	ImVec2 viewportCenter = ImVec2(viewportSize.x * 0.5f, viewportSize.y * 0.5f);
+	ImVec2 viewportCenter = ImVec2(viewportSize.x * 0.5F, viewportSize.y * 0.5F);
 	ImGui::SetNextWindowPos(viewportCenter, ImGuiCond_Always, PIVOT_CENTER);
 }
 

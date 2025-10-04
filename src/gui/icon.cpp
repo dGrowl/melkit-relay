@@ -182,8 +182,8 @@ static IconMap gamepadStickRightStrings{
 };
 
 static const std::unordered_map<const char*, float> Y_OFFSETS{
-    {"\uE0E2", -3.0f},
-    {"\uE0F2", 3.0f },
+    {"\uE0E2", -3.0F},
+    {"\uE0F2", 3.0F },
 };
 
 void drawIconOrDefault(const imp::TargetTag target,
@@ -201,7 +201,7 @@ void drawIconOrDefault(const imp::TargetTag target,
 		ImVec2 cursorPos = ImGui::GetCursorPos();
 		ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + dyIter->second));
 	}
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, alpha), "%s", iconString);
+	ImGui::TextColored(ImVec4(1.0F, 1.0F, 1.0F, alpha), "%s", iconString);
 }
 
 void drawIcon(const imp::Code code, const float alpha) {

@@ -128,7 +128,7 @@ ImpulseStrings getImpulseStrings(const imp::Code code) {
 }
 
 void EditParameterModal::showAddImpulse() {
-	if (ImGui::Button("Add", ImVec2(128.0f, 0.0f))) {
+	if (ImGui::Button("Add", ImVec2(128.0F, 0.0F))) {
 		ImGui::OpenPopup(AddImpulseModal::NAME);
 	}
 
@@ -141,7 +141,7 @@ void EditParameterModal::showImpulses() {
 		ImGui::SeparatorText("Input");
 	}
 
-	ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(12.0f, 2.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(12.0F, 2.0F));
 
 	if (ImGui::BeginTable("Input Table",
 	                      6,
@@ -179,7 +179,7 @@ void EditParameterModal::showImpulses() {
 			}
 
 			ImGui::TableNextColumn();
-			ImGui::SetNextItemWidth(128.0f);
+			ImGui::SetNextItemWidth(128.0F);
 			ImGui::BeginDisabled();
 			float value = data.getValue();
 			ImGui::SliderFloat("##impulse-value",
@@ -254,14 +254,14 @@ void EditParameterModal::showOutput() {
 		ImGui::TableNextColumn();
 		ImGui::Text("Minimum");
 		ImGui::TableNextColumn();
-		ImGui::SetNextItemWidth(-1.0f);
+		ImGui::SetNextItemWidth(-1.0F);
 		ImGui::Text("%.2f", _editingParameter.getMin());
 
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn();
 		ImGui::Text("Maximum");
 		ImGui::TableNextColumn();
-		ImGui::SetNextItemWidth(-1.0f);
+		ImGui::SetNextItemWidth(-1.0F);
 		ImGui::Text("%.2f", _editingParameter.getMax());
 
 		ImGui::TableNextRow();
@@ -278,7 +278,7 @@ void EditParameterModal::showOutput() {
 		                 outputString.c_str(),
 		                 _editingParameter.getMin(),
 		                 _editingParameter.getMax(),
-		                 ImVec2(0.0f, 64.0f));
+		                 ImVec2(0.0F, 64.0F));
 
 		ImGui::EndTable();
 	}
@@ -352,7 +352,7 @@ EditParameterModal::EditParameterModal(ws::IController& wsController,
 void EditParameterModal::refresh() {
 	_initialName = _editingParameter.getName();
 	SDL_strlcpy(_nameFieldBuffer, _initialName.c_str(), MAX_NAME_BUFFER_LENGTH);
-	_outputHistory.fill(0.0f);
+	_outputHistory.fill(0.0F);
 	switch (_editingParameter.getBlendMode()) {
 		case vts::BlendMode::MAX:
 			_blendModeSelector.setIndex(BLEND_MODE_MAX);
@@ -377,13 +377,13 @@ void EditParameterModal::show() {
 		showOutput();
 		checkDeleteImpulse();
 
-		if (ImGui::Button("Save", ImVec2(128.0f, 0.0f))) {
+		if (ImGui::Button("Save", ImVec2(128.0F, 0.0F))) {
 			save();
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SetItemDefaultFocus();
 		ImGui::SameLine();
-		if (ImGui::Button("Discard", ImVec2(128.0f, 0.0f))) {
+		if (ImGui::Button("Discard", ImVec2(128.0F, 0.0F))) {
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();

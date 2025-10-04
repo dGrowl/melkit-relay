@@ -59,10 +59,10 @@ Parameter::Parameter() :
 Parameter::Parameter(const std::string& name) :
     _blendMode(BlendMode::MAX),
     _fresh(false),
-    _defaultValue(0.0f),
-    _max(1.0f),
-    _min(0.0f),
-    _output(0.0f),
+    _defaultValue(0.0F),
+    _max(1.0F),
+    _min(0.0F),
+    _output(0.0F),
     _impulseReceivers(),
     _name(name) {}
 
@@ -151,8 +151,8 @@ void Parameter::setName(const std::string& name) {
 
 void Parameter::updateBounds() {
 	if (_impulseReceivers.empty()) {
-		_max = 1.0f;
-		_min = 0.0f;
+		_max = 1.0F;
+		_min = 0.0F;
 		return;
 	}
 	_max = _defaultValue;

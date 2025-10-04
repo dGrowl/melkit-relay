@@ -27,7 +27,7 @@ static constexpr int WINDOW_HEIGHT_DEFAULT = 540;
 static constexpr int WINDOW_WIDTH_MIN      = 512;
 static constexpr int WINDOW_HEIGHT_MIN     = 256;
 
-static const SDL_FColor CLEAR_COLOR{.03f, .02f, .04f, 1.0f};
+static const SDL_FColor CLEAR_COLOR{.03f, .02f, .04f, 1.0F};
 
 namespace gui {
 
@@ -161,7 +161,7 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 	ImGui::Render();
 	auto       drawData = ImGui::GetDrawData();
 	const bool isMinimized =
-	    (drawData->DisplaySize.x <= 0.0f || drawData->DisplaySize.y <= 0.0f);
+	    (drawData->DisplaySize.x <= 0.0F || drawData->DisplaySize.y <= 0.0F);
 
 	auto            commandBuffer    = SDL_AcquireGPUCommandBuffer(gpu);
 	SDL_GPUTexture* swapchainTexture = nullptr;

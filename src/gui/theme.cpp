@@ -11,39 +11,39 @@ void Theme::initColors() {
 
 	auto& colors = style.Colors;
 
-	colors[ImGuiCol_FrameBg]             = ImVec4(0.294f, 0.125f, 0.122f, 1.0f);
-	colors[ImGuiCol_FrameBgHovered]      = ImVec4(0.439f, 0.149f, 0.157f, 1.0f);
-	colors[ImGuiCol_FrameBgActive]       = ImVec4(0.682f, 0.2f, 0.212f, 1.0f);
-	colors[ImGuiCol_TitleBgActive]       = ImVec4(0.478f, 0.169f, 0.161f, 1.0f);
-	colors[ImGuiCol_CheckMark]           = ImVec4(0.98f, 0.259f, 0.278f, 1.0f);
-	colors[ImGuiCol_SliderGrab]          = ImVec4(0.878f, 0.239f, 0.247f, 1.0f);
-	colors[ImGuiCol_SliderGrabActive]    = ImVec4(0.98f, 0.259f, 0.278f, 1.0f);
-	colors[ImGuiCol_Button]              = ImVec4(0.439f, 0.149f, 0.157f, 1.0f);
-	colors[ImGuiCol_ButtonHovered]       = ImVec4(0.98f, 0.259f, 0.278f, 1.0f);
-	colors[ImGuiCol_ButtonActive]        = ImVec4(0.98f, 0.059f, 0.133f, 1.0f);
-	colors[ImGuiCol_Header]              = ImVec4(0.357f, 0.133f, 0.141f, 1.0f);
-	colors[ImGuiCol_HeaderHovered]       = ImVec4(0.8f, 0.224f, 0.239f, 1.0f);
-	colors[ImGuiCol_HeaderActive]        = ImVec4(0.98f, 0.259f, 0.278f, 1.0f);
-	colors[ImGuiCol_SeparatorHovered]    = ImVec4(0.6f, 0.098f, 0.114f, 1.0f);
-	colors[ImGuiCol_SeparatorActive]     = ImVec4(0.749f, 0.102f, 0.122f, 1.0f);
-	colors[ImGuiCol_ResizeGrip]          = ImVec4(0.259f, 0.114f, 0.118f, 1.0f);
-	colors[ImGuiCol_ResizeGripHovered]   = ImVec4(0.682f, 0.2f, 0.212f, 1.0f);
-	colors[ImGuiCol_ResizeGripActive]    = ImVec4(0.933f, 0.251f, 0.271f, 1.0f);
-	colors[ImGuiCol_TabHovered]          = ImVec4(0.8f, 0.224f, 0.239f, 1.0f);
-	colors[ImGuiCol_Tab]                 = ImVec4(0.51f, 0.165f, 0.165f, 1.0f);
-	colors[ImGuiCol_TabSelected]         = ImVec4(0.678f, 0.2f, 0.208f, 1.0f);
-	colors[ImGuiCol_TabSelectedOverline] = ImVec4(0.98f, 0.259f, 0.278f, 1.0f);
-	colors[ImGuiCol_TabDimmed]           = ImVec4(0.149f, 0.067f, 0.067f, 1.0f);
-	colors[ImGuiCol_TabDimmedSelected]   = ImVec4(0.424f, 0.137f, 0.141f, 1.0f);
-	colors[ImGuiCol_TextLink]            = ImVec4(0.98f, 0.259f, 0.278f, 1.0f);
-	colors[ImGuiCol_TextSelectedBg]      = ImVec4(0.392f, 0.141f, 0.149f, 1.0f);
-	colors[ImGuiCol_NavCursor]           = ImVec4(0.98f, 0.259f, 0.278f, 1.0f);
+	colors[ImGuiCol_FrameBg]             = ImVec4(0.294F, 0.125F, 0.122F, 1.0F);
+	colors[ImGuiCol_FrameBgHovered]      = ImVec4(0.439F, 0.149F, 0.157F, 1.0F);
+	colors[ImGuiCol_FrameBgActive]       = ImVec4(0.682F, 0.2F, 0.212F, 1.0F);
+	colors[ImGuiCol_TitleBgActive]       = ImVec4(0.478F, 0.169F, 0.161F, 1.0F);
+	colors[ImGuiCol_CheckMark]           = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
+	colors[ImGuiCol_SliderGrab]          = ImVec4(0.878F, 0.239F, 0.247F, 1.0F);
+	colors[ImGuiCol_SliderGrabActive]    = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
+	colors[ImGuiCol_Button]              = ImVec4(0.439F, 0.149F, 0.157F, 1.0F);
+	colors[ImGuiCol_ButtonHovered]       = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
+	colors[ImGuiCol_ButtonActive]        = ImVec4(0.98F, 0.059F, 0.133F, 1.0F);
+	colors[ImGuiCol_Header]              = ImVec4(0.357F, 0.133F, 0.141F, 1.0F);
+	colors[ImGuiCol_HeaderHovered]       = ImVec4(0.8F, 0.224F, 0.239F, 1.0F);
+	colors[ImGuiCol_HeaderActive]        = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
+	colors[ImGuiCol_SeparatorHovered]    = ImVec4(0.6F, 0.098F, 0.114F, 1.0F);
+	colors[ImGuiCol_SeparatorActive]     = ImVec4(0.749F, 0.102F, 0.122F, 1.0F);
+	colors[ImGuiCol_ResizeGrip]          = ImVec4(0.259F, 0.114F, 0.118F, 1.0F);
+	colors[ImGuiCol_ResizeGripHovered]   = ImVec4(0.682F, 0.2F, 0.212F, 1.0F);
+	colors[ImGuiCol_ResizeGripActive]    = ImVec4(0.933F, 0.251F, 0.271F, 1.0F);
+	colors[ImGuiCol_TabHovered]          = ImVec4(0.8F, 0.224F, 0.239F, 1.0F);
+	colors[ImGuiCol_Tab]                 = ImVec4(0.51F, 0.165F, 0.165F, 1.0F);
+	colors[ImGuiCol_TabSelected]         = ImVec4(0.678F, 0.2F, 0.208F, 1.0F);
+	colors[ImGuiCol_TabSelectedOverline] = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
+	colors[ImGuiCol_TabDimmed]           = ImVec4(0.149F, 0.067F, 0.067F, 1.0F);
+	colors[ImGuiCol_TabDimmedSelected]   = ImVec4(0.424F, 0.137F, 0.141F, 1.0F);
+	colors[ImGuiCol_TextLink]            = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
+	colors[ImGuiCol_TextSelectedBg]      = ImVec4(0.392F, 0.141F, 0.149F, 1.0F);
+	colors[ImGuiCol_NavCursor]           = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
 }
 
 void Theme::initLayout() {
 	ImGuiStyle& style = ImGui::GetStyle();
 
-	style.WindowPadding.y = 8.0f;
+	style.WindowPadding.y = 8.0F;
 }
 
 void Theme::init() {

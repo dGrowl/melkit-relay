@@ -231,7 +231,7 @@ imp::Code AddImpulseModal::buildImpulseCode() const {
 }
 
 void AddImpulseModal::showCloseButtons() {
-	if (ImGui::Button("Add", ImVec2(128.0f, 0.0f))) {
+	if (ImGui::Button("Add", ImVec2(128.0F, 0.0F))) {
 		imp::Code code = buildImpulseCode();
 		if (code != imp::EventTag::KEY) {
 			_editingParameter.addImpulse(code);
@@ -240,7 +240,7 @@ void AddImpulseModal::showCloseButtons() {
 	}
 	ImGui::SetItemDefaultFocus();
 	ImGui::SameLine();
-	if (ImGui::Button("Cancel", ImVec2(128.0f, 0.0f))) {
+	if (ImGui::Button("Cancel", ImVec2(128.0F, 0.0F))) {
 		ImGui::CloseCurrentPopup();
 	}
 }

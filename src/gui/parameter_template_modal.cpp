@@ -42,14 +42,14 @@ void ParameterTemplateModal::showCloseButtons() {
 	bool isValid = (_hasPress || _hasShoulders || _hasSticks || _hasTriggers)
 	               && (_useController || _useMouseKeyboard);
 	ImGui::BeginDisabled(!isValid);
-	if (ImGui::Button("Create", ImVec2(128.0f, 0.0f))) {
+	if (ImGui::Button("Create", ImVec2(128.0F, 0.0F))) {
 		execute();
 		ImGui::CloseCurrentPopup();
 	}
 	ImGui::EndDisabled();
 	ImGui::SetItemDefaultFocus();
 	ImGui::SameLine();
-	if (ImGui::Button("Cancel", ImVec2(128.0f, 0.0f))) {
+	if (ImGui::Button("Cancel", ImVec2(128.0F, 0.0F))) {
 		ImGui::CloseCurrentPopup();
 	}
 }

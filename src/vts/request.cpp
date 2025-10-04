@@ -141,7 +141,7 @@ struct ParameterCreationRequestData {
 	std::string explanation = "This is my new parameter.";
 	float       min;
 	float       max;
-	float       defaultValue = 0.0f;
+	float       defaultValue = 0.0F;
 
 	struct glaze {
 		using T                     = ParameterCreationRequestData;

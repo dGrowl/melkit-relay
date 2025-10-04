@@ -34,7 +34,7 @@ void ConfigSettingsPanel::showGamepadSettings() {
 		ImGui::TableNextColumn();
 		ImGui::Text("Device");
 		ImGui::TableNextColumn();
-		ImGui::SetNextItemWidth(-1.0f);
+		ImGui::SetNextItemWidth(-1.0F);
 		if (_gamepadSelector.show()) {
 			_gamepadManager.setActive(_gamepadSelector.getIndex());
 		}
@@ -61,7 +61,7 @@ void ConfigSettingsPanel::showMouseMotionSettings() {
 		ImGui::TableNextColumn();
 		ImGui::Text("Sensitivity");
 		ImGui::TableNextColumn();
-		ImGui::SetNextItemWidth(-1.0f);
+		ImGui::SetNextItemWidth(-1.0F);
 		if (ImGui::SliderInt("##mouse-sensitivity-slider",
 		                     &_mouseSensitivity,
 		                     1,
@@ -78,7 +78,7 @@ void ConfigSettingsPanel::showMouseMotionSettings() {
 	ImGui::Spacing();
 }
 
-static constexpr float REGION_DISPLAY_HEIGHT = 64.0f;
+static constexpr float REGION_DISPLAY_HEIGHT = 64.0F;
 
 void ConfigSettingsPanel::showMousePositionSettings() {
 	{
@@ -103,7 +103,7 @@ void ConfigSettingsPanel::showMousePositionSettings() {
 		float  availableWidth = ImGui::GetContentRegionAvail().x;
 
 		ImVec2 rectMin = cursorPos;
-		ImVec2 rectMax(cursorPos.x + availableWidth - 1.0f,
+		ImVec2 rectMax(cursorPos.x + availableWidth - 1.0F,
 		               cursorPos.y + REGION_DISPLAY_HEIGHT);
 
 		ImU32 fillColor = ImGui::GetColorU32(ImGuiCol_FrameBg);
@@ -120,13 +120,13 @@ void ConfigSettingsPanel::showMousePositionSettings() {
 		const char* bottomRightText = bottomRightString.c_str();
 
 		ImVec2 topLeftTextPos = rectMin;
-		topLeftTextPos.x += 3.0f;
-		topLeftTextPos.y += 2.0f;
+		topLeftTextPos.x += 3.0F;
+		topLeftTextPos.y += 2.0F;
 
 		ImVec2 bottomRightTextSize = ImGui::CalcTextSize(bottomRightText);
 		ImVec2 bottomRightTextPos  = rectMax;
-		bottomRightTextPos.x -= bottomRightTextSize.x + 3.0f;
-		bottomRightTextPos.y -= bottomRightTextSize.y + 2.0f;
+		bottomRightTextPos.x -= bottomRightTextSize.x + 3.0F;
+		bottomRightTextPos.y -= bottomRightTextSize.y + 2.0F;
 
 		drawList->AddText(topLeftTextPos, textColor, topLeftText);
 		drawList->AddText(bottomRightTextPos, textColor, bottomRightText);
@@ -146,7 +146,7 @@ void ConfigSettingsPanel::showMousePositionSettings() {
 		ImGui::EndTable();
 	}
 
-	if (ImGui::Button("Adjust", ImVec2(-1.0f, 0.0f))) {
+	if (ImGui::Button("Adjust", ImVec2(-1.0F, 0.0F))) {
 		_setMouseBoundsModal.refresh();
 		ImGui::OpenPopup(SetMouseBoundsModal::NAME);
 	}
@@ -168,7 +168,7 @@ void ConfigSettingsPanel::showVtsSettings() {
 		ImGui::TableNextColumn();
 		ImGui::Text("API Address");
 		ImGui::TableNextColumn();
-		ImGui::SetNextItemWidth(-1.0f);
+		ImGui::SetNextItemWidth(-1.0F);
 		ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
 		if (ImGui::InputText("##vts-url", _urlBuffer, IM_ARRAYSIZE(_urlBuffer))) {
 			_wsController.setUrl(_urlBuffer);
@@ -185,12 +185,12 @@ void ConfigSettingsPanel::showVtsSettings() {
 	}
 
 	if (_wsController.getStatus() == ws::Status::CONNECTED) {
-		if (ImGui::Button("Disconnect", ImVec2(-1.0f, 0.0f))) {
+		if (ImGui::Button("Disconnect", ImVec2(-1.0F, 0.0F))) {
 			_wsController.stop();
 		}
 	}
 	else {
-		if (ImGui::Button("Connect", ImVec2(-1.0f, 0.0f))) {
+		if (ImGui::Button("Connect", ImVec2(-1.0F, 0.0F))) {
 			_wsController.setUrl(_urlBuffer);
 			_wsController.start();
 		}

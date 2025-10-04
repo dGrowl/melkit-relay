@@ -63,7 +63,7 @@ void ConfigParameterPanel::showControls() {
 		ImGui::TableSetupColumn("Edit", ImGuiTableColumnFlags_WidthFixed);
 
 		ImGui::TableNextColumn();
-		ImGui::SetNextItemWidth(-1.0f);
+		ImGui::SetNextItemWidth(-1.0F);
 		ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
 		if (ImGui::InputTextWithHint("##filter",
 		                             "Filter",
@@ -74,7 +74,7 @@ void ConfigParameterPanel::showControls() {
 		ImGui::PopItemFlag();
 
 		ImGui::TableNextColumn();
-		if (ImGui::Button("Edit", ImVec2(128.0f, 0.0f))) {
+		if (ImGui::Button("Edit", ImVec2(128.0F, 0.0F))) {
 			shouldOpenEditMenu = true;
 		}
 		ImGui::EndTable();
@@ -92,7 +92,7 @@ void ConfigParameterPanel::showControls() {
 		    ImGui::Selectable("Delete",
 		                      false,
 		                      ImGuiSelectableFlags_None,
-		                      ImVec2(128.0f, 0.0f));  // sets the width of the menu
+		                      ImVec2(128.0F, 0.0F));  // sets the width of the menu
 
 		ImGui::EndPopup();
 	}
@@ -116,7 +116,7 @@ void ConfigParameterPanel::showData() {
 	}
 	bool shouldOpenModal = false;
 
-	ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(12.0f, 2.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(12.0F, 2.0F));
 
 	if (ImGui::BeginTable("Parameter Table",
 	                      3,
@@ -124,7 +124,7 @@ void ConfigParameterPanel::showData() {
 	                          | ImGuiTableFlags_RowBg
 	                          | ImGuiTableFlags_ScrollY
 	                          | ImGuiTableFlags_SizingFixedFit,
-	                      ImVec2(0.0f, 0.0f))) {
+	                      ImVec2(0.0F, 0.0F))) {
 		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
 		ImGui::TableSetupColumn("Inputs", ImGuiTableColumnFlags_WidthStretch);
 		ImGui::TableSetupColumn("Output", ImGuiTableColumnFlags_WidthFixed);
@@ -140,8 +140,8 @@ void ConfigParameterPanel::showData() {
 			ImGui::TableNextColumn();
 
 			ImVec2 cursorPos = ImGui::GetCursorPos();
-			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + 9.0f));
-			if (ImGui::Button(p.getName().c_str(), ImVec2(200.0f, 0.0f))) {
+			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + 9.0F));
+			if (ImGui::Button(p.getName().c_str(), ImVec2(200.0F, 0.0F))) {
 				_editingParameter = p;
 				_editParameterModal.refresh();
 				shouldOpenModal = true;
@@ -150,10 +150,10 @@ void ConfigParameterPanel::showData() {
 			ImGui::TableNextColumn();
 
 			auto     availableWidth = ImGui::GetContentRegionAvail().x;
-			unsigned nIconsPerRow   = std::max(1.0f, availableWidth / 38.0f);
+			unsigned nIconsPerRow   = std::max(1.0F, availableWidth / 38.0F);
 			for (const auto& receiver : p.getReceivers() | std::views::values) {
 				const float alpha =
-				    math::remapLinear(receiver.getValue(), -1.0f, 1.0f, 0.1f, 1.0f);
+				    math::remapLinear(receiver.getValue(), -1.0F, 1.0F, 0.1F, 1.0F);
 				if (iIcon == nIconsPerRow) {
 					iIcon = 0;
 					ImGui::NewLine();
@@ -164,7 +164,7 @@ void ConfigParameterPanel::showData() {
 
 			ImGui::TableNextColumn();
 			cursorPos = ImGui::GetCursorPos();
-			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + 8.0f));
+			ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + 8.0F));
 			ImGui::Text("%.2f", p.getOutput());
 
 			ImGui::PopID();

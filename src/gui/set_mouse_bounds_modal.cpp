@@ -16,7 +16,7 @@ constexpr imp::Code MOUSE_POSITION_X_IMPULSE =
 constexpr imp::Code MOUSE_POSITION_Y_IMPULSE =
     imp::Axis::Y | imp::EventTag::MOUSE_MOVE_ABS;
 
-constexpr float COORDINATE_FIELD_WIDTH = 100.0f;
+constexpr float COORDINATE_FIELD_WIDTH = 100.0F;
 
 namespace gui {
 
@@ -84,7 +84,7 @@ void SetMouseBoundsModal::show() {
 			ImGui::SeparatorText("Corners");
 		}
 
-		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(12.0f, 2.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(12.0F, 2.0F));
 
 		if (ImGui::BeginTable("InputTable",
 		                      3,
@@ -168,7 +168,7 @@ void SetMouseBoundsModal::show() {
 			ImGui::Text("X");
 
 			ImGui::TableNextColumn();
-			ImGui::SetNextItemWidth(128.0f);
+			ImGui::SetNextItemWidth(128.0F);
 			ImGui::BeginDisabled();
 			float xValue = mouseX.getValue();
 			ImGui::SliderFloat("##x-value",
@@ -190,7 +190,7 @@ void SetMouseBoundsModal::show() {
 			ImGui::Text("Y");
 
 			ImGui::TableNextColumn();
-			ImGui::SetNextItemWidth(128.0f);
+			ImGui::SetNextItemWidth(128.0F);
 			ImGui::BeginDisabled();
 			float yValue = mouseY.getValue();
 			ImGui::SliderFloat("##y-value",
@@ -206,12 +206,12 @@ void SetMouseBoundsModal::show() {
 
 		ImGui::PopStyleVar();
 
-		if (ImGui::Button("Save", ImVec2(128.0f, 0.0f))) {
+		if (ImGui::Button("Save", ImVec2(128.0F, 0.0F))) {
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SetItemDefaultFocus();
 		ImGui::SameLine();
-		if (ImGui::Button("Discard", ImVec2(128.0f, 0.0f))) {
+		if (ImGui::Button("Discard", ImVec2(128.0F, 0.0F))) {
 			_impulseProcessor.setMouseBounds(_currentBounds);
 			ImGui::CloseCurrentPopup();
 		}

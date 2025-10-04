@@ -68,7 +68,7 @@ void Fonts::push(const FontType type) {
 			ImGui::PushFont(IMPULSE_FONT, ICON_SIZE);
 			return;
 	}
-	ImGuiIO& io = ImGui::GetIO();
+	const ImGuiIO& io = ImGui::GetIO();
 	ImGui::PushFont(io.FontDefault, 0.0F);
 }
 

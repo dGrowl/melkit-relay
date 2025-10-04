@@ -99,7 +99,7 @@ struct AuthenticationData {
 void authenticate(ws::IController& wsController) {
 	std::string token = SETTINGS.getAuthToken();
 	if (!token.empty()) {
-		Request<AuthenticationData> request(
+		const Request<AuthenticationData> request(
 		    "AuthenticationRequest",
 		    AuthenticationData{.authenticationToken = std::move(token)});
 		if (auto message = stringify(request)) {
@@ -128,7 +128,7 @@ struct AuthenticationTokenRequestData {
 };
 
 void requestToken(ws::IController& wsController) {
-	Request<AuthenticationTokenRequestData> request(
+	const Request<AuthenticationTokenRequestData> request(
 	    "AuthenticationTokenRequest",
 	    AuthenticationTokenRequestData());
 	if (auto message = stringify(request)) {
@@ -160,7 +160,7 @@ struct ParameterCreationRequestData {
 
 void createParameter(ws::IController& wsController,
                      const Parameter& parameter) {
-	Request<ParameterCreationRequestData> request(
+	const Request<ParameterCreationRequestData> request(
 	    "ParameterCreationRequest",
 	    ParameterCreationRequestData{
 	        .parameterName = parameter.getName(),
@@ -183,7 +183,7 @@ struct ParameterDeletionData {
 
 void deleteParameter(ws::IController&       wsController,
                      const std::string_view name) {
-	Request<ParameterDeletionData> request(
+	const Request<ParameterDeletionData> request(
 	    "ParameterDeletionRequest",
 	    ParameterDeletionData{.parameterName = std::string{name}});
 	if (auto message = stringify(request)) {
@@ -192,7 +192,7 @@ void deleteParameter(ws::IController&       wsController,
 }
 
 void getParameters(ws::IController& wsController) {
-	BaseRequest request{.messageType = "InputParameterListRequest"};
+	const BaseRequest request{.messageType = "InputParameterListRequest"};
 	if (auto message = stringify(request)) {
 		wsController.sendMessage(std::move(*message));
 	}
@@ -216,7 +216,7 @@ struct InjectParameterDataRequestData {
 
 void setParameters(ws::IController&             wsController,
                    std::vector<ParameterValue>& values) {
-	Request<InjectParameterDataRequestData> request(
+	const Request<InjectParameterDataRequestData> request(
 	    "InjectParameterDataRequest",
 	    InjectParameterDataRequestData{.parameterValues = std::move(values)});
 	if (auto message = stringify(request)) {

@@ -45,7 +45,7 @@ void SettingsManager::backup(const std::string& contents) {
 	SDL_Time timestamp;
 	SDL_GetCurrentTime(&timestamp);
 
-	std::string path =
+	const std::string path =
 	    std::format("settings_{}.backup.json", SDL_NS_TO_SECONDS(timestamp));
 
 	std::ofstream file(path);
@@ -57,7 +57,7 @@ void SettingsManager::backup(const std::string& contents) {
 }
 
 void SettingsManager::load() {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock(_mutex);
 
 	std::ifstream file(FILE_PATH);
 	if (!file.is_open()) {
@@ -91,7 +91,7 @@ void SettingsManager::loadDefault() {
 }
 
 void SettingsManager::save() {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock(_mutex);
 	saveUnlocked();
 }
 
@@ -117,37 +117,37 @@ void SettingsManager::saveUnlocked() {
 }
 
 const math::Rectangle<int> SettingsManager::getMouseBounds() const {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock(_mutex);
 
 	return _data.mouseBounds;
 }
 
 const std::string SettingsManager::getAuthToken() const {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock(_mutex);
 
 	return _data.vtsToken;
 }
 
 const std::string SettingsManager::getWsUrl() const {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock(_mutex);
 
 	return _data.apiUrl;
 }
 
 const std::vector<SettingsParameter> SettingsManager::getParameters() const {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock(_mutex);
 
 	return _data.parameters;
 }
 
 int SettingsManager::getMouseSensitivity() const {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock(_mutex);
 
 	return _data.mouseSensitivity;
 }
 
 void SettingsManager::setAuthToken(const char* newAuthToken) {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock(_mutex);
 
 	_data.vtsToken = newAuthToken;
 
@@ -155,7 +155,7 @@ void SettingsManager::setAuthToken(const char* newAuthToken) {
 }
 
 void SettingsManager::setMouseBounds(const math::Rectangle<int>& bounds) {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock(_mutex);
 
 	_data.mouseBounds = bounds;
 
@@ -163,7 +163,7 @@ void SettingsManager::setMouseBounds(const math::Rectangle<int>& bounds) {
 }
 
 void SettingsManager::setMouseSensitivity(const int newSensitivity) {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock(_mutex);
 
 	_data.mouseSensitivity = newSensitivity;
 
@@ -171,7 +171,7 @@ void SettingsManager::setMouseSensitivity(const int newSensitivity) {
 }
 
 void SettingsManager::setParameter(const vts::Parameter& parameter) {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock(_mutex);
 
 	for (auto it = _data.parameters.begin(); it != _data.parameters.end(); ++it) {
 		if (it->name == parameter.getName()) {
@@ -191,7 +191,7 @@ void SettingsManager::setParameter(const vts::Parameter& parameter) {
 }
 
 void SettingsManager::setWsUrl(const char* newWsUrl) {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock(_mutex);
 
 	_data.apiUrl = newWsUrl;
 
@@ -199,7 +199,7 @@ void SettingsManager::setWsUrl(const char* newWsUrl) {
 }
 
 void SettingsManager::removeParameter(const std::string& name) {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock(_mutex);
 
 	for (auto it = _data.parameters.begin(); it != _data.parameters.end(); ++it) {
 		if (it->name == name) {

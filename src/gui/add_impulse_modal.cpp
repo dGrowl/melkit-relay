@@ -232,7 +232,7 @@ imp::Code AddImpulseModal::buildImpulseCode() const {
 
 void AddImpulseModal::showCloseButtons() {
 	if (ImGui::Button("Add", ImVec2(128.0F, 0.0F))) {
-		imp::Code code = buildImpulseCode();
+		const imp::Code code = buildImpulseCode();
 		if (code != imp::EventTag::KEY) {
 			_editingParameter.addImpulse(code);
 			ImGui::CloseCurrentPopup();

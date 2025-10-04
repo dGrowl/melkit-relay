@@ -15,8 +15,8 @@ static constexpr const char* DEFAULT_PARAMETER_NAME = "MK_NewParameter";
 
 float Parameter::calcImpulseSum() {
 	float total = 0;
-	for (imp::Receiver& data : _impulseReceivers | std::views::values) {
-		total += data.getValue();
+	for (const auto& receiver : _impulseReceivers | std::views::values) {
+		total += receiver.getValue();
 	}
 	return total;
 }
@@ -24,11 +24,11 @@ float Parameter::calcImpulseSum() {
 float Parameter::calcMajorImpulse() {
 	float majorValue = 0;
 	float majorDelta = 0;
-	for (imp::Receiver& data : _impulseReceivers | std::views::values) {
-		const float delta = std::abs(data.getValue() - _defaultValue);
+	for (const auto& receiver : _impulseReceivers | std::views::values) {
+		const float delta = std::abs(receiver.getValue() - _defaultValue);
 		if ((delta > majorDelta)
-		    || (delta == majorDelta && data.getValue() > majorValue)) {
-			majorValue = data.getValue();
+		    || (delta == majorDelta && receiver.getValue() > majorValue)) {
+			majorValue = receiver.getValue();
 			majorDelta = delta;
 		}
 	}

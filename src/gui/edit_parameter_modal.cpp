@@ -285,7 +285,7 @@ void EditParameterModal::showOutput() {
 }
 
 int EditParameterModal::restrictInputName(ImGuiInputTextCallbackData* data) {
-	bool isPrefixValid =
+	const bool isPrefixValid =
 	    (data->BufTextLen >= NAME_PREFIX_LENGTH)
 	    && (SDL_strncmp(data->Buf, NAME_PREFIX, NAME_PREFIX_LENGTH) == 0);
 

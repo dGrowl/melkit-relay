@@ -78,7 +78,7 @@ int ConfigWindow::open(SDL_GPUDevice* gpu) {
 
 	SDL_SetWindowMinimumSize(_window, WINDOW_WIDTH_MIN, WINDOW_HEIGHT_MIN);
 	SDL_SetWindowPosition(_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-	Surface icon(ICON_PATH);
+	const Surface icon(ICON_PATH);
 	SDL_SetWindowIcon(_window, icon);
 	SDL_ShowWindow(_window);
 
@@ -135,14 +135,14 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 	ImGui::SetNextWindowPos(viewport->Pos);
 	ImGui::SetNextWindowSize(viewport->Size);
 
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar
-	                               | ImGuiWindowFlags_NoDecoration
-	                               | ImGuiWindowFlags_NoMove
-	                               | ImGuiWindowFlags_NoResize
-	                               | ImGuiWindowFlags_NoBringToFrontOnFocus;
+	const ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar
+	                                     | ImGuiWindowFlags_NoDecoration
+	                                     | ImGuiWindowFlags_NoMove
+	                                     | ImGuiWindowFlags_NoResize
+	                                     | ImGuiWindowFlags_NoBringToFrontOnFocus;
 	if (ImGui::Begin("Config", nullptr, windowFlags)) {
 		showMenuBar();
-		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
+		const ImVec2 contentRegion = ImGui::GetContentRegionAvail();
 		if (ImGui::BeginTable("Panels",
 		                      2,
 		                      ImGuiTableFlags_Resizable,

@@ -188,8 +188,8 @@ void Processor::handleMouseButton(SDL_UserEvent& event, bool isClicked) {
 }
 
 void Processor::handleMouseMove(SDL_UserEvent& event) {
-	int x = pointerToSigned<Sint16>(event.data1);
-	int y = pointerToSigned<Sint16>(event.data2);
+	const int x = pointerToSigned<Sint16>(event.data1);
+	const int y = pointerToSigned<Sint16>(event.data2);
 	_mouseState.dx += (x - _mouseState.x) * _mouseCoefficient;
 	_mouseState.dy += (y - _mouseState.y) * _mouseCoefficient;
 	_mouseState.x = x;
@@ -198,7 +198,7 @@ void Processor::handleMouseMove(SDL_UserEvent& event) {
 
 void Processor::handleMouseWheel(SDL_UserEvent& event) {
 	auto rotation = pointerToSigned<Sint16>(event.data1);
-	if (rotation == -1) {
+	if (rotation < 0) {
 		_mouseState.wheelUp += MAX_MOUSE_WHEEL_DELTA * 2.0F;
 	}
 	else {
@@ -216,17 +216,18 @@ void Processor::updateMouseMovement(const Uint64 dtMs) {
 	if (_mouseState.dx == 0.0F && _mouseState.dy == 0.0F) {
 		return;
 	}
-	const float decay = MOUSE_DECAY_RATE_PER_MS * dtMs;
 
-	float x        = transformMousePosition(_mouseState.x,
-                                  _mouseBounds.left,
-                                  _mouseBounds.right);
-	float y        = transformMousePosition(_mouseState.y,
-                                  _mouseBounds.top,
-                                  _mouseBounds.bottom,
-                                  1.0F,
-                                  0.0F);
-	_mouseState.dx = math::sign(_mouseState.dx)
+	const float x = transformMousePosition(_mouseState.x,
+	                                       _mouseBounds.left,
+	                                       _mouseBounds.right);
+	const float y = transformMousePosition(_mouseState.y,
+	                                       _mouseBounds.top,
+	                                       _mouseBounds.bottom,
+	                                       1.0F,
+	                                       0.0F);
+
+	const float decay = MOUSE_DECAY_RATE_PER_MS * dtMs;
+	_mouseState.dx    = math::sign(_mouseState.dx)
 	                 * std::clamp(std::abs(_mouseState.dx) - decay,
 	                              0.0F,
 	                              MAX_MOUSE_MOTION_DELTA);
@@ -235,8 +236,8 @@ void Processor::updateMouseMovement(const Uint64 dtMs) {
 	                              0.0F,
 	                              MAX_MOUSE_MOTION_DELTA);
 
-	float dx = transformMouseDelta(_mouseState.dx);
-	float dy = transformMouseDelta(_mouseState.dy, 1.0F, -1.0F);
+	const float dx = transformMouseDelta(_mouseState.dx);
+	const float dy = transformMouseDelta(_mouseState.dy, 1.0F, -1.0F);
 
 	_queue.emplace_back(MOUSE_MOVE_ABS_X, x);
 	_queue.emplace_back(MOUSE_MOVE_ABS_Y, y);
@@ -253,16 +254,15 @@ void Processor::updateMouseWheel(const Uint64 dtMs) {
 	if (_mouseState.wheelUp == 0.0F && _mouseState.wheelDown == 0.0F) {
 		return;
 	}
-	const float decay = MOUSE_WHEEL_DECAY_RATE_PER_MS * dtMs;
 
+	const float decay = MOUSE_WHEEL_DECAY_RATE_PER_MS * dtMs;
 	_mouseState.wheelUp =
 	    std::clamp(_mouseState.wheelUp - decay, 0.0F, MAX_MOUSE_WHEEL_DELTA * 2);
 	_mouseState.wheelDown =
 	    std::clamp(_mouseState.wheelDown - decay, 0.0F, MAX_MOUSE_WHEEL_DELTA * 2);
 
-	float wheelUp   = transformMouseWheel(_mouseState.wheelUp);
-	float wheelDown = transformMouseWheel(_mouseState.wheelDown);
-
+	const float wheelUp   = transformMouseWheel(_mouseState.wheelUp);
+	const float wheelDown = transformMouseWheel(_mouseState.wheelDown);
 	_queue.emplace_back(MOUSE_WHEEL_UP, wheelUp);
 	_queue.emplace_back(MOUSE_WHEEL_DOWN, wheelDown);
 }

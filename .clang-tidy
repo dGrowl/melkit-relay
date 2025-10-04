@@ -1,7 +1,8 @@
 ---
 Checks: >
   misc-include-cleaner,
-  readability-uppercase-literal-suffix
+  readability-uppercase-literal-suffix,
+  misc-const-correctness
 
 SystemHeaders: false
 HeaderFilterRegex: '^(src|inc)/.*'

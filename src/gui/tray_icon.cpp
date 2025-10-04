@@ -11,7 +11,7 @@ TrayIcon::TrayIcon() :
     _menu(nullptr),
     _configEntry(nullptr),
     _quitEntry(nullptr) {
-	Surface image(ICON_PATH);
+	const Surface image(ICON_PATH);
 	_tray = SDL_CreateTray(image, "Relay");
 	_menu = SDL_CreateTrayMenu(_tray);
 	_configEntry =

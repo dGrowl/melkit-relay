@@ -99,22 +99,22 @@ void ConfigSettingsPanel::showMousePositionSettings() {
 
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
 
-		ImVec2 cursorPos      = ImGui::GetCursorScreenPos();
-		float  availableWidth = ImGui::GetContentRegionAvail().x;
+		const ImVec2 cursorPos      = ImGui::GetCursorScreenPos();
+		const float  availableWidth = ImGui::GetContentRegionAvail().x;
 
-		ImVec2 rectMin = cursorPos;
-		ImVec2 rectMax(cursorPos.x + availableWidth - 1.0F,
-		               cursorPos.y + REGION_DISPLAY_HEIGHT);
+		const ImVec2 rectMin = cursorPos;
+		const ImVec2 rectMax(cursorPos.x + availableWidth - 1.0F,
+		                     cursorPos.y + REGION_DISPLAY_HEIGHT);
 
-		ImU32 fillColor = ImGui::GetColorU32(ImGuiCol_FrameBg);
-		ImU32 textColor = ImGui::GetColorU32(ImGuiCol_Text);
+		const ImU32 fillColor = ImGui::GetColorU32(ImGuiCol_FrameBg);
+		const ImU32 textColor = ImGui::GetColorU32(ImGuiCol_Text);
 
 		drawList->AddRectFilled(rectMin, rectMax, fillColor);
 
 		const auto& mouseBounds = _impulseProcessor.getMouseBounds();
-		auto        topLeftString =
+		const auto  topLeftString =
 		    std::format("({}, {})", mouseBounds.left, mouseBounds.top);
-		auto bottomRightString =
+		const auto bottomRightString =
 		    std::format("({}, {})", mouseBounds.right, mouseBounds.bottom);
 		const char* topLeftText     = topLeftString.c_str();
 		const char* bottomRightText = bottomRightString.c_str();
@@ -123,8 +123,8 @@ void ConfigSettingsPanel::showMousePositionSettings() {
 		topLeftTextPos.x += 3.0F;
 		topLeftTextPos.y += 2.0F;
 
-		ImVec2 bottomRightTextSize = ImGui::CalcTextSize(bottomRightText);
-		ImVec2 bottomRightTextPos  = rectMax;
+		const ImVec2 bottomRightTextSize = ImGui::CalcTextSize(bottomRightText);
+		ImVec2       bottomRightTextPos  = rectMax;
 		bottomRightTextPos.x -= bottomRightTextSize.x + 3.0F;
 		bottomRightTextPos.y -= bottomRightTextSize.y + 2.0F;
 
@@ -218,7 +218,7 @@ ConfigSettingsPanel::ConfigSettingsPanel(pad::Manager&    gamepadManager,
 }
 
 void ConfigSettingsPanel::show() {
-	ImVec2 childSize = ImGui::GetContentRegionAvail();
+	const ImVec2 childSize = ImGui::GetContentRegionAvail();
 	if (ImGui::BeginChild("SettingsPanelChild",
 	                      childSize,
 	                      ImGuiChildFlags_None,

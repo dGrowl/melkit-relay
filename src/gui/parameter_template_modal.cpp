@@ -39,8 +39,8 @@ const std::array<imp::Code, 5> PRESS_RIGHT_GAMEPAD_IMPULSES = {
 namespace gui {
 
 void ParameterTemplateModal::showCloseButtons() {
-	bool isValid = (_hasPress || _hasShoulders || _hasSticks || _hasTriggers)
-	               && (_useController || _useMouseKeyboard);
+	const bool isValid = (_hasPress || _hasShoulders || _hasSticks || _hasTriggers)
+	                     && (_useController || _useMouseKeyboard);
 	ImGui::BeginDisabled(!isValid);
 	if (ImGui::Button("Create", ImVec2(128.0F, 0.0F))) {
 		execute();

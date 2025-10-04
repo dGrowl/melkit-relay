@@ -106,7 +106,7 @@ void Monitor::stop() {
 void Monitor::threadFn() {
 	hook_set_dispatch_proc(handleEvent);
 
-	int status = hook_run();
+	const int status = hook_run();
 	if (status != UIOHOOK_SUCCESS) {
 		SDL_LogError(SDL_LOG_CATEGORY_SYSTEM, "Failed to start uiohook\n");
 	}

@@ -198,7 +198,7 @@ void drawIconOrDefault(const imp::TargetTag target,
 	ImGui::SameLine();
 	const auto dyIter = Y_OFFSETS.find(iconString);
 	if (dyIter != Y_OFFSETS.end()) {
-		ImVec2 cursorPos = ImGui::GetCursorPos();
+		const ImVec2 cursorPos = ImGui::GetCursorPos();
 		ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + dyIter->second));
 	}
 	ImGui::TextColored(ImVec4(1.0F, 1.0F, 1.0F, alpha), "%s", iconString);

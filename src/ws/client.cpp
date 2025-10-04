@@ -97,7 +97,7 @@ void Client::threadFn() {
 	while (_alive) {
 		mg_mgr_poll(&manager, 64);
 		{
-			std::lock_guard<std::mutex> lock(_sendMutex);
+			const std::lock_guard<std::mutex> lock(_sendMutex);
 			while (_alive && !_sendQueue.empty() && connection != nullptr) {
 				mg_ws_send(connection,
 				           _sendQueue.front().c_str(),
@@ -120,7 +120,7 @@ Status Client::getStatus() {
 }
 
 void Client::sendMessage(std::string&& message) {
-	std::lock_guard<std::mutex> lock(_sendMutex);
+	const std::lock_guard<std::mutex> lock(_sendMutex);
 
 	_sendQueue.push(std::move(message));
 }

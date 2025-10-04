@@ -32,9 +32,9 @@ static std::unordered_set<std::string> buildFilterSet(
     vts::ParameterManager& parameterManager,
     const std::string&     filter) {
 	std::unordered_set<std::string> result;
-	std::string                     lowerFilter = toLower(filter);
+	const std::string               lowerFilter = toLower(filter);
 	for (const auto& parameter : parameterManager.values()) {
-		std::string lowerName = toLower(parameter.getName());
+		const std::string lowerName = toLower(parameter.getName());
 		if (!lowerName.contains(lowerFilter)) {
 			result.insert(parameter.getName());
 		}
@@ -149,8 +149,8 @@ void ConfigParameterPanel::showData() {
 			unsigned iIcon = 0;
 			ImGui::TableNextColumn();
 
-			auto     availableWidth = ImGui::GetContentRegionAvail().x;
-			unsigned nIconsPerRow   = std::max(1.0F, availableWidth / 38.0F);
+			auto           availableWidth = ImGui::GetContentRegionAvail().x;
+			const unsigned nIconsPerRow   = std::max(1.0F, availableWidth / 38.0F);
 			for (const auto& receiver : p.getReceivers() | std::views::values) {
 				const float alpha =
 				    math::remapLinear(receiver.getValue(), -1.0F, 1.0F, 0.1F, 1.0F);

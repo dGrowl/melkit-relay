@@ -1,6 +1,24 @@
 #include "gui/theme.hpp"
 
+#include <charconv>
+#include <string_view>
+
 #include "imgui/imgui.h"
+
+ImVec4 hexToImVec4(std::string_view hex) {
+	if (hex.starts_with('#')) {
+		hex.remove_prefix(1);
+	}
+
+	unsigned hexValue;
+	std::from_chars(hex.data(), hex.data() + hex.size(), hexValue, 16);
+
+	const float r = ((hexValue >> 16) & 0xFF) / 255.0F;
+	const float g = ((hexValue >> 8) & 0xFF) / 255.0F;
+	const float b = (hexValue & 0xFF) / 255.0F;
+
+	return ImVec4(r, g, b, 1.0F);
+}
 
 namespace gui {
 
@@ -11,33 +29,33 @@ void Theme::initColors() {
 
 	auto& colors = style.Colors;
 
-	colors[ImGuiCol_FrameBg]             = ImVec4(0.294F, 0.125F, 0.122F, 1.0F);
-	colors[ImGuiCol_FrameBgHovered]      = ImVec4(0.439F, 0.149F, 0.157F, 1.0F);
-	colors[ImGuiCol_FrameBgActive]       = ImVec4(0.682F, 0.2F, 0.212F, 1.0F);
-	colors[ImGuiCol_TitleBgActive]       = ImVec4(0.478F, 0.169F, 0.161F, 1.0F);
-	colors[ImGuiCol_CheckMark]           = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
-	colors[ImGuiCol_SliderGrab]          = ImVec4(0.878F, 0.239F, 0.247F, 1.0F);
-	colors[ImGuiCol_SliderGrabActive]    = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
-	colors[ImGuiCol_Button]              = ImVec4(0.439F, 0.149F, 0.157F, 1.0F);
-	colors[ImGuiCol_ButtonHovered]       = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
-	colors[ImGuiCol_ButtonActive]        = ImVec4(0.98F, 0.059F, 0.133F, 1.0F);
-	colors[ImGuiCol_Header]              = ImVec4(0.357F, 0.133F, 0.141F, 1.0F);
-	colors[ImGuiCol_HeaderHovered]       = ImVec4(0.8F, 0.224F, 0.239F, 1.0F);
-	colors[ImGuiCol_HeaderActive]        = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
-	colors[ImGuiCol_SeparatorHovered]    = ImVec4(0.6F, 0.098F, 0.114F, 1.0F);
-	colors[ImGuiCol_SeparatorActive]     = ImVec4(0.749F, 0.102F, 0.122F, 1.0F);
-	colors[ImGuiCol_ResizeGrip]          = ImVec4(0.259F, 0.114F, 0.118F, 1.0F);
-	colors[ImGuiCol_ResizeGripHovered]   = ImVec4(0.682F, 0.2F, 0.212F, 1.0F);
-	colors[ImGuiCol_ResizeGripActive]    = ImVec4(0.933F, 0.251F, 0.271F, 1.0F);
-	colors[ImGuiCol_TabHovered]          = ImVec4(0.8F, 0.224F, 0.239F, 1.0F);
-	colors[ImGuiCol_Tab]                 = ImVec4(0.51F, 0.165F, 0.165F, 1.0F);
-	colors[ImGuiCol_TabSelected]         = ImVec4(0.678F, 0.2F, 0.208F, 1.0F);
-	colors[ImGuiCol_TabSelectedOverline] = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
-	colors[ImGuiCol_TabDimmed]           = ImVec4(0.149F, 0.067F, 0.067F, 1.0F);
-	colors[ImGuiCol_TabDimmedSelected]   = ImVec4(0.424F, 0.137F, 0.141F, 1.0F);
-	colors[ImGuiCol_TextLink]            = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
-	colors[ImGuiCol_TextSelectedBg]      = ImVec4(0.392F, 0.141F, 0.149F, 1.0F);
-	colors[ImGuiCol_NavCursor]           = ImVec4(0.98F, 0.259F, 0.278F, 1.0F);
+	colors[ImGuiCol_FrameBg]             = hexToImVec4("#4B201F");
+	colors[ImGuiCol_FrameBgHovered]      = hexToImVec4("#702628");
+	colors[ImGuiCol_FrameBgActive]       = hexToImVec4("#AE3336");
+	colors[ImGuiCol_TitleBgActive]       = hexToImVec4("#7A2B29");
+	colors[ImGuiCol_CheckMark]           = hexToImVec4("#FA4247");
+	colors[ImGuiCol_SliderGrab]          = hexToImVec4("#E03D3F");
+	colors[ImGuiCol_SliderGrabActive]    = hexToImVec4("#FA4247");
+	colors[ImGuiCol_Button]              = hexToImVec4("#702628");
+	colors[ImGuiCol_ButtonHovered]       = hexToImVec4("#FA4247");
+	colors[ImGuiCol_ButtonActive]        = hexToImVec4("#FA0F22");
+	colors[ImGuiCol_Header]              = hexToImVec4("#5B2224");
+	colors[ImGuiCol_HeaderHovered]       = hexToImVec4("#CC393D");
+	colors[ImGuiCol_HeaderActive]        = hexToImVec4("#FA4247");
+	colors[ImGuiCol_SeparatorHovered]    = hexToImVec4("#99191D");
+	colors[ImGuiCol_SeparatorActive]     = hexToImVec4("#BF1A1F");
+	colors[ImGuiCol_ResizeGrip]          = hexToImVec4("#421D1E");
+	colors[ImGuiCol_ResizeGripHovered]   = hexToImVec4("#AE3336");
+	colors[ImGuiCol_ResizeGripActive]    = hexToImVec4("#EE4045");
+	colors[ImGuiCol_TabHovered]          = hexToImVec4("#CC393D");
+	colors[ImGuiCol_Tab]                 = hexToImVec4("#822A2A");
+	colors[ImGuiCol_TabSelected]         = hexToImVec4("#AD3335");
+	colors[ImGuiCol_TabSelectedOverline] = hexToImVec4("#FA4247");
+	colors[ImGuiCol_TabDimmed]           = hexToImVec4("#261111");
+	colors[ImGuiCol_TabDimmedSelected]   = hexToImVec4("#6C2324");
+	colors[ImGuiCol_TextLink]            = hexToImVec4("#FA4247");
+	colors[ImGuiCol_TextSelectedBg]      = hexToImVec4("#642426");
+	colors[ImGuiCol_NavCursor]           = hexToImVec4("#FA4247");
 }
 
 void Theme::initLayout() {

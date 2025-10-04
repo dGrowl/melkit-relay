@@ -42,10 +42,10 @@ void Manager::clearActive() {
 }
 
 void Manager::refreshDevices() {
-	int  nPads    = 0;
-	auto gamepads = SDL_GetGamepads(&nPads);
-	_ids          = {0};
-	_names        = {"None"};
+	int   nPads    = 0;
+	auto* gamepads = SDL_GetGamepads(&nPads);
+	_ids           = {0};
+	_names         = {"None"};
 	for (int i = 0; i < nPads; ++i) {
 		_ids.emplace_back(gamepads[i]);
 		_names.emplace_back(SDL_GetGamepadNameForID(gamepads[i]));

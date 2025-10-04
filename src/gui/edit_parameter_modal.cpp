@@ -307,7 +307,7 @@ int EditParameterModal::restrictInputName(ImGuiInputTextCallbackData* data) {
 }
 
 int EditParameterModal::inputNameCallback(ImGuiInputTextCallbackData* data) {
-	auto instance = static_cast<EditParameterModal*>(data->UserData);
+	auto* instance = static_cast<EditParameterModal*>(data->UserData);
 	return instance->restrictInputName(data);
 }
 

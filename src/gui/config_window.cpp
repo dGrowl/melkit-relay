@@ -159,11 +159,11 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 	ImGui::End();
 
 	ImGui::Render();
-	auto       drawData = ImGui::GetDrawData();
+	auto*      drawData = ImGui::GetDrawData();
 	const bool isMinimized =
 	    (drawData->DisplaySize.x <= 0.0F || drawData->DisplaySize.y <= 0.0F);
 
-	auto            commandBuffer    = SDL_AcquireGPUCommandBuffer(gpu);
+	auto*           commandBuffer    = SDL_AcquireGPUCommandBuffer(gpu);
 	SDL_GPUTexture* swapchainTexture = nullptr;
 	SDL_WaitAndAcquireGPUSwapchainTexture(commandBuffer,
 	                                      _window,
@@ -183,7 +183,7 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 		targetInfo.layer_or_depth_plane   = 0;
 		targetInfo.cycle                  = false;
 
-		auto renderPass =
+		auto* renderPass =
 		    SDL_BeginGPURenderPass(commandBuffer, &targetInfo, 1, nullptr);
 		ImGui_ImplSDLGPU3_RenderDrawData(drawData, commandBuffer, renderPass);
 		SDL_EndGPURenderPass(renderPass);

@@ -1,0 +1,9 @@
+---
+Checks: misc-include-cleaner
+
+SystemHeaders: false
+HeaderFilterRegex: '^(src|inc)/.*'
+
+WarningsAsErrors: ''
+UseColor: true
+---

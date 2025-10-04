@@ -1,9 +1,16 @@
 #ifndef GUI_EDIT_PARAMETER_MODAL_
 #define GUI_EDIT_PARAMETER_MODAL_
+
 #include <array>
+#include <cstddef>
+#include <string>
+
+#include "imgui/imgui.h"
 
 #include "core/meta.hpp"
 #include "gui/add_impulse_modal.hpp"
+#include "gui/combo_box.hpp"
+#include "impulse/code.hpp"
 #include "vts/parameter.hpp"
 #include "ws/controller.hpp"
 

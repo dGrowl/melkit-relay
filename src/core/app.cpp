@@ -1,13 +1,19 @@
 #include "core/app.hpp"
 
-#include <format>
+#include <string>
+#include <vector>
 
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_gpu.h>
+#include <SDL3/SDL_init.h>
+#include <SDL3/SDL_tray.h>
+
+#include "imgui/backends/imgui_impl_sdl3.h"
 #include "imgui/imgui.h"
 
 #include "core/settings.hpp"
 #include "gui/fonts.hpp"
 #include "gui/theme.hpp"
-#include "gui/utility.hpp"
 #include "mnk/event.hpp"
 #include "vts/request.hpp"
 #include "vts/response.hpp"

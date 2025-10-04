@@ -1,6 +1,11 @@
 #include "mnk/monitor.hpp"
 
+#include <cstdint>
+#include <libuiohook/uiohook.h>
+
+#include <SDL3/SDL_events.h>
 #include <SDL3/SDL_log.h>
+#include <SDL3/SDL_stdinc.h>
 
 #include "impulse/code.hpp"
 #include "mnk/event.hpp"

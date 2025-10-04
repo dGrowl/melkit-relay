@@ -98,6 +98,9 @@ format:
 loc:
 	find inc src -regex ".*\.\(hpp\|cpp\)$$" | xargs wc -l
 
+tidy:
+	printf "%s\n" $(APP_SOURCES) $(APP_HEADERS) | xargs -P$(shell nproc) -n1 -I{}  clang-tidy {} -- $(CXXFLAGS)
+
 clean:
 	rm -f $(EXE)
 	rm -rf $(OBJ_DIR)

@@ -1,7 +1,7 @@
 #ifndef GUI_TRAY_ICON_HPP_
 #define GUI_TRAY_ICON_HPP_
 
-#include <SDL3/SDL.h>
+#include <SDL3/SDL_tray.h>
 
 namespace gui {
 

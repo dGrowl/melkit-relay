@@ -1,15 +1,17 @@
 #include "vts/request.hpp"
 
 #include <iostream>
-#include <format>
-#include <fstream>
-#include <glaze/core/context.hpp>
-#include <glaze/core/reflect.hpp>
-#include <glaze/json/write.hpp>
-#include <mongoose.h>
+
 #include <optional>
 #include <string>
 #include <string_view>
+#include <utility>
+#include <vector>
+
+#include <glaze/core/common.hpp>
+#include <glaze/core/context.hpp>
+#include <glaze/core/reflect.hpp>
+#include <glaze/json/write.hpp>
 
 #include "core/meta.hpp"
 #include "core/settings.hpp"

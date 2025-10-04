@@ -1,14 +1,15 @@
 #ifndef IMPULSE_PROCESSOR_HPP_
 #define IMPULSE_PROCESSOR_HPP_
 
-#include <SDL3/SDL_events.h>
-#include <ranges>
+#include <utility>
 #include <vector>
+
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_joystick.h>
+#include <SDL3/SDL_stdinc.h>
 
 #include "impulse/code.hpp"
 #include "math/geometry.hpp"
-#include "vts/parameter_manager.hpp"
-#include "ws/controller.hpp"
 
 namespace imp {
 

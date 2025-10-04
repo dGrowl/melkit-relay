@@ -2,10 +2,7 @@
 #define VTS_RESPONSE_HPP_
 
 #include <SDL3/SDL_events.h>
-#include <string>
-#include <vector>
-
-#include "vts/parameter.hpp"
+#include <SDL3/SDL_stdinc.h>
 
 namespace vts {
 

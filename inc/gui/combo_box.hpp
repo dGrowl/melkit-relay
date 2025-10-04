@@ -1,6 +1,7 @@
 #ifndef GUI_COMBO_BOX_HPP_
 #define GUI_COMBO_BOX_HPP_
 
+#include <cstddef>
 #include <vector>
 
 namespace gui {

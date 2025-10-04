@@ -2,6 +2,7 @@
 #define CORE_APP_HPP_
 
 #include <SDL3/SDL_events.h>
+#include <SDL3/SDL_gpu.h>
 #include <SDL3/SDL_tray.h>
 
 #include "core/pacer.hpp"

@@ -1,6 +1,6 @@
 #include "gui/tray_icon.hpp"
 
-#include <SDL3_image/SDL_image.h>
+#include <SDL3/SDL_tray.h>
 
 #include "gui/image.hpp"
 

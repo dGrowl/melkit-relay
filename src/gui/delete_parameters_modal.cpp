@@ -1,12 +1,15 @@
 #include "gui/delete_parameters_modal.hpp"
 
 #include <algorithm>
+#include <functional>
 #include <ranges>
 
 #include "imgui/imgui.h"
 
 #include "gui/utility.hpp"
+#include "vts/parameter_manager.hpp"
 #include "vts/request.hpp"
+#include "ws/controller.hpp"
 
 namespace gui {
 

@@ -1,14 +1,21 @@
 #include "gui/config_parameter_panel.hpp"
 
 #include <algorithm>
+#include <cctype>
+#include <ranges>
 #include <string>
 #include <unordered_set>
 
+#include <SDL3/SDL_stdinc.h>
+
 #include "imgui/imgui.h"
 
+#include "gui/delete_parameters_modal.hpp"
 #include "gui/fonts.hpp"
 #include "gui/icon.hpp"
+#include "gui/parameter_template_modal.hpp"
 #include "math/formula.hpp"
+#include "vts/parameter_manager.hpp"
 #include "ws/controller.hpp"
 
 static char charToLower(unsigned char c) {

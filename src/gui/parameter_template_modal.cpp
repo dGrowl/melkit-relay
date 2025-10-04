@@ -1,14 +1,18 @@
 #include "gui/parameter_template_modal.hpp"
 
 #include <array>
+#include <cstddef>
+#include <vector>
 
 #include "imgui/imgui.h"
 #include "libuiohook/uiohook.h"
 
 #include "core/settings.hpp"
 #include "gui/utility.hpp"
+#include "impulse/code.hpp"
 #include "vts/parameter.hpp"
 #include "vts/request.hpp"
+#include "ws/controller.hpp"
 
 static constexpr size_t TEMPLATE_CONTROLLER = 0;
 

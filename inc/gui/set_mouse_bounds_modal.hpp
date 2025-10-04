@@ -2,6 +2,7 @@
 #define GUI_SET_MOUSE_BOUNDS_MODAL_
 
 #include "impulse/processor.hpp"
+#include "math/geometry.hpp"
 #include "vts/parameter.hpp"
 
 namespace gui {

@@ -1,11 +1,12 @@
 #ifndef CORE_SETTINGS_HPP_
 #define CORE_SETTINGS_HPP_
 
-#include <glaze/core/common.hpp>
-#include <glaze/core/meta.hpp>
 #include <mutex>
 #include <string>
 #include <vector>
+
+#include <glaze/core/common.hpp>
+#include <glaze/core/meta.hpp>
 
 #include "impulse/code.hpp"
 #include "math/geometry.hpp"

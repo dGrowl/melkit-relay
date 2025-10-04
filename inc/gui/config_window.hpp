@@ -1,18 +1,14 @@
 #ifndef GUI_CONFIG_WINDOW_HPP_
 #define GUI_CONFIG_WINDOW_HPP_
 
+#include <cstddef>
+
 #include <SDL3/SDL_gpu.h>
 #include <SDL3/SDL_video.h>
 
-#include "imgui/backends/imgui_impl_sdl3.h"
-#include "imgui/backends/imgui_impl_sdlgpu3.h"
-#include "imgui/imgui.h"
-
 #include "gui/config_parameter_panel.hpp"
 #include "gui/config_settings_panel.hpp"
-#include "gui/delete_parameters_modal.hpp"
-#include "gui/edit_parameter_modal.hpp"
-#include "gui/parameter_template_modal.hpp"
+#include "impulse/processor.hpp"
 #include "pad/manager.hpp"
 #include "vts/parameter_manager.hpp"
 #include "ws/controller.hpp"

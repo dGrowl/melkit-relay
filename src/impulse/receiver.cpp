@@ -1,9 +1,6 @@
 #include "impulse/receiver.hpp"
 
-#include <algorithm>
-#include <limits>
-
-#include "math/formula.hpp"
+#include "impulse/code.hpp"
 
 namespace imp {
 

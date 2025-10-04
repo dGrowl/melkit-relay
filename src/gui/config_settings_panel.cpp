@@ -1,11 +1,15 @@
 #include "gui/config_settings_panel.hpp"
 
-#include <cmath>
+#include <cstddef>
 #include <format>
+
+#include <SDL3/SDL_stdinc.h>
 
 #include "imgui/imgui.h"
 
 #include "gui/fonts.hpp"
+#include "vts/parameter.hpp"
+#include "ws/controller.hpp"
 
 namespace gui {
 
@@ -175,7 +179,7 @@ void ConfigSettingsPanel::showVtsSettings() {
 		ImGui::TableNextColumn();
 		ImGui::Text("Status");
 		ImGui::TableNextColumn();
-		ImGui::Text(STATUS_TEXT[_wsController.getStatus()]);
+		ImGui::Text("%s", STATUS_TEXT[_wsController.getStatus()]);
 
 		ImGui::EndTable();
 	}

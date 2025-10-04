@@ -1,13 +1,13 @@
 #ifndef WS_CLIENT_HPP_
 #define WS_CLIENT_HPP_
 
-#include <SDL3/SDL_events.h>
 #include <atomic>
-#include <mongoose.h>
 #include <mutex>
 #include <queue>
 #include <string>
 #include <thread>
+
+#include <mongoose.h>
 
 #include "ws/controller.hpp"
 

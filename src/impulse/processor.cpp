@@ -1,18 +1,21 @@
 #include "impulse/processor.hpp"
 
-#include <SDL3/SDL_events.h>
-#include <SDL3/SDL_timer.h>
 #include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
 #include <limits>
-#include <ranges>
 
-#include "libuiohook/uiohook.h"
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_gamepad.h>
+#include <SDL3/SDL_joystick.h>
+#include <SDL3/SDL_stdinc.h>
+#include <SDL3/SDL_timer.h>
 
 #include "core/settings.hpp"
 #include "impulse/code.hpp"
 #include "math/formula.hpp"
 #include "math/geometry.hpp"
-#include "mnk/event.hpp"
 
 template <typename T>
 T pointerToUnsigned(const void* p) {

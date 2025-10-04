@@ -1,6 +1,14 @@
 #include "gui/utility.hpp"
 
+#include <ranges>
 #include <unordered_map>
+
+#include <SDL3/SDL_stdinc.h>
+
+#include "imgui/imgui.h"
+#include "libuiohook/uiohook.h"
+
+#include "impulse/code.hpp"
 
 static const std::unordered_map<ImGuiKey, imp::TargetTag> imguiToUioKeyMap = {
     {ImGuiKey_Tab,            VC_TAB          },

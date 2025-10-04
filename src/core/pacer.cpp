@@ -1,5 +1,6 @@
 #include "core/pacer.hpp"
 
+#include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_timer.h>
 
 constexpr Uint64 NS_PER_SECOND = 1'000'000'000;

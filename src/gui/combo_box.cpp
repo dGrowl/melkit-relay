@@ -1,5 +1,8 @@
 #include "gui/combo_box.hpp"
 
+#include <cstddef>
+#include <vector>
+
 #include <SDL3/SDL_assert.h>
 
 #include "imgui/imgui.h"

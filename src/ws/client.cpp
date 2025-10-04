@@ -1,11 +1,18 @@
 #include "ws/client.hpp"
 
-#include <SDL3/SDL_log.h>
 #include <format>
+#include <mutex>
+#include <thread>
+#include <utility>
+
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_log.h>
+#include <SDL3/SDL_stdinc.h>
 #include <mongoose.h>
 
 #include "core/settings.hpp"
 #include "vts/response.hpp"
+#include "ws/controller.hpp"
 #include "ws/event.hpp"
 
 #ifdef NDEBUG

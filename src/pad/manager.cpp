@@ -1,6 +1,11 @@
 #include "pad/manager.hpp"
 
+#include <cstddef>
+#include <vector>
+
 #include <SDL3/SDL_gamepad.h>
+#include <SDL3/SDL_joystick.h>
+#include <SDL3/SDL_stdinc.h>
 
 static constexpr auto NONE_INDEX = 0;
 

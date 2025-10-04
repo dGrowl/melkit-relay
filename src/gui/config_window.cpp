@@ -1,18 +1,21 @@
 #include "gui/config_window.hpp"
 
-#include <algorithm>
-#include <format>
-#include <functional>
-#include <ranges>
+#include <cstddef>
 
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_gpu.h>
+#include <SDL3/SDL_pixels.h>
+#include <SDL3/SDL_video.h>
+
+#include "imgui/backends/imgui_impl_sdl3.h"
+#include "imgui/backends/imgui_impl_sdlgpu3.h"
 #include "imgui/imgui.h"
 
-#include "gui/fonts.hpp"
-#include "gui/icon.hpp"
 #include "gui/image.hpp"
-#include "math/formula.hpp"
-#include "vts/parameter.hpp"
-#include "vts/request.hpp"
+#include "impulse/processor.hpp"
+#include "pad/manager.hpp"
+#include "vts/parameter_manager.hpp"
+#include "ws/controller.hpp"
 
 static constexpr auto WINDOW_TITLE = "Relay: Configuration";
 

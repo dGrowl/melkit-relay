@@ -2,6 +2,7 @@
 #define WS_EVENT_HPP_
 
 #include <SDL3/SDL_events.h>
+#include <SDL3/SDL_stdinc.h>
 
 namespace ws {
 

@@ -5,7 +5,9 @@
 
 #include "imgui/imgui.h"
 
+#include "gui/add_impulse_modal.hpp"
 #include "gui/combo_box.hpp"
+#include "impulse/code.hpp"
 #include "vts/parameter.hpp"
 
 namespace gui {

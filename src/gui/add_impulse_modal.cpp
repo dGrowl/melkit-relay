@@ -6,6 +6,7 @@
 #include "imgui/imgui.h"
 
 #include "gui/utility.hpp"
+#include "impulse/code.hpp"
 
 namespace gui {
 

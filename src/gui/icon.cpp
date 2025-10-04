@@ -1,11 +1,12 @@
 #include "gui/icon.hpp"
 
 #include <unordered_map>
-#include <unordered_set>
 
+#include "imgui/imgui.h"
 #include "libuiohook/uiohook.h"
 
 #include "gui/fonts.hpp"
+#include "impulse/code.hpp"
 
 namespace gui {
 
@@ -200,7 +201,7 @@ void drawIconOrDefault(const imp::TargetTag target,
 		ImVec2 cursorPos = ImGui::GetCursorPos();
 		ImGui::SetCursorPos(ImVec2(cursorPos.x, cursorPos.y + dyIter->second));
 	}
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, alpha), iconString);
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, alpha), "%s", iconString);
 }
 
 void drawIcon(const imp::Code code, const float alpha) {

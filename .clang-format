@@ -31,10 +31,12 @@ IncludeBlocks: Regroup
 IncludeCategories:
   - Regex: '^<iostream>'
     Priority: 1
+  - Regex: '^<(glaze|SDL3|mongoose).*>'
+    Priority: 3
   - Regex: '^<.*>'
-    SortPriority: 2
+    Priority: 2
   - Regex: '"(imgui|libuiohook).*"'
-    SortPriority: 3
+    Priority: 4
   - Regex: '".*"'
-    SortPriority: 4
+    Priority: 5
 ---

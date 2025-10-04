@@ -1,11 +1,20 @@
 #include "vts/response.hpp"
 
 #include <iostream>
+
+#include <cstdint>
+#include <optional>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include <SDL3/SDL_events.h>
+#include <glaze/core/common.hpp>
 #include <glaze/core/context.hpp>
+#include <glaze/core/opts.hpp>
+#include <glaze/core/read.hpp>
 #include <glaze/core/reflect.hpp>
 #include <glaze/json/read.hpp>
-#include <optional>
-#include <vector>
 
 #include "core/meta.hpp"
 

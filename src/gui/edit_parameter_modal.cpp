@@ -1,15 +1,23 @@
 #include "gui/edit_parameter_modal.hpp"
 
+#include <algorithm>
 #include <format>
+#include <string>
+#include <vector>
+
+#include <SDL3/SDL_stdinc.h>
 
 #include "imgui/imgui.h"
 
 #include "core/settings.hpp"
+#include "gui/add_impulse_modal.hpp"
 #include "gui/combo_box.hpp"
 #include "gui/fonts.hpp"
 #include "gui/utility.hpp"
+#include "impulse/code.hpp"
 #include "vts/parameter.hpp"
 #include "vts/request.hpp"
+#include "ws/controller.hpp"
 
 namespace gui {
 
@@ -157,13 +165,13 @@ void EditParameterModal::showImpulses() {
 
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
-			ImGui::Text(fields.device);
+			ImGui::Text("%s", fields.device);
 
 			ImGui::TableNextColumn();
-			ImGui::Text(fields.event);
+			ImGui::Text("%s", fields.event);
 
 			ImGui::TableNextColumn();
-			ImGui::Text(fields.target);
+			ImGui::Text("%s", fields.target);
 
 			ImGui::TableNextColumn();
 			if (ImGui::Checkbox("##invert-impulse", &data.isInvertedRef())) {

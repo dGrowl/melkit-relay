@@ -1,8 +1,9 @@
 #ifndef WS_CONTROLLER_HPP_
 #define WS_CONTROLLER_HPP_
 
-#include <SDL3/SDL_stdinc.h>
 #include <string>
+
+#include <SDL3/SDL_stdinc.h>
 
 namespace ws {
 

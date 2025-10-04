@@ -1,5 +1,10 @@
 #include "vts/parameter_manager.hpp"
 
+#include <ranges>
+#include <string>
+
+#include "impulse/code.hpp"
+
 namespace vts {
 
 ParameterManager::ParameterManager() :

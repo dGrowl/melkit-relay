@@ -1,13 +1,26 @@
 #include "core/settings.hpp"
 
 #include <iostream>
+
+#include <format>
+#include <fstream>
+#include <iterator>
+#include <mutex>
+#include <string>
+#include <vector>
+
+#include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_time.h>
 #include <SDL3/SDL_timer.h>
 #include <SDL3/SDL_video.h>
-#include <format>
-#include <fstream>
+#include <glaze/core/opts.hpp>
+#include <glaze/core/reflect.hpp>
+#include <glaze/core/write.hpp>
 #include <glaze/json/read.hpp>
-#include <glaze/json/write.hpp>
+#include <glaze/json/write.hpp>  // NOLINT(misc-include-cleaner)
+
+#include "math/geometry.hpp"
+#include "vts/parameter.hpp"
 
 static constexpr auto FILE_PATH = "settings.json";
 

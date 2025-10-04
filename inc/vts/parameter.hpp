@@ -3,8 +3,10 @@
 
 #include <string>
 #include <unordered_map>
-#include <vector>
 
+#include <SDL3/SDL_stdinc.h>
+
+#include "impulse/code.hpp"
 #include "impulse/receiver.hpp"
 
 namespace vts {

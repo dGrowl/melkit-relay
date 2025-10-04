@@ -1,12 +1,16 @@
 #ifndef GUI_CONFIG_SETTINGS_PANEL_HPP_
 #define GUI_CONFIG_SETTINGS_PANEL_HPP_
 
+#include <cstddef>
+
+#include <SDL3/SDL_stdinc.h>
+
 #include "gui/combo_box.hpp"
 #include "gui/set_mouse_bounds_modal.hpp"
+#include "impulse/processor.hpp"
 #include "pad/manager.hpp"
-#include "vts/parameter_manager.hpp"
+#include "vts/parameter.hpp"
 #include "ws/controller.hpp"
-
 namespace gui {
 
 constexpr Uint8 MAX_URL_LENGTH = 128;

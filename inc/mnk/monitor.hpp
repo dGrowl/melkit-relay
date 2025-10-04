@@ -1,8 +1,9 @@
 #ifndef MNK_MONITOR_HPP_
 #define MNK_MONITOR_HPP_
 
-#include <SDL3/SDL_events.h>
 #include <thread>
+
+#include <SDL3/SDL_events.h>
 
 #include "libuiohook/uiohook.h"
 

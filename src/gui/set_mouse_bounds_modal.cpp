@@ -1,5 +1,7 @@
 #include "gui/set_mouse_bounds_modal.hpp"
 
+#include <algorithm>
+
 #include "imgui/imgui.h"
 
 #include "gui/fonts.hpp"

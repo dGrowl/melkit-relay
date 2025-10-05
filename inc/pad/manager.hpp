@@ -28,7 +28,7 @@ public:
 
 	void clearActive();
 	void refreshDevices();
-	void setActive(const size_t i);
+	void setActive(size_t i);
 };
 
 }  // namespace pad

@@ -152,7 +152,7 @@ imp::TargetTag convertImGuiToUioKey(const ImGuiKey keycode) {
 	return imguiToUioKeyMap.at(keycode);
 }
 
-const char* getUioKeyName(const Uint32 keycode) {
+const char* getUioKeyName(const UioKey keycode) {
 	return uioToStringMap.at(keycode);
 }
 

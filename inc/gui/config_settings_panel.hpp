@@ -42,7 +42,7 @@ public:
 	                    ws::IController& wsController);
 
 	void show();
-	void setActiveGamepadIndex(const size_t activeIndex);
+	void setActiveGamepadIndex(size_t activeIndex);
 };
 
 }  // namespace gui

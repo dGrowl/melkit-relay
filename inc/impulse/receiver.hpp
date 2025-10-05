@@ -17,7 +17,7 @@ private:
 	float _value;
 
 public:
-	explicit Receiver(const Code code, const bool isInverted = false);
+	explicit Receiver(Code code, bool isInverted = false);
 
 	[[nodiscard]] bool  getIsInverted() const;
 	[[nodiscard]] Code  getCode() const;

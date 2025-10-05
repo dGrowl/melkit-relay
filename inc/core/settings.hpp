@@ -119,7 +119,7 @@ public:
 
 	void setAuthToken(const char* newAuthToken);
 	void setMouseBounds(const math::Rectangle<int>& bounds);
-	void setMouseSensitivity(const int newSensitivity);
+	void setMouseSensitivity(int newSensitivity);
 	void setParameter(const vts::Parameter& parameter);
 	void setWsUrl(const char* newWsUrl);
 

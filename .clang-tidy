@@ -19,7 +19,7 @@
 
 #   clang-analyzer-*
 
-Checks: modernize-use-nodiscard
+Checks: readability-avoid-const-params-in-decls
 
 SystemHeaders: false
 HeaderFilterRegex: '^(src|inc)/.*'

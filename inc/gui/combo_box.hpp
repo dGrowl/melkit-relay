@@ -18,7 +18,7 @@ public:
 	[[nodiscard]] size_t getIndex() const;
 
 	bool show();
-	void setIndex(const size_t i);
+	void setIndex(size_t i);
 };
 
 }  // namespace gui

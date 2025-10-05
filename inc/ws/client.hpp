@@ -28,7 +28,7 @@ public:
 	static void handleEvent(mg_connection* connection, int event, void* eventData);
 	void        handleError(const char* description);
 	void        handleOpen();
-	void        setStatus(const Status newStatus);
+	void        setStatus(Status newStatus);
 	void        threadFn();
 
 	// IController

@@ -5,7 +5,7 @@
 
 namespace gui {
 
-void drawIcon(const imp::Code code, const float alpha);
+void drawIcon(imp::Code code, float alpha);
 
 }
 

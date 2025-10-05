@@ -13,15 +13,17 @@
 
 namespace gui {
 
+using UioKey = Uint32;
+
 using KeycodeView =
     decltype(std::declval<const std::unordered_map<ImGuiKey, imp::TargetTag>&>()
              | std::views::keys);
 
 KeycodeView validImGuiKeys();
 
-imp::TargetTag convertImGuiToUioKey(const ImGuiKey keycode);
+imp::TargetTag convertImGuiToUioKey(ImGuiKey keycode);
 
-const char* getUioKeyName(const Uint32 keycode);
+const char* getUioKeyName(UioKey keycode);
 
 void centerNextWindow();
 

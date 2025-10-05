@@ -18,15 +18,15 @@ private:
 	bool _pushed;
 
 public:
-	FontScope(ImFont* font, const float size);
+	FontScope(ImFont* font, float size);
 	~FontScope();
 };
 
 class Fonts {
 public:
-	static FontScope scope(const FontType type);
+	static FontScope scope(FontType type);
 	static void      init();
-	static void      push(const FontType type);
+	static void      push(FontType type);
 };
 
 }  // namespace gui

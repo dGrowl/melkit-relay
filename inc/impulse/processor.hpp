@@ -36,7 +36,7 @@ private:
 	ImpulseQueue _queue;
 
 	void handleGamepadAxisMotion(SDL_GamepadAxisEvent& event);
-	void handleGamepadButton(SDL_GamepadButtonEvent& event, const bool isPressed);
+	void handleGamepadButton(SDL_GamepadButtonEvent& event, bool isPressed);
 
 	void handleKeyDown(SDL_UserEvent& event);
 	void handleKeyUp(SDL_UserEvent& event);
@@ -58,11 +58,10 @@ public:
 	[[nodiscard]] int                         getMouseSensitivity() const;
 
 	void clear();
-	void handleGamepadEvent(SDL_Event&           event,
-	                        const SDL_JoystickID activeGamepadId);
+	void handleGamepadEvent(SDL_Event& event, SDL_JoystickID activeGamepadId);
 	void handleEvent(SDL_UserEvent& event);
 	void setMouseBounds(const math::Rectangle<int>& bounds);
-	void setMouseSensitivity(const int sensitivity);
+	void setMouseSensitivity(int sensitivity);
 	void update();
 };
 

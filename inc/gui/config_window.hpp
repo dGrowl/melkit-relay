@@ -35,7 +35,7 @@ public:
 	SDL_WindowID id() const;
 	void         close(SDL_GPUDevice* gpu);
 	void         render(SDL_GPUDevice* gpu);
-	void         setActiveGamepadIndex(const size_t activeIndex);
+	void         setActiveGamepadIndex(size_t activeIndex);
 };
 
 }  // namespace gui

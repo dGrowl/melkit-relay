@@ -13,23 +13,20 @@ class Monitor {
 private:
 	std::thread _thread;
 
-	static void buildKeyDown(SDL_UserEvent&       userEvent,
-	                         uiohook_event* const hookEvent);
-	static void buildKeyUp(SDL_UserEvent&       userEvent,
-	                       uiohook_event* const hookEvent);
-	static void buildMouseMove(SDL_UserEvent&       userEvent,
-	                           uiohook_event* const hookEvent);
-	static void buildMouseClick(SDL_UserEvent&       userEvent,
-	                            uiohook_event* const hookEvent);
-	static void buildMouseRelease(SDL_UserEvent&       userEvent,
-	                              uiohook_event* const hookEvent);
-	static void buildMouseWheel(SDL_UserEvent&       userEvent,
-	                            uiohook_event* const hookEvent);
+	static void buildKeyDown(SDL_UserEvent& userEvent, uiohook_event* hookEvent);
+	static void buildKeyUp(SDL_UserEvent& userEvent, uiohook_event* hookEvent);
+	static void buildMouseMove(SDL_UserEvent& userEvent, uiohook_event* hookEvent);
+	static void buildMouseClick(SDL_UserEvent& userEvent,
+	                            uiohook_event* hookEvent);
+	static void buildMouseRelease(SDL_UserEvent& userEvent,
+	                              uiohook_event* hookEvent);
+	static void buildMouseWheel(SDL_UserEvent& userEvent,
+	                            uiohook_event* hookEvent);
 
 public:
 	Monitor();
 	~Monitor();
-	static void handleEvent(uiohook_event* const event);
+	static void handleEvent(uiohook_event* event);
 	void        stop();
 	void        threadFn();
 };

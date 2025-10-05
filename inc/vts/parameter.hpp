@@ -40,7 +40,7 @@ public:
 	BlendMode                 getBlendMode() const;
 	bool                      hasImpulses() const;
 	bool                      isFresh();
-	const imp::Receiver&      getReceiver(const imp::Code code) const;
+	const imp::Receiver&      getReceiver(imp::Code code) const;
 	const ImpulseReceiverMap& getReceivers() const;
 	const std::string&        getName() const;
 	float                     getMax() const;
@@ -48,13 +48,13 @@ public:
 	float                     getNormalized() const;
 	float                     getOutput() const;
 	ImpulseReceiverMap&       getReceivers();
-	void addImpulse(const imp::Code code, const bool isInverted = false);
-	void clearImpulses();
-	void handleImpulse(const imp::Code code, const float value);
-	void removeImpulse(const imp::Code code);
-	void setBlendMode(const BlendMode mode);
-	void setName(const std::string& name);
-	void updateBounds();
+	void                      addImpulse(imp::Code code, bool isInverted = false);
+	void                      clearImpulses();
+	void                      handleImpulse(imp::Code code, float value);
+	void                      removeImpulse(imp::Code code);
+	void                      setBlendMode(BlendMode mode);
+	void                      setName(const std::string& name);
+	void                      updateBounds();
 };
 
 }  // namespace vts

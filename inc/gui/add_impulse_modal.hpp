@@ -35,8 +35,7 @@ private:
 	[[nodiscard]] imp::TargetTag getMouseButtonTag() const;
 	[[nodiscard]] imp::TargetTag getMouseWheelTag() const;
 
-	[[nodiscard]] imp::Code getGamepadStickActionCode(
-	    const bool isLeftStick) const;
+	[[nodiscard]] imp::Code      getGamepadStickActionCode(bool isLeftStick) const;
 	[[nodiscard]] imp::TargetTag getGamepadButtonTag() const;
 	[[nodiscard]] imp::TargetTag getGamepadTriggerTag() const;
 

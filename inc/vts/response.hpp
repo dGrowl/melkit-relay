@@ -16,7 +16,7 @@ enum ResponseCode : Sint32 {
 	PARAMETER_DELETION,
 };
 
-void buildResponseEvent(SDL_UserEvent& user, char* jsonChars, const int nChars);
+void buildResponseEvent(SDL_UserEvent& user, char* jsonChars, int nChars);
 
 }  // namespace vts
 

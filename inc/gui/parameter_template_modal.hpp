@@ -29,7 +29,7 @@ private:
 	void execute();
 
 public:
-	ParameterTemplateModal(ws::IController& wsController);
+	explicit ParameterTemplateModal(ws::IController& wsController);
 
 	void show();
 

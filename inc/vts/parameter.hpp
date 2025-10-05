@@ -35,7 +35,7 @@ private:
 
 public:
 	Parameter();
-	Parameter(const std::string& name);
+	explicit Parameter(const std::string& name);
 
 	BlendMode                 getBlendMode() const;
 	bool                      hasImpulses() const;

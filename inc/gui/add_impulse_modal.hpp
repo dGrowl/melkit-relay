@@ -59,7 +59,7 @@ private:
 	void showGamepadTriggerSelector();
 
 public:
-	AddImpulseModal(vts::Parameter& editingParameter);
+	explicit AddImpulseModal(vts::Parameter& editingParameter);
 	void show();
 
 	constexpr static const char* NAME = "Add Input";

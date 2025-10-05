@@ -10,10 +10,10 @@ private:
 	SDL_Surface* _surface;
 
 public:
-	Surface(const char* path);
+	explicit Surface(const char* path);
 	~Surface();
 
-	operator SDL_Surface*() const;
+	operator SDL_Surface*() const;  // NOLINT(google-explicit-constructor)
 };
 
 constexpr auto ICON_PATH = "./img/icon.png";

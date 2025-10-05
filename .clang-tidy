@@ -1,9 +1,25 @@
 ---
-Checks: >
-  misc-include-cleaner,
-  readability-uppercase-literal-suffix,
-  misc-const-correctness,
-  readability-qualified-auto
+# Checks: >
+#   bugprone-*,
+#   -bugprone-switch-missing-default-case,
+
+#   readability-*,
+#   -readability-identifier,
+
+#   modernize-*,
+
+#   performance-*,
+
+#   misc-*,
+
+#   google-*,
+
+#   cppcoreguidelines-*,
+#   -cppcoreguidelines-avoid-const-or-ref-data-members,
+
+#   clang-analyzer-*
+
+Checks: google-explicit-constructor
 
 SystemHeaders: false
 HeaderFilterRegex: '^(src|inc)/.*'

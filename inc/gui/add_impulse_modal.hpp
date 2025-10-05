@@ -31,15 +31,16 @@ private:
 	ComboBox _gamepadStickActionSelector;
 	ComboBox _gamepadTriggerSelector;
 
-	imp::TargetTag getMouseAxisTag() const;
-	imp::TargetTag getMouseButtonTag() const;
-	imp::TargetTag getMouseWheelTag() const;
+	[[nodiscard]] imp::TargetTag getMouseAxisTag() const;
+	[[nodiscard]] imp::TargetTag getMouseButtonTag() const;
+	[[nodiscard]] imp::TargetTag getMouseWheelTag() const;
 
-	imp::Code      getGamepadStickActionCode(const bool isLeftStick) const;
-	imp::TargetTag getGamepadButtonTag() const;
-	imp::TargetTag getGamepadTriggerTag() const;
+	[[nodiscard]] imp::Code getGamepadStickActionCode(
+	    const bool isLeftStick) const;
+	[[nodiscard]] imp::TargetTag getGamepadButtonTag() const;
+	[[nodiscard]] imp::TargetTag getGamepadTriggerTag() const;
 
-	imp::Code buildImpulseCode() const;
+	[[nodiscard]] imp::Code buildImpulseCode() const;
 
 	void showCloseButtons();
 	void showDeviceSelector();

@@ -19,12 +19,13 @@ private:
 public:
 	explicit Receiver(const Code code, const bool isInverted = false);
 
-	bool  getIsInverted() const;
+	[[nodiscard]] bool  getIsInverted() const;
+	[[nodiscard]] Code  getCode() const;
+	[[nodiscard]] float getMax() const;
+	[[nodiscard]] float getMin() const;
+	[[nodiscard]] float getValue() const;
+
 	bool& isInvertedRef();
-	float getMax() const;
-	float getMin() const;
-	float getValue() const;
-	Code  getCode() const;
 	void  update(float value);
 };
 

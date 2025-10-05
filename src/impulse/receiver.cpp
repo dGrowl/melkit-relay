@@ -24,8 +24,8 @@ bool Receiver::getIsInverted() const {
 	return _isInverted;
 }
 
-bool& Receiver::isInvertedRef() {
-	return _isInverted;
+Code Receiver::getCode() const {
+	return _code;
 }
 
 float Receiver::getMax() const {
@@ -40,8 +40,8 @@ float Receiver::getValue() const {
 	return _isInverted ? _value * -1.0F : _value;
 }
 
-Code Receiver::getCode() const {
-	return _code;
+bool& Receiver::isInvertedRef() {
+	return _isInverted;
 }
 
 void Receiver::update(float value) {

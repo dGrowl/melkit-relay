@@ -15,9 +15,10 @@ private:
 public:
 	ComboBox(const char* label, const std::vector<const char*>& options);
 
-	bool   show();
-	size_t getIndex() const;
-	void   setIndex(const size_t i);
+	[[nodiscard]] size_t getIndex() const;
+
+	bool show();
+	void setIndex(const size_t i);
 };
 
 }  // namespace gui

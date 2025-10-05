@@ -52,17 +52,18 @@ public:
 	Processor(Processor&)            = delete;
 	Processor& operator=(Processor&) = delete;
 
-	const ImpulseQueue&         impulses() const;
-	const math::Rectangle<int>& getMouseBounds() const;
-	const MouseState&           getMouseState() const;
-	int                         getMouseSensitivity() const;
-	void                        clear();
-	void                        handleGamepadEvent(SDL_Event&           event,
-	                                               const SDL_JoystickID activeGamepadId);
-	void                        handleEvent(SDL_UserEvent& event);
-	void                        setMouseBounds(const math::Rectangle<int>& bounds);
-	void                        setMouseSensitivity(const int sensitivity);
-	void                        update();
+	[[nodiscard]] const ImpulseQueue&         impulses() const;
+	[[nodiscard]] const math::Rectangle<int>& getMouseBounds() const;
+	[[nodiscard]] const MouseState&           getMouseState() const;
+	[[nodiscard]] int                         getMouseSensitivity() const;
+
+	void clear();
+	void handleGamepadEvent(SDL_Event&           event,
+	                        const SDL_JoystickID activeGamepadId);
+	void handleEvent(SDL_UserEvent& event);
+	void setMouseBounds(const math::Rectangle<int>& bounds);
+	void setMouseSensitivity(const int sensitivity);
+	void update();
 };
 
 }  // namespace imp

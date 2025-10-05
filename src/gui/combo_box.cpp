@@ -14,6 +14,10 @@ ComboBox::ComboBox(const char* label, const std::vector<const char*>& options) :
     _options(options),
     _i(0) {}
 
+size_t ComboBox::getIndex() const {
+	return _i;
+}
+
 bool ComboBox::show() {
 	if (_options.empty()) {
 		ImGui::Text("N/A");
@@ -37,10 +41,6 @@ bool ComboBox::show() {
 		ImGui::EndCombo();
 	}
 	return updated;
-}
-
-size_t ComboBox::getIndex() const {
-	return _i;
 }
 
 void ComboBox::setIndex(const size_t i) {

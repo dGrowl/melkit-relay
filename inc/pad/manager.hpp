@@ -9,23 +9,26 @@
 
 namespace pad {
 
+using NameList = std::vector<const char*>;
+
 class Manager {
 private:
 	SDL_Gamepad*                _activeGamepad;
 	size_t                      _iActive;
-	std::vector<const char*>    _names;
+	NameList                    _names;
 	std::vector<SDL_JoystickID> _ids;
 
 public:
 	Manager();
 	~Manager();
 
-	auto           getNames() const -> const std::vector<const char*>&;
-	SDL_JoystickID getActiveId() const;
-	size_t         getActiveIndex() const;
-	void           clearActive();
-	void           refreshDevices();
-	void           setActive(const size_t i);
+	[[nodiscard]] auto           getNames() const -> const NameList&;
+	[[nodiscard]] SDL_JoystickID getActiveId() const;
+	[[nodiscard]] size_t         getActiveIndex() const;
+
+	void clearActive();
+	void refreshDevices();
+	void setActive(const size_t i);
 };
 
 }  // namespace pad

@@ -19,7 +19,7 @@
 
 #   clang-analyzer-*
 
-Checks: google-explicit-constructor
+Checks: modernize-use-nodiscard
 
 SystemHeaders: false
 HeaderFilterRegex: '^(src|inc)/.*'

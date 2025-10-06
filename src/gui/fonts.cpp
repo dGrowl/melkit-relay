@@ -63,7 +63,6 @@ void Fonts::push(const FontType type) {
 		case FontType::BOLD:
 			ImGui::PushFont(BOLD_FONT, DEFAULT_SIZE);
 			return;
-			return;
 		case FontType::IMPULSE:
 			ImGui::PushFont(IMPULSE_FONT, ICON_SIZE);
 			return;

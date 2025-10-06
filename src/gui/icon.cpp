@@ -207,7 +207,7 @@ void drawIconOrDefault(const imp::TargetTag target,
 void drawIcon(const imp::Code code, const float alpha) {
 	const imp::EventTag::T event  = code & 0xFFFF;
 	const imp::TargetTag   target = code & 0xFFFF0000;
-	Fonts::push(FontType::IMPULSE);
+	FONT_SCOPE(FontType::IMPULSE);
 	switch (event) {
 		case imp::EventTag::KEY:
 			drawIconOrDefault(target >> 16, alpha, keyStrings, "\u248F");
@@ -235,7 +235,6 @@ void drawIcon(const imp::Code code, const float alpha) {
 			drawIconOrDefault(target, alpha, gamepadStickRightStrings, "\u21CC");
 			break;
 	}
-	ImGui::PopFont();
 }
 
 }  // namespace gui

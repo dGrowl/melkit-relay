@@ -6,10 +6,18 @@
 
 namespace gui {
 
-class ParameterTemplateModal {
-private:
-	ws::IController& _wsController;
+class ITemplate {
+public:
+	virtual ~ITemplate() = default;
 
+	[[nodiscard]] virtual bool isValid() const = 0;
+
+	virtual void execute(ws::IController& wsController) = 0;
+	virtual void show()                                 = 0;
+};
+
+class ControllerTemplate : public ITemplate {
+private:
 	bool _hasPress;
 	bool _hasShoulders;
 	bool _hasSticks;
@@ -18,15 +26,33 @@ private:
 	bool _useController;
 	bool _useMouseKeyboard;
 
+	void createPressParameters(ws::IController& wsController) const;
+	void createShoulderParameters(ws::IController& wsController) const;
+	void createStickParameters(ws::IController& wsController) const;
+	void createTriggerParameters(ws::IController& wsController) const;
+
+public:
+	ControllerTemplate();
+	virtual ~ControllerTemplate() override = default;
+
+	[[nodiscard]] bool isValid() const override;
+
+	void execute(ws::IController& wsController) override;
+	void show() override;
+};
+
+class ParameterTemplateModal {
+private:
+	ws::IController& _wsController;
+
 	ComboBox _templateSelector;
 
-	void showCloseButtons();
+	ControllerTemplate _controllerTemplate;
 
-	void createPressParameters();
-	void createShoulderParameters();
-	void createStickParameters();
-	void createTriggerParameters();
+	[[nodiscard]] bool isValid() const;
+
 	void execute();
+	void showCloseButtons();
 
 public:
 	explicit ParameterTemplateModal(ws::IController& wsController);

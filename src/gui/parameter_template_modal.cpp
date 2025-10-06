@@ -16,45 +16,30 @@
 
 static constexpr size_t TEMPLATE_CONTROLLER = 0;
 
-static std::vector<const char*> TEMPLATES{"Controller"};
+static const std::vector<const char*> TEMPLATES{"Controller"};
 
-const std::array<imp::Code, 2> PRESS_LEFT_KEY_IMPULSES = {
-    VC_CONTROL_L << 16 | imp::EventTag::KEY,
-    VC_SHIFT_L << 16 | imp::EventTag::KEY};
-const std::array<imp::Code, 4> PRESS_RIGHT_KEY_IMPULSES = {
+const auto PRESS_LEFT_KEY_IMPULSES =
+    std::to_array<imp::Code>({VC_CONTROL_L << 16 | imp::EventTag::KEY,
+                              VC_SHIFT_L << 16 | imp::EventTag::KEY});
+const auto PRESS_RIGHT_KEY_IMPULSES    = std::to_array<imp::Code>({
     VC_R << 16 | imp::EventTag::KEY,
     VC_F << 16 | imp::EventTag::KEY,
     VC_G << 16 | imp::EventTag::KEY,
     VC_SPACE << 16 | imp::EventTag::KEY,
-};
-const std::array<imp::Code, 1> PRESS_LEFT_GAMEPAD_IMPULSES = {
-    imp::GamepadButton::LEFT_STICK | imp::EventTag::GAMEPAD_BUTTON};
-const std::array<imp::Code, 5> PRESS_RIGHT_GAMEPAD_IMPULSES = {
-    imp::GamepadButton::NORTH | imp::EventTag::GAMEPAD_BUTTON,
-    imp::GamepadButton::SOUTH | imp::EventTag::GAMEPAD_BUTTON,
-    imp::GamepadButton::WEST | imp::EventTag::GAMEPAD_BUTTON,
-    imp::GamepadButton::EAST | imp::EventTag::GAMEPAD_BUTTON,
-    imp::GamepadButton::RIGHT_STICK | imp::EventTag::GAMEPAD_BUTTON};
+});
+const auto PRESS_LEFT_GAMEPAD_IMPULSES = std::to_array<imp::Code>(
+    {imp::GamepadButton::LEFT_STICK | imp::EventTag::GAMEPAD_BUTTON});
+const auto PRESS_RIGHT_GAMEPAD_IMPULSES = std::to_array<imp::Code>(
+    {imp::GamepadButton::NORTH | imp::EventTag::GAMEPAD_BUTTON,
+     imp::GamepadButton::SOUTH | imp::EventTag::GAMEPAD_BUTTON,
+     imp::GamepadButton::WEST | imp::EventTag::GAMEPAD_BUTTON,
+     imp::GamepadButton::EAST | imp::EventTag::GAMEPAD_BUTTON,
+     imp::GamepadButton::RIGHT_STICK | imp::EventTag::GAMEPAD_BUTTON});
 
 namespace gui {
 
-void ParameterTemplateModal::showCloseButtons() {
-	const bool isValid = (_hasPress || _hasShoulders || _hasSticks || _hasTriggers)
-	                     && (_useController || _useMouseKeyboard);
-	ImGui::BeginDisabled(!isValid);
-	if (ImGui::Button("Create", ImVec2(128.0F, 0.0F))) {
-		execute();
-		ImGui::CloseCurrentPopup();
-	}
-	ImGui::EndDisabled();
-	ImGui::SetItemDefaultFocus();
-	ImGui::SameLine();
-	if (ImGui::Button("Cancel", ImVec2(128.0F, 0.0F))) {
-		ImGui::CloseCurrentPopup();
-	}
-}
-
-void ParameterTemplateModal::createPressParameters() {
+void ControllerTemplate::createPressParameters(
+    ws::IController& wsController) const {
 	vts::Parameter leftPress("MK_LPress");
 	vts::Parameter rightPress("MK_RPress");
 
@@ -78,11 +63,12 @@ void ParameterTemplateModal::createPressParameters() {
 
 	SETTINGS.setParameter(leftPress);
 	SETTINGS.setParameter(rightPress);
-	vts::createParameter(_wsController, leftPress);
-	vts::createParameter(_wsController, rightPress);
+	vts::createParameter(wsController, leftPress);
+	vts::createParameter(wsController, rightPress);
 }
 
-void ParameterTemplateModal::createShoulderParameters() {
+void ControllerTemplate::createShoulderParameters(
+    ws::IController& wsController) const {
 	vts::Parameter leftShoulder("MK_LShoulder");
 	vts::Parameter rightShoulder("MK_RShoulder");
 
@@ -100,11 +86,12 @@ void ParameterTemplateModal::createShoulderParameters() {
 
 	SETTINGS.setParameter(leftShoulder);
 	SETTINGS.setParameter(rightShoulder);
-	vts::createParameter(_wsController, leftShoulder);
-	vts::createParameter(_wsController, rightShoulder);
+	vts::createParameter(wsController, leftShoulder);
+	vts::createParameter(wsController, rightShoulder);
 }
 
-void ParameterTemplateModal::createStickParameters() {
+void ControllerTemplate::createStickParameters(
+    ws::IController& wsController) const {
 	vts::Parameter leftStickX("MK_LStickX");
 	leftStickX.setBlendMode(vts::BlendMode::BOUNDED_SUM);
 	vts::Parameter leftStickY("MK_LStickY");
@@ -145,13 +132,14 @@ void ParameterTemplateModal::createStickParameters() {
 	SETTINGS.setParameter(leftStickY);
 	SETTINGS.setParameter(rightStickX);
 	SETTINGS.setParameter(rightStickY);
-	vts::createParameter(_wsController, leftStickX);
-	vts::createParameter(_wsController, leftStickY);
-	vts::createParameter(_wsController, rightStickX);
-	vts::createParameter(_wsController, rightStickY);
+	vts::createParameter(wsController, leftStickX);
+	vts::createParameter(wsController, leftStickY);
+	vts::createParameter(wsController, rightStickX);
+	vts::createParameter(wsController, rightStickY);
 }
 
-void ParameterTemplateModal::createTriggerParameters() {
+void ControllerTemplate::createTriggerParameters(
+    ws::IController& wsController) const {
 	vts::Parameter leftTrigger("MK_LTrigger");
 	vts::Parameter rightTrigger("MK_RTrigger");
 
@@ -167,33 +155,110 @@ void ParameterTemplateModal::createTriggerParameters() {
 
 	SETTINGS.setParameter(leftTrigger);
 	SETTINGS.setParameter(rightTrigger);
-	vts::createParameter(_wsController, leftTrigger);
-	vts::createParameter(_wsController, rightTrigger);
+	vts::createParameter(wsController, leftTrigger);
+	vts::createParameter(wsController, rightTrigger);
 }
 
-void ParameterTemplateModal::execute() {
-	if (_hasPress) {
-		createPressParameters();
-	}
-	if (_hasShoulders) {
-		createShoulderParameters();
-	}
-	if (_hasSticks) {
-		createStickParameters();
-	}
-	if (_hasTriggers) {
-		createTriggerParameters();
-	}
-}
-
-ParameterTemplateModal::ParameterTemplateModal(ws::IController& wsController) :
-    _wsController(wsController),
+ControllerTemplate::ControllerTemplate() :
     _hasPress(true),
     _hasShoulders(true),
     _hasSticks(true),
     _hasTriggers(true),
     _useController(true),
-    _useMouseKeyboard(true),
+    _useMouseKeyboard(true) {}
+
+bool ControllerTemplate::isValid() const {
+	return (_hasPress || _hasShoulders || _hasSticks || _hasTriggers)
+	       && (_useController || _useMouseKeyboard);
+}
+
+void ControllerTemplate::execute(ws::IController& wsController) {
+	if (_hasPress) {
+		createPressParameters(wsController);
+	}
+	if (_hasShoulders) {
+		createShoulderParameters(wsController);
+	}
+	if (_hasSticks) {
+		createStickParameters(wsController);
+	}
+	if (_hasTriggers) {
+		createTriggerParameters(wsController);
+	}
+}
+
+void ControllerTemplate::show() {
+	ImGui::SeparatorText("Actions");
+
+	ImGui::Text(
+	    "Select which parts of the game controller your model will be able to "
+	    "interact with.");
+
+	ImGui::Checkbox("##action-press", &_hasPress);
+	ImGui::SameLine();
+	ImGui::Text("Press (pushing on the sides)");
+
+	ImGui::Checkbox("##action-shoulders", &_hasShoulders);
+	ImGui::SameLine();
+	ImGui::Text("Shoulders (LB, RB)");
+
+	ImGui::Checkbox("##action-sticks", &_hasSticks);
+	ImGui::SameLine();
+	ImGui::Text("Sticks (LS, RS)");
+
+	ImGui::Checkbox("##action-triggers", &_hasTriggers);
+	ImGui::SameLine();
+	ImGui::Text("Triggers (LT, RT)");
+
+	ImGui::SeparatorText("Inputs");
+
+	ImGui::Text(
+	    "Select which of your physical devices will send input to the virtual "
+	    "controller.");
+
+	ImGui::Checkbox("##device-controller", &_useController);
+	ImGui::SameLine();
+	ImGui::Text("Controller");
+
+	ImGui::Checkbox("##device-mouse-keyboard", &_useMouseKeyboard);
+	ImGui::SameLine();
+	ImGui::Text("Mouse & Keyboard");
+}
+
+bool ParameterTemplateModal::isValid() const {
+	switch (_templateSelector.getIndex()) {
+		case TEMPLATE_CONTROLLER:
+			return _controllerTemplate.isValid();
+	}
+	return false;
+}
+
+void ParameterTemplateModal::execute() {
+	switch (_templateSelector.getIndex()) {
+		case TEMPLATE_CONTROLLER:
+			_controllerTemplate.execute(_wsController);
+			break;
+	}
+}
+
+static constexpr ImVec2 DEFAULT_BUTTON_SIZE{128.0F, 0.0F};
+
+void ParameterTemplateModal::showCloseButtons() {
+	ImGui::BeginDisabled(!isValid());
+	if (ImGui::Button("Create", DEFAULT_BUTTON_SIZE)) {
+		execute();
+		ImGui::CloseCurrentPopup();
+	}
+	ImGui::EndDisabled();
+	ImGui::SetItemDefaultFocus();
+	ImGui::SameLine();
+	if (ImGui::Button("Cancel", DEFAULT_BUTTON_SIZE)) {
+		ImGui::CloseCurrentPopup();
+	}
+}
+
+ParameterTemplateModal::ParameterTemplateModal(ws::IController& wsController) :
+    _wsController(wsController),
     _templateSelector("##template-selector", TEMPLATES) {}
 
 void ParameterTemplateModal::show() {
@@ -209,41 +274,11 @@ void ParameterTemplateModal::show() {
 		ImGui::Text("Select the type of device your VTuber model will control.");
 		_templateSelector.show();
 
-		ImGui::SeparatorText("Actions");
-
-		ImGui::Text(
-		    "Select which parts of the game controller your model will be able to "
-		    "interact with.");
-
-		ImGui::Checkbox("##action-press", &_hasPress);
-		ImGui::SameLine();
-		ImGui::Text("Press (pushing on the sides)");
-
-		ImGui::Checkbox("##action-shoulders", &_hasShoulders);
-		ImGui::SameLine();
-		ImGui::Text("Shoulders (LB, RB)");
-
-		ImGui::Checkbox("##action-sticks", &_hasSticks);
-		ImGui::SameLine();
-		ImGui::Text("Sticks (LS, RS)");
-
-		ImGui::Checkbox("##action-triggers", &_hasTriggers);
-		ImGui::SameLine();
-		ImGui::Text("Triggers (LT, RT)");
-
-		ImGui::SeparatorText("Inputs");
-
-		ImGui::Text(
-		    "Select which of your physical devices will send input to the virtual "
-		    "controller.");
-
-		ImGui::Checkbox("##device-controller", &_useController);
-		ImGui::SameLine();
-		ImGui::Text("Controller");
-
-		ImGui::Checkbox("##device-mouse-keyboard", &_useMouseKeyboard);
-		ImGui::SameLine();
-		ImGui::Text("Mouse & Keyboard");
+		switch (_templateSelector.getIndex()) {
+			case TEMPLATE_CONTROLLER:
+				_controllerTemplate.show();
+				break;
+		}
 
 		showCloseButtons();
 

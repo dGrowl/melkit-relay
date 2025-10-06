@@ -32,13 +32,13 @@ FontScope::~FontScope() {
 FontScope Fonts::scope(const FontType type) {
 	switch (type) {
 		case FontType::DEFAULT:
-			return FontScope(DEFAULT_FONT, DEFAULT_SIZE);
+			return {DEFAULT_FONT, DEFAULT_SIZE};
 		case FontType::BOLD:
-			return FontScope(BOLD_FONT, DEFAULT_SIZE);
+			return {BOLD_FONT, DEFAULT_SIZE};
 		case FontType::IMPULSE:
-			return FontScope(IMPULSE_FONT, ICON_SIZE);
+			return {IMPULSE_FONT, ICON_SIZE};
 	}
-	return FontScope(DEFAULT_FONT, DEFAULT_SIZE);
+	return {DEFAULT_FONT, DEFAULT_SIZE};
 }
 
 void Fonts::init() {

@@ -17,7 +17,7 @@ ImVec4 hexToImVec4(std::string_view hex) {
 	const float g = ((hexValue >> 8) & 0xFF) / 255.0F;
 	const float b = (hexValue & 0xFF) / 255.0F;
 
-	return ImVec4(r, g, b, 1.0F);
+	return {r, g, b, 1.0F};
 }
 
 namespace gui {

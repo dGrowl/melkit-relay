@@ -16,10 +16,11 @@
 
 #   cppcoreguidelines-*,
 #   -cppcoreguidelines-avoid-const-or-ref-data-members,
+#   -cppcoreguidelines-pro-type-vararg,
 
 #   clang-analyzer-*
 
-Checks: readability-avoid-const-params-in-decls
+Checks: modernize-return-braced-init-list
 
 SystemHeaders: false
 HeaderFilterRegex: '^(src|inc)/.*'

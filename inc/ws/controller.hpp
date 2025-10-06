@@ -7,11 +7,11 @@
 
 namespace ws {
 
-enum Status : Uint8 {
+enum class Status : Uint8 {
 	DISCONNECTED,
 	CONNECTING,
-	FAILED,
-	CONNECTED,
+	UNAUTHENTICATED,
+	AUTHENTICATED,
 };
 
 class IController {

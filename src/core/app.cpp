@@ -161,6 +161,10 @@ void App::handleEvent(SDL_Event& event) {
 	}
 }
 
+void App::handleVtsApiError() {
+	stopWs();
+}
+
 void App::handleVtsAuthenticationToken(SDL_UserEvent& event) {
 	auto* token = static_cast<std::string*>(event.data1);
 	SETTINGS.setAuthToken(token->c_str());
@@ -169,6 +173,7 @@ void App::handleVtsAuthenticationToken(SDL_UserEvent& event) {
 }
 
 void App::handleVtsAuthenticationSuccess() {
+	_wsClient.setStatus(ws::Status::AUTHENTICATED);
 	vts::getParameters(_wsClient);
 }
 
@@ -225,6 +230,9 @@ void App::loadParameterSettings() {
 
 void App::handleVtsMessage(SDL_UserEvent& event) {
 	switch (event.code) {
+		case vts::ResponseCode::API_ERROR:
+			handleVtsApiError();
+			break;
 		case vts::ResponseCode::AUTHENTICATION_TOKEN:
 			handleVtsAuthenticationToken(event);
 			break;

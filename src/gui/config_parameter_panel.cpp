@@ -213,11 +213,20 @@ void ConfigParameterPanel::show() {
 		FONT_SCOPE(FontType::BOLD);
 		ImGui::SeparatorText("Parameters");
 	}
-	if (_wsController.getStatus() == ws::Status::CONNECTED) {
-		showParameters();
-	}
-	else {
-		ImGui::Text("You'll need to connect to VTS to manage parameters.");
+	switch (_wsController.getStatus()) {
+		case ws::Status::AUTHENTICATED:
+			showParameters();
+			break;
+		case ws::Status::UNAUTHENTICATED:
+			ImGui::TextWrapped(
+			    "You need to allow Relay to access the API from inside of VTube "
+			    "Studio.");
+			break;
+		default:
+			ImGui::TextWrapped(
+			    "You need to connect to VTube Studio to manage parameters. You can use "
+			    "the controls on the upper-left side of this window.");
+			break;
 	}
 }
 

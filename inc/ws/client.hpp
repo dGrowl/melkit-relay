@@ -26,6 +26,7 @@ private:
 public:
 	Client();
 	static void handleEvent(mg_connection* connection, int event, void* eventData);
+	static void handleMessage(mg_ws_message* message);
 	void        handleError(const char* description);
 	void        handleOpen();
 	void        setStatus(Status newStatus);

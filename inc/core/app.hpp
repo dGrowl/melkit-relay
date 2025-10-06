@@ -32,6 +32,7 @@ private:
 	gui::ConfigWindow _config;
 	gui::TrayIcon     _icon;
 
+	void handleVtsApiError();
 	void handleVtsAuthenticationFailure();
 	void handleVtsAuthenticationSuccess();
 	void handleVtsAuthenticationToken(SDL_UserEvent& event);

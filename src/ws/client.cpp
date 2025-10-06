@@ -22,14 +22,6 @@
 #endif
 
 namespace ws {
-void handleMessage(void* event_data) {
-	mg_ws_message* wm = (mg_ws_message*)event_data;
-	SDL_Event      sdlEvent;
-	SDL_zero(sdlEvent);
-	sdlEvent.type = Event::MESSAGE;
-	vts::buildResponseEvent(sdlEvent.user, wm->data.buf, wm->data.len);
-	SDL_PushEvent(&sdlEvent);
-}
 
 Client::Client() :
     _alive(false),
@@ -52,13 +44,13 @@ void Client::handleEvent(mg_connection* connection,
 			}
 			break;
 		case MG_EV_ERROR:
-			client->handleError((char*)eventData);
+			client->handleError(static_cast<char*>(eventData));
 			break;
 		case MG_EV_WS_OPEN:
 			client->handleOpen();
 			break;
 		case MG_EV_WS_MSG:
-			handleMessage(eventData);
+			handleMessage(static_cast<mg_ws_message*>(eventData));
 			break;
 	}
 
@@ -67,12 +59,20 @@ void Client::handleEvent(mg_connection* connection,
 	}
 }
 
+void Client::handleMessage(mg_ws_message* message) {
+	SDL_Event sdlEvent;
+	SDL_zero(sdlEvent);
+	sdlEvent.type = Event::MESSAGE;
+	vts::buildResponseEvent(sdlEvent.user, message->data.buf, message->data.len);
+	SDL_PushEvent(&sdlEvent);
+}
+
 void Client::handleError(const char* description) {
 	SDL_Log("WebSocket Error: %s\n", description);
 }
 
 void Client::handleOpen() {
-	setStatus(Status::CONNECTED);
+	setStatus(Status::UNAUTHENTICATED);
 
 	SDL_Event sdlEvent;
 	SDL_zero(sdlEvent);

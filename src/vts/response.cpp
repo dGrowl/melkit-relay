@@ -26,15 +26,12 @@ static void logError(const glz::error_ctx& error, const std::string& buffer) {
 }
 
 struct Type {
+	static constexpr auto API_ERROR            = "APIError";
 	static constexpr auto AUTHENTICATION_TOKEN = "AuthenticationTokenResponse";
-
-	static constexpr auto AUTHENTICATION = "AuthenticationResponse";
-
+	static constexpr auto AUTHENTICATION       = "AuthenticationResponse";
 	static constexpr auto INPUT_PARAMETER_LIST = "InputParameterListResponse";
-
-	static constexpr auto PARAMETER_CREATION = "ParameterCreationResponse";
-
-	static constexpr auto PARAMETER_DELETION = "ParameterDeletionResponse";
+	static constexpr auto PARAMETER_CREATION   = "ParameterCreationResponse";
+	static constexpr auto PARAMETER_DELETION   = "ParameterDeletionResponse";
 };
 
 namespace vts {
@@ -90,6 +87,26 @@ std::optional<ResponseType> parseResponse(const std::string& jsonString) {
 	}
 	logError(result.error(), jsonString);
 	return std::nullopt;
+}
+
+struct APIErrorResponseData {
+	int         errorId;
+	std::string message;
+
+	struct glaze {
+		using T = APIErrorResponseData;
+		static constexpr auto value =
+		    glz::object("errorID", &T::errorId, "message", &T::message);
+	};
+};
+
+using APIErrorResponse = Response<APIErrorResponseData>;
+
+void buildApiErrorEvent(SDL_UserEvent&              event,
+                        const APIErrorResponseData& data) {
+	if (data.errorId == 50) {
+		event.code = vts::ResponseCode::API_ERROR;
+	}
 }
 
 struct AuthenticationResponseData {
@@ -240,6 +257,11 @@ void buildResponseEvent(SDL_UserEvent& event,
 
 	event.code = ResponseCode::UNKNOWN;
 
+	if (messageType == Type::API_ERROR) {
+		if (auto response = parseResponse<APIErrorResponse>(jsonString)) {
+			buildApiErrorEvent(event, *(response->data));
+		}
+	}
 	if (messageType == Type::AUTHENTICATION) {
 		if (auto response = parseResponse<AuthenticationResponse>(jsonString)) {
 			buildAuthenticationEvent(event, *(response->data));

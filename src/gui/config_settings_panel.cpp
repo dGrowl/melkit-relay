@@ -13,12 +13,19 @@
 
 namespace gui {
 
-static const char* STATUS_TEXT[] = {
-    "DISCONNECTED",
-    "CONNECTING",
-    "FAILED",
-    "CONNECTED",
-};
+static constexpr const char* getStatusString(const ws::Status status) {
+	switch (status) {
+		case ws::Status::DISCONNECTED:
+			return "DISCONNECTED";
+		case ws::Status::CONNECTING:
+			return "CONNECTING";
+		case ws::Status::UNAUTHENTICATED:
+			return "UNAUTHENTICATED";
+		case ws::Status::AUTHENTICATED:
+			return "AUTHENTICATED";
+	}
+	return "?";
+}
 
 void ConfigSettingsPanel::showGamepadSettings() {
 	{
@@ -179,20 +186,20 @@ void ConfigSettingsPanel::showVtsSettings() {
 		ImGui::TableNextColumn();
 		ImGui::Text("Status");
 		ImGui::TableNextColumn();
-		ImGui::Text("%s", STATUS_TEXT[_wsController.getStatus()]);
+		ImGui::Text("%s", getStatusString(_wsController.getStatus()));
 
 		ImGui::EndTable();
 	}
 
-	if (_wsController.getStatus() == ws::Status::CONNECTED) {
-		if (ImGui::Button("Disconnect", ImVec2(-1.0F, 0.0F))) {
-			_wsController.stop();
-		}
-	}
-	else {
+	if (_wsController.getStatus() == ws::Status::DISCONNECTED) {
 		if (ImGui::Button("Connect", ImVec2(-1.0F, 0.0F))) {
 			_wsController.setUrl(_urlBuffer);
 			_wsController.start();
+		}
+	}
+	else {
+		if (ImGui::Button("Disconnect", ImVec2(-1.0F, 0.0F))) {
+			_wsController.stop();
 		}
 	}
 

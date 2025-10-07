@@ -1,6 +1,8 @@
 #include "pad/manager.hpp"
 
 #include <cstddef>
+#include <memory>
+#include <span>
 #include <vector>
 
 #include <SDL3/SDL_gamepad.h>
@@ -41,19 +43,32 @@ void Manager::clearActive() {
 	}
 }
 
+static constexpr SDL_JoystickID NONE_JOYSTICK_ID = 0;
+
+[[nodiscard]]
+static std::vector<SDL_JoystickID> getGamepads() {
+	int             nPads = 0;
+	SDL_JoystickID* raw   = SDL_GetGamepads(&nPads);
+	const std::unique_ptr<SDL_JoystickID, decltype(&SDL_free)> guard(raw,
+	                                                                 SDL_free);
+
+	const std::span<SDL_JoystickID> spanPads{raw, static_cast<size_t>(nPads)};
+	std::vector<SDL_JoystickID>     pads;
+	pads.reserve(static_cast<size_t>(nPads) + 1);
+	pads.emplace_back(NONE_JOYSTICK_ID);
+	pads.insert(pads.end(), spanPads.begin(), spanPads.end());
+	return pads;
+}
+
 void Manager::refreshDevices() {
-	int   nPads    = 0;
-	auto* gamepads = SDL_GetGamepads(&nPads);
-	_ids           = {0};
-	_names         = {"None"};
-	for (int i = 0; i < nPads; ++i) {
-		_ids.emplace_back(gamepads[i]);
-		_names.emplace_back(SDL_GetGamepadNameForID(gamepads[i]));
+	_ids   = getGamepads();
+	_names = {"None"};
+	for (size_t i = 1; i < _ids.size(); ++i) {
+		_names.emplace_back(SDL_GetGamepadNameForID(_ids[i]));
 	}
 	if (_ids.size() > 1 && _activeGamepad == nullptr) {
 		setActive(1);
 	}
-	SDL_free(gamepads);
 }
 
 void Manager::setActive(const size_t i) {

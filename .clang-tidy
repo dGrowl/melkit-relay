@@ -1,10 +1,12 @@
 ---
 # Checks: >
 #   bugprone-*,
+#   -bugprone-easily-swappable-parameters,
 #   -bugprone-switch-missing-default-case,
 
 #   readability-*,
 #   -readability-identifier,
+#   -readability-identifier-length,
 
 #   modernize-*,
 
@@ -20,7 +22,7 @@
 
 #   clang-analyzer-*
 
-Checks: modernize-return-braced-init-list
+Checks: cppcoreguidelines-pro-bounds-pointer-arithmetic
 
 SystemHeaders: false
 HeaderFilterRegex: '^(src|inc)/.*'

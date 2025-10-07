@@ -7,13 +7,37 @@
 namespace gui {
 
 class ITemplate {
+protected:
+	ITemplate() = default;
+
 public:
-	virtual ~ITemplate() = default;
+	virtual ~ITemplate()                   = default;
+	ITemplate(const ITemplate&)            = delete;
+	ITemplate& operator=(const ITemplate&) = delete;
+	ITemplate(ITemplate&&)                 = delete;
+	ITemplate& operator=(ITemplate&&)      = delete;
 
 	[[nodiscard]] virtual bool isValid() const = 0;
 
 	virtual void execute(ws::IController& wsController) = 0;
 	virtual void show()                                 = 0;
+};
+
+class BrushTemplate : public ITemplate {
+private:
+	bool _hasPosition;
+	bool _hasStroke;
+
+	static void createPositionParameters(ws::IController& wsController);
+	static void createStrokeParameters(ws::IController& wsController);
+
+public:
+	BrushTemplate();
+
+	[[nodiscard]] bool isValid() const override;
+
+	void execute(ws::IController& wsController) override;
+	void show() override;
 };
 
 class ControllerTemplate : public ITemplate {
@@ -33,7 +57,6 @@ private:
 
 public:
 	ControllerTemplate();
-	virtual ~ControllerTemplate() override = default;
 
 	[[nodiscard]] bool isValid() const override;
 
@@ -47,6 +70,7 @@ private:
 
 	ComboBox _templateSelector;
 
+	BrushTemplate      _brushTemplate;
 	ControllerTemplate _controllerTemplate;
 
 	[[nodiscard]] bool isValid() const;

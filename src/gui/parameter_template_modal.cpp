@@ -15,8 +15,9 @@
 #include "ws/controller.hpp"
 
 static constexpr size_t TEMPLATE_CONTROLLER = 0;
+static constexpr size_t TEMPLATE_BRUSH      = 1;
 
-static const std::vector<const char*> TEMPLATES{"Controller"};
+static const std::vector<const char*> TEMPLATES{"Controller", "Brush"};
 
 const auto PRESS_LEFT_KEY_IMPULSES =
     std::to_array<imp::Code>({VC_CONTROL_L << 16 | imp::EventTag::KEY,
@@ -37,6 +38,67 @@ const auto PRESS_RIGHT_GAMEPAD_IMPULSES = std::to_array<imp::Code>(
      imp::GamepadButton::RIGHT_STICK | imp::EventTag::GAMEPAD_BUTTON});
 
 namespace gui {
+
+void BrushTemplate::createPositionParameters(ws::IController& wsController) {
+	vts::Parameter brushX("MK_BrushX");
+	vts::Parameter brushY("MK_BrushY");
+
+	brushX.addImpulse(imp::Axis::X | imp::EventTag::MOUSE_MOVE_ABS);
+	brushY.addImpulse(imp::Axis::Y | imp::EventTag::MOUSE_MOVE_ABS);
+
+	SETTINGS.setParameter(brushX);
+	SETTINGS.setParameter(brushY);
+
+	vts::createParameter(wsController, brushX);
+	vts::createParameter(wsController, brushY);
+}
+
+void BrushTemplate::createStrokeParameters(ws::IController& wsController) {
+	vts::Parameter brushStroke("MK_BrushStroke");
+
+	brushStroke.addImpulse(imp::MouseButton::LEFT | imp::EventTag::MOUSE_BUTTON);
+
+	SETTINGS.setParameter(brushStroke);
+	vts::createParameter(wsController, brushStroke);
+}
+
+BrushTemplate::BrushTemplate() :
+    _hasPosition(true),
+    _hasStroke(true) {}
+
+bool BrushTemplate::isValid() const {
+	return _hasPosition || _hasStroke;
+}
+
+void BrushTemplate::execute(ws::IController& wsController) {
+	if (_hasPosition) {
+		createPositionParameters(wsController);
+	}
+	if (_hasStroke) {
+		createStrokeParameters(wsController);
+	}
+}
+
+void BrushTemplate::show() {
+	ImGui::SeparatorText("Actions");
+
+	ImGui::TextWrapped(
+	    "Select how your model is able to interact with their brush/stylus.");
+
+	ImGui::Checkbox("##action-position", &_hasPosition);
+	ImGui::SameLine();
+	ImGui::Text("Moving around");
+
+	ImGui::Checkbox("##action-stroke", &_hasStroke);
+	ImGui::SameLine();
+	ImGui::Text("Drawing/pressing down");
+
+	ImGui::Separator();
+
+	ImGui::TextWrapped(
+	    "NOTE: You can set the boundaries of your art application's canvas by "
+	    "adjusting the \"Mouse (Position) Region\" settings.");
+}
 
 void ControllerTemplate::createPressParameters(
     ws::IController& wsController) const {
@@ -190,7 +252,7 @@ void ControllerTemplate::execute(ws::IController& wsController) {
 void ControllerTemplate::show() {
 	ImGui::SeparatorText("Actions");
 
-	ImGui::Text(
+	ImGui::TextWrapped(
 	    "Select which parts of the game controller your model will be able to "
 	    "interact with.");
 
@@ -212,7 +274,7 @@ void ControllerTemplate::show() {
 
 	ImGui::SeparatorText("Inputs");
 
-	ImGui::Text(
+	ImGui::TextWrapped(
 	    "Select which of your physical devices will send input to the virtual "
 	    "controller.");
 
@@ -229,6 +291,8 @@ bool ParameterTemplateModal::isValid() const {
 	switch (_templateSelector.getIndex()) {
 		case TEMPLATE_CONTROLLER:
 			return _controllerTemplate.isValid();
+		case TEMPLATE_BRUSH:
+			return _brushTemplate.isValid();
 	}
 	return false;
 }
@@ -237,6 +301,9 @@ void ParameterTemplateModal::execute() {
 	switch (_templateSelector.getIndex()) {
 		case TEMPLATE_CONTROLLER:
 			_controllerTemplate.execute(_wsController);
+			break;
+		case TEMPLATE_BRUSH:
+			_brushTemplate.execute(_wsController);
 			break;
 	}
 }
@@ -277,6 +344,9 @@ void ParameterTemplateModal::show() {
 		switch (_templateSelector.getIndex()) {
 			case TEMPLATE_CONTROLLER:
 				_controllerTemplate.show();
+				break;
+			case TEMPLATE_BRUSH:
+				_brushTemplate.show();
 				break;
 		}
 

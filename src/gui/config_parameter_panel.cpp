@@ -111,7 +111,7 @@ void ConfigParameterPanel::showData() {
 	if (_parameterManager.isEmpty()) {
 		ImGui::TextWrapped(
 		    "You haven't created any parameters yet. :(\n\n"
-		    "To get started, hit the \"Edit\" button in the top right!");
+		    "To get started, hit the \"Edit\" button in the upper-right corner!");
 		return;
 	}
 	bool shouldOpenModal = false;

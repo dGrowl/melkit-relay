@@ -8,6 +8,7 @@
 
 #include "gui/config_parameter_panel.hpp"
 #include "gui/config_settings_panel.hpp"
+#include "gui/theme_color_modal.hpp"
 #include "impulse/processor.hpp"
 #include "pad/manager.hpp"
 #include "vts/parameter_manager.hpp"
@@ -21,6 +22,8 @@ private:
 
 	ConfigSettingsPanel  _settingsPanel;
 	ConfigParameterPanel _parameterPanel;
+
+	ThemeColorModal _themeColorModal;
 
 	void showMenuBar();
 

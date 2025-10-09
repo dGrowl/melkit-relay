@@ -59,7 +59,7 @@ int App::init() {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
-	gui::Theme::init();
+	THEME.init();
 	gui::Fonts::init();
 
 	_icon.setConfigCallback(App::openConfigCallback, this);

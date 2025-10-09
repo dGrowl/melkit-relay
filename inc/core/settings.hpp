@@ -65,6 +65,7 @@ struct SettingsParameter {
 struct Settings {
 	std::string          apiUrl           = "localhost:8001";
 	std::string          vtsToken         = "";
+	float                themeHueShift    = 0.0F;
 	int                  mouseSensitivity = 20;
 	math::Rectangle<int> mouseBounds{
 	    .top    = 0,
@@ -81,6 +82,8 @@ struct Settings {
 		                                          &T::apiUrl,
 		                                          "vts_token",
 		                                          &T::vtsToken,
+		                                          "theme_hue_shift",
+		                                          &T::themeHueShift,
 		                                          "mouse_sensitivity",
 		                                          &T::mouseSensitivity,
 		                                          "mouse_bounds",
@@ -115,12 +118,14 @@ public:
 	const std::string                    getAuthToken() const;
 	const std::string                    getWsUrl() const;
 	const std::vector<SettingsParameter> getParameters() const;
+	float                                getThemeHueShift() const;
 	int                                  getMouseSensitivity() const;
 
 	void setAuthToken(const char* newAuthToken);
 	void setMouseBounds(const math::Rectangle<int>& bounds);
 	void setMouseSensitivity(int newSensitivity);
 	void setParameter(const vts::Parameter& parameter);
+	void setThemeHueShift(float shift);
 	void setWsUrl(const char* newWsUrl);
 
 	void removeParameter(const std::string& name);

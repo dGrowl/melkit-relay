@@ -140,6 +140,12 @@ const std::vector<SettingsParameter> SettingsManager::getParameters() const {
 	return _data.parameters;
 }
 
+float SettingsManager::getThemeHueShift() const {
+	const std::lock_guard<std::mutex> lock(_mutex);
+
+	return _data.themeHueShift;
+}
+
 int SettingsManager::getMouseSensitivity() const {
 	const std::lock_guard<std::mutex> lock(_mutex);
 
@@ -186,6 +192,14 @@ void SettingsManager::setParameter(const vts::Parameter& parameter) {
 	for (const auto& [code, receiver] : parameter.getReceivers()) {
 		newParameter.receivers.emplace_back(code, receiver.getIsInverted());
 	}
+
+	saveUnlocked();
+}
+
+void SettingsManager::setThemeHueShift(float shift) {
+	const std::lock_guard<std::mutex> lock(_mutex);
+
+	_data.themeHueShift = shift;
 
 	saveUnlocked();
 }

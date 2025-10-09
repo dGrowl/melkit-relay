@@ -12,6 +12,7 @@
 #include "imgui/imgui.h"
 
 #include "gui/image.hpp"
+#include "gui/theme_color_modal.hpp"
 #include "impulse/processor.hpp"
 #include "pad/manager.hpp"
 #include "vts/parameter_manager.hpp"
@@ -32,6 +33,7 @@ static const SDL_FColor CLEAR_COLOR{.03f, .02f, .04f, 1.0F};
 namespace gui {
 
 void ConfigWindow::showMenuBar() {
+	bool shouldOpenThemeColorModal = false;
 	if (ImGui::BeginMenuBar()) {
 		if (ImGui::BeginMenu("Menu")) {
 			if (ImGui::MenuItem("Quit")) {
@@ -40,7 +42,16 @@ void ConfigWindow::showMenuBar() {
 			}
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Theme")) {
+			if (ImGui::MenuItem("Color")) {
+				shouldOpenThemeColorModal = true;
+			}
+			ImGui::EndMenu();
+		}
 		ImGui::EndMenuBar();
+	}
+	if (shouldOpenThemeColorModal) {
+		ImGui::OpenPopup(ThemeColorModal::NAME);
 	}
 }
 
@@ -142,6 +153,8 @@ void ConfigWindow::render(SDL_GPUDevice* gpu) {
 	                                     | ImGuiWindowFlags_NoBringToFrontOnFocus;
 	if (ImGui::Begin("Config", nullptr, windowFlags)) {
 		showMenuBar();
+		_themeColorModal.show();
+
 		const ImVec2 contentRegion = ImGui::GetContentRegionAvail();
 		if (ImGui::BeginTable("Panels",
 		                      2,

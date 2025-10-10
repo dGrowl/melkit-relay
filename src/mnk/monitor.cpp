@@ -7,18 +7,9 @@
 #include <SDL3/SDL_log.h>
 #include <SDL3/SDL_stdinc.h>
 
+#include "core/utility.hpp"
 #include "impulse/code.hpp"
 #include "mnk/event.hpp"
-
-template <typename T>
-void* unsignedToPointer(const T x) {
-	return reinterpret_cast<void*>(static_cast<uintptr_t>(x));
-}
-
-template <typename T>
-void* signedToPointer(const T x) {
-	return reinterpret_cast<void*>(static_cast<intptr_t>(x));
-}
 
 namespace mnk {
 
@@ -34,38 +25,38 @@ Monitor::~Monitor() {
 void Monitor::buildKeyDown(SDL_UserEvent&       userEvent,
                            uiohook_event* const hookEvent) {
 	userEvent.code  = imp::DeviceAction::KEY_DOWN;
-	userEvent.data1 = unsignedToPointer(hookEvent->data.keyboard.keycode);
+	userEvent.data1 = core::unsignedToPointer(hookEvent->data.keyboard.keycode);
 }
 
 void Monitor::buildKeyUp(SDL_UserEvent&       userEvent,
                          uiohook_event* const hookEvent) {
 	userEvent.code  = imp::DeviceAction::KEY_UP;
-	userEvent.data1 = unsignedToPointer(hookEvent->data.keyboard.keycode);
+	userEvent.data1 = core::unsignedToPointer(hookEvent->data.keyboard.keycode);
 }
 
 void Monitor::buildMouseMove(SDL_UserEvent&       userEvent,
                              uiohook_event* const hookEvent) {
 	userEvent.code  = imp::DeviceAction::MOUSE_MOVE;
-	userEvent.data1 = signedToPointer(hookEvent->data.mouse.x);
-	userEvent.data2 = signedToPointer(hookEvent->data.mouse.y);
+	userEvent.data1 = core::signedToPointer(hookEvent->data.mouse.x);
+	userEvent.data2 = core::signedToPointer(hookEvent->data.mouse.y);
 }
 
 void Monitor::buildMouseClick(SDL_UserEvent&       userEvent,
                               uiohook_event* const hookEvent) {
 	userEvent.code  = imp::DeviceAction::MOUSE_CLICK;
-	userEvent.data1 = unsignedToPointer(hookEvent->data.mouse.button << 16);
+	userEvent.data1 = core::unsignedToPointer(hookEvent->data.mouse.button << 16);
 }
 
 void Monitor::buildMouseRelease(SDL_UserEvent&       userEvent,
                                 uiohook_event* const hookEvent) {
 	userEvent.code  = imp::DeviceAction::MOUSE_RELEASE;
-	userEvent.data1 = unsignedToPointer(hookEvent->data.mouse.button << 16);
+	userEvent.data1 = core::unsignedToPointer(hookEvent->data.mouse.button << 16);
 }
 
 void Monitor::buildMouseWheel(SDL_UserEvent&       userEvent,
                               uiohook_event* const hookEvent) {
 	userEvent.code  = imp::DeviceAction::MOUSE_WHEEL;
-	userEvent.data1 = signedToPointer(hookEvent->data.wheel.rotation);
+	userEvent.data1 = core::signedToPointer(hookEvent->data.wheel.rotation);
 }
 
 void Monitor::handleEvent(uiohook_event* const event) {

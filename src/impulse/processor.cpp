@@ -13,19 +13,10 @@
 #include <SDL3/SDL_timer.h>
 
 #include "core/settings.hpp"
+#include "core/utility.hpp"
 #include "impulse/code.hpp"
 #include "math/formula.hpp"
 #include "math/geometry.hpp"
-
-template <typename T>
-T pointerToUnsigned(const void* p) {
-	return static_cast<T>(reinterpret_cast<uintptr_t>(p));
-}
-
-template <typename T>
-T pointerToSigned(const void* p) {
-	return static_cast<T>(reinterpret_cast<intptr_t>(p));
-}
 
 static constexpr float DEADZONE   = 3000.0F;
 static constexpr float SATURATION = 3000.0F;
@@ -170,26 +161,26 @@ void Processor::handleGamepadButton(SDL_GamepadButtonEvent& event,
 }
 
 void Processor::handleKeyDown(SDL_UserEvent& event) {
-	auto         keycode = pointerToUnsigned<Uint32>(event.data1);
+	auto         keycode = core::pointerToUnsigned<Uint32>(event.data1);
 	const Uint32 code    = EventTag::KEY | (keycode << 16);
 	_queue.emplace_back(code, 1.0F);
 }
 
 void Processor::handleKeyUp(SDL_UserEvent& event) {
-	auto         keycode = pointerToUnsigned<Uint32>(event.data1);
+	auto         keycode = core::pointerToUnsigned<Uint32>(event.data1);
 	const Uint32 code    = EventTag::KEY | (keycode << 16);
 	_queue.emplace_back(code, 0.0F);
 }
 
 void Processor::handleMouseButton(SDL_UserEvent& event, bool isClicked) {
-	auto         button = pointerToUnsigned<Uint32>(event.data1);
+	auto         button = core::pointerToUnsigned<Uint32>(event.data1);
 	const Uint32 code   = EventTag::MOUSE_BUTTON | button;
 	_queue.emplace_back(code, isClicked ? 1.0F : 0.0F);
 }
 
 void Processor::handleMouseMove(SDL_UserEvent& event) {
-	const int x = pointerToSigned<Sint16>(event.data1);
-	const int y = pointerToSigned<Sint16>(event.data2);
+	const int x = core::pointerToSigned<Sint16>(event.data1);
+	const int y = core::pointerToSigned<Sint16>(event.data2);
 	_mouseState.dx += (x - _mouseState.x) * _mouseCoefficient;
 	_mouseState.dy += (y - _mouseState.y) * _mouseCoefficient;
 	_mouseState.x = x;
@@ -197,7 +188,7 @@ void Processor::handleMouseMove(SDL_UserEvent& event) {
 }
 
 void Processor::handleMouseWheel(SDL_UserEvent& event) {
-	auto rotation = pointerToSigned<Sint16>(event.data1);
+	auto rotation = core::pointerToSigned<Sint16>(event.data1);
 	if (rotation < 0) {
 		_mouseState.wheelUp += MAX_MOUSE_WHEEL_DELTA * 2.0F;
 	}

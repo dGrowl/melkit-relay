@@ -15,9 +15,11 @@ private:
 
 public:
 	TrayIcon();
+
 	void destroy();
-	void setQuitCallback(SDL_TrayCallback callback, void* userdata);
+	void loadImage(float hueShift = 0.0F);
 	void setConfigCallback(SDL_TrayCallback callback, void* userdata);
+	void setQuitCallback(SDL_TrayCallback callback, void* userdata);
 };
 
 }  // namespace gui

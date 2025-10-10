@@ -32,6 +32,7 @@ private:
 	gui::ConfigWindow _config;
 	gui::TrayIcon     _icon;
 
+	void handleThemeHueChange(const SDL_UserEvent& event);
 	void handleVtsApiError();
 	void handleVtsAuthenticationFailure();
 	void handleVtsAuthenticationSuccess();

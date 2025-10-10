@@ -11,12 +11,15 @@ private:
 
 public:
 	explicit Surface(const char* path);
+	explicit Surface(SDL_Surface* surface);
 	~Surface();
 
-	operator SDL_Surface*() const;  // NOLINT(google-explicit-constructor)
-};
+	static Surface APP_ICON();
 
-constexpr auto ICON_PATH = "./img/icon.png";
+	operator SDL_Surface*() const;  // NOLINT(google-explicit-constructor)
+
+	void shiftHue(float amount);
+};
 
 }  // namespace gui
 

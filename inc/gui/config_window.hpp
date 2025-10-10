@@ -37,6 +37,7 @@ public:
 	int          open(SDL_GPUDevice* gpu);
 	SDL_WindowID id() const;
 	void         close(SDL_GPUDevice* gpu);
+	void         loadIcon(float hueShift = 0.0F);
 	void         render(SDL_GPUDevice* gpu);
 	void         setActiveGamepadIndex(size_t activeIndex);
 };

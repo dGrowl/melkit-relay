@@ -11,6 +11,7 @@
 #include "imgui/backends/imgui_impl_sdlgpu3.h"
 #include "imgui/imgui.h"
 
+#include "core/settings.hpp"
 #include "gui/image.hpp"
 #include "gui/theme_color_modal.hpp"
 #include "impulse/processor.hpp"
@@ -89,8 +90,7 @@ int ConfigWindow::open(SDL_GPUDevice* gpu) {
 
 	SDL_SetWindowMinimumSize(_window, WINDOW_WIDTH_MIN, WINDOW_HEIGHT_MIN);
 	SDL_SetWindowPosition(_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-	const Surface icon(ICON_PATH);
-	SDL_SetWindowIcon(_window, icon);
+	loadIcon(SETTINGS.getThemeHueShift());
 	SDL_ShowWindow(_window);
 
 	if (!SDL_ClaimWindowForGPUDevice(gpu, _window)) {
@@ -131,6 +131,14 @@ void ConfigWindow::close(SDL_GPUDevice* gpu) {
 	SDL_DestroyWindow(_window);
 
 	_window = nullptr;
+}
+
+void ConfigWindow::loadIcon(float hueShift) {
+	Surface image = Surface::APP_ICON();
+	if (hueShift != 0.0F) {
+		image.shiftHue(hueShift);
+	}
+	SDL_SetWindowIcon(_window, image);
 }
 
 void ConfigWindow::render(SDL_GPUDevice* gpu) {

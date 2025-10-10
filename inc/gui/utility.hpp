@@ -27,6 +27,11 @@ const char* getUioKeyName(UioKey keycode);
 
 void centerNextWindow();
 
+ImVec4 hexToRgba(std::string_view hex);
+ImVec4 rgbaToHsla(const ImVec4& rgba);
+ImVec4 hslaToRgba(const ImVec4& hsla);
+ImVec4 hueShiftRgba(const ImVec4& rgba, const float shift);
+
 }  // namespace gui
 
 #endif  // GUI_UTILITY_HPP_

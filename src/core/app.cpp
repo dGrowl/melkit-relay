@@ -12,6 +12,8 @@
 #include "imgui/imgui.h"
 
 #include "core/settings.hpp"
+#include "core/utility.hpp"
+#include "gui/event.hpp"
 #include "gui/fonts.hpp"
 #include "gui/theme.hpp"
 #include "mnk/event.hpp"
@@ -34,6 +36,7 @@ App::App() :
     _icon() {
 	ws::allocateEvents();
 	mnk::allocateEvents();
+	gui::allocateEvents();
 	_wsClient.start();
 }
 
@@ -138,6 +141,9 @@ void App::handleEvent(SDL_Event& event) {
 		case ws::Event::MESSAGE:
 			handleVtsMessage(event.user);
 			break;
+		case gui::Event::THEME_HUE_CHANGE:
+			handleThemeHueChange(event.user);
+			break;
 		case SDL_EVENT_QUIT:
 			quit();
 			break;
@@ -159,6 +165,12 @@ void App::handleEvent(SDL_Event& event) {
 			_impulseProcessor.handleGamepadEvent(event, _gamepadManager.getActiveId());
 			break;
 	}
+}
+
+void App::handleThemeHueChange(const SDL_UserEvent& event) {
+	const float shift = core::pointerToFloat(event.data1);
+	_icon.loadImage(shift);
+	_config.loadIcon(shift);
 }
 
 void App::handleVtsApiError() {

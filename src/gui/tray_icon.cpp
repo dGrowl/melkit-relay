@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL_tray.h>
 
+#include "core/settings.hpp"
 #include "gui/image.hpp"
 
 namespace gui {
@@ -11,8 +12,8 @@ TrayIcon::TrayIcon() :
     _menu(nullptr),
     _configEntry(nullptr),
     _quitEntry(nullptr) {
-	const Surface image(ICON_PATH);
-	_tray = SDL_CreateTray(image, "Relay");
+	_tray = SDL_CreateTray(nullptr, "Relay");
+	loadImage(SETTINGS.getThemeHueShift());
 	_menu = SDL_CreateTrayMenu(_tray);
 	_configEntry =
 	    SDL_InsertTrayEntryAt(_menu, -1, "Configure", SDL_TRAYENTRY_BUTTON);
@@ -21,6 +22,14 @@ TrayIcon::TrayIcon() :
 
 void TrayIcon::destroy() {
 	SDL_DestroyTray(_tray);
+}
+
+void TrayIcon::loadImage(float hueShift) {
+	Surface image = Surface::APP_ICON();
+	if (hueShift != 0.0F) {
+		image.shiftHue(hueShift);
+	}
+	SDL_SetTrayIcon(_tray, image);
 }
 
 void TrayIcon::setConfigCallback(SDL_TrayCallback callback, void* userdata) {
